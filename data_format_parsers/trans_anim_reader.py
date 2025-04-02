@@ -5,6 +5,7 @@ from . anim_reader import *
 def read_trans_anim(name, reader, super: bool) -> None:
     trans_anim_data = {}
     version = reader.int32()
+    print("trans_anim", "name, version", name, version)
     if version > 4:
         read_metadata(reader, super)
     read_anim(reader, True)

@@ -7,6 +7,6 @@ from . trans_reader import *
 
 def read_waypoint(reader, name, super: bool) -> None:
     version = reader.int32()
-    print("name, version", name, version)
+    print("waypoint", "name, version", name, version)
     find_next_file(reader)
     return

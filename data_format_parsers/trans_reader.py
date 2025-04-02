@@ -7,7 +7,7 @@ def read_trans(reader, super: bool, name: str = "", character_name: str = "") ->
     trans_data["bone_name"] = name
     trans_data["character_name"] = character_name
     version = reader.int32()
-   # print("trans_VERSION", version)
+    print("trans_VERSION", version)
     read_metadata(reader, super)
     local_xfm = reader.matrix()
     world_xfm = reader.matrix()
@@ -66,6 +66,41 @@ def create_trans(trans_data) -> None:
     local_xfm = trans_data["local_xfm"]
     world_xfm = trans_data["world_xfm"]
     parent_name = trans_data.get("parent", "")
+    if ".trans" in bone_name:
+        obj = bpy.data.objects.get(bone_name)
+        if obj == None:  
+            obj = bpy.data.objects.new(bone_name, None)  
+        if len(parent_name) > 0 and "bone" not in parent_name:
+            try:
+                o = bpy.data.objects.get(parent_name)
+                if o:
+                    obj.parent = o
+                else:
+                    o = bpy.data.objects.new(parent_name, None)
+                    bpy.context.scene.collection.objects.link(o)
+                    o.empty_display_size = 2
+                    o.empty_display_type = 'PLAIN_AXES'
+                    obj.parent = o
+            except:
+                pass
+        try:
+            bpy.context.scene.collection.objects.link(obj)
+        except:
+            print(obj, "Already exists")
+        if (obj.parent != None) or (parent_name != None):
+            obj.matrix_local = mathutils.Matrix((
+                (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
+                (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
+                (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11],),
+                (0.0, 0.0, 0.0, 1.0),
+            ))  
+        else:
+            obj.matrix_world = mathutils.Matrix((
+                (world_xfm[0], world_xfm[3], world_xfm[6], world_xfm[9],),
+                (world_xfm[1], world_xfm[4], world_xfm[7], world_xfm[10],),
+                (world_xfm[2], world_xfm[5], world_xfm[8], world_xfm[11],),
+                (0.0, 0.0, 0.0, 1.0),
+            ))
     if "Armature" in bpy.data.armatures:
         armature_data = bpy.data.armatures["Armature"]
     else:

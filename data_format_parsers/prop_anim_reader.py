@@ -2,9 +2,53 @@ import bpy
 from .. common import *
 from . anim_reader import *
 
-def read_prop_anim(reader, super: bool):
+def AnimEventFloat(reader):
+    value = reader.float32()
+    pos = reader.float32()
+    print("pos", pos)
+    return value, pos
+
+def AnimEventColor(reader):
+    value = reader.color4()
+    pos = reader.float32()
+    print("pos", pos)
+    return value, pos
+
+def AnimEventObject(reader):
+    text1 = reader.numstring()
+    text2 = reader.numstring()
+    pos = reader.float32()
+    print("pos", pos)
+    return text1, text2, pos
+
+def AnimEventBool(reader):
+    value = reader.milo_bool()
+    pos = reader.float32()
+    print("pos", pos)
+    return value, pos
+
+def AnimEventQuat(reader):
+    value = reader.quat4()
+    pos = reader.float32()
+    print("pos", pos)
+    return value, pos
+
+def AnimEventVector3(reader):
+    value = reader.vec3f()
+    pos = reader.float32()
+    print("pos", pos)
+    return value, pos
+
+def AnimEventSymbol(reader):
+    text = reader.numstring()
+    pos = reader.float32()
+    print("pos", pos)
+    return text, pos
+
+
+def read_prop_anim(reader, name, super: bool):
     version = reader.int32()
-    print("version", version)
+    print("prop_anim", "name, version", name, version)
     metadata = read_metadata(reader, super)
     anim = read_anim(reader, True)
     if version == 12:
@@ -51,6 +95,7 @@ def read_prop_anim(reader, super: bool):
             print("unknown_bool", unknown_bool)
         event_count = reader.int32()
         print("event_count", event_count)
+        print("values", values)
         for x in range(event_count):
             if values[0] == "position":
                 location = reader.vec3f()
@@ -98,10 +143,29 @@ def read_prop_anim(reader, super: bool):
                 pos = reader.float32()
                 print("pos", pos)
             elif values[0] == "ambient_color":
-                scale = reader.vec4f()
+                amb_color = reader.vec4f()
                 pos = reader.float32()
                 print("pos", pos)
+            elif values[0] == "emit_rate":
+                emit_value = reader.float32()
+                pos = reader.float32()
+                print("pos", pos)
+           # if values[1] == "x":
+           #     print("X") 
+           # elif values[1] == "y":
+           #     print("Y") 
+           # elif values[1] == "z":
+           #     print("Z") 
             else:
+                print("value not found", value)
+                print("value not found", value)
+                print("value not found", value)
+                print("value not found", value)
+                print("value not found", value)
+                print("value not found", value)
+                print("value not found", value)
+                print("value not found", value)
+                print("value not found", value)
                 print("value not found", value)
     if version >= 13:
         unknown_bool2 = reader.milo_bool()

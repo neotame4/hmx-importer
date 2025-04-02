@@ -19,33 +19,33 @@ from . compression import *
 from . coll_reader import *
 
 from . cam_reader import *		#.cam
-#from . camshot_reader import *		#no extension or .shot
-#from . bandcamshot_reader import *	#.shot
+from . camshot_reader import *		#no extension or .shot
+from . bandcamshot_reader import *	#.shot
 #from . camanim_reader import *		#.cnm			#gdrb
 
 
 from . mat_reader import *
 
-#from . matanim_reader import *		#.mnm
+from . matanim_reader import *		#.mnm
 
 from . group_reader import *		#.grp
 
 from . light_reader import *		#.lit
 from . spotlight_reader import *	#.spot
 #from . light_preset_reader import * 	#.pst
-#from . lightanim_reader import *	#.lnm
+from . lightanim_reader import *	#.lnm
 
 from . mesh_reader import *
 from . meshanim_reader import *		#.msnm or .meshanim
 
 #from . meshblend_reader import *	#.blend
 #from . meshblendanim_reader import *	#.blendanim
-#from . multimesh_reader import *	#.mm
+from . multimesh_reader import *	#.mm
 #from . line_reader import *		#.lie
 #from . blendshapedriver_reader import *	#.bdrv		#lrb
 
 
-#from . charbone_reader import *	#.mesh or .cb
+from . charbone_reader import *	#.mesh or .cb
 
 from . poll_reader import *
 from . prop_anim_reader import *	#.anim
@@ -58,8 +58,8 @@ from . trans_anim_reader import *	#.tnm or .anim
 from . trans_reader import *		#.trans or .mesh
 from . world_crowd_reader import *	#.crd
 
-#from . particlesys_reader import *	#.part
-#from . particlesysanim_reader import *	#.panim
+from . particlesys_reader import *	#.part
+from . particlesysanim_reader import *	#.panim
 #from . environ_reader import *		#.env
 #from . envanim_reader import *		#.enm
 #from . eventtrigger_reader import *	#.trig
@@ -67,15 +67,15 @@ from . world_crowd_reader import *	#.crd
 #from . animfilter_reader import *	#.filt
 #from . set_reader import *		#.set
 #from . postproc_reader import *	#.pp
-#from . waypoint_reader import *	#.way
+from . waypoint_reader import *	#.way
 #from . cubetex_reader import *		#.cube
-#from . view_reader import *		#no extension or .view
+from . view_reader import *		#no extension or .view
 #from . font_reader import *		#.font
 #from . text_reader import *		#.txt
 #from . bandlabel_reader import *	#.lbl
 #from . uitrigger_reader import *	#.trig
 #from . uiproxy_reader import *		#no extension
-#from . flare_reader import *		#.flare
+from . flare_reader import *		#.flare
 #from . mem_reader import *		#.mem
 #from . hair_reader import *		#.hair
 #from . walk_reader import *		#no extension
@@ -102,7 +102,7 @@ from . world_crowd_reader import *	#.crd
 #from . outfit_reader import *		#.outfit
 #from . outfitconfig_reader import *	#.cfg
 #from . fxsendreverb_reader import *	#.send
-#from . interest_reader import *	#.intr
+from . interest_reader import *	#.intr
 #from . p9character_reader import *	#no extension
 #from . lipsync_reader import *		#.lipsync
 #from . lipsyncdriver_reader import *	#.lipdrv
@@ -296,10 +296,16 @@ def read_obj_dir(reader, super: bool, inlined: bool, self):
             og_proxy_file = proxy_file
             if proxy_file.startswith("../../../"):
                 up_count = 3
+                print("up_count", up_count)
                 proxy_file = proxy_file.replace("../../../", "")
             elif proxy_file.startswith("../../"):
                 up_count = 3
+                print("up_count", up_count)
                 proxy_file = proxy_file.replace("../../", "")  
+            elif proxy_file.startswith("../"):
+                up_count = 3
+                print("up_count", up_count)
+                proxy_file = proxy_file.replace("../", "") 
             proxy_file = proxy_file.replace("/", "\\")
             dirname = os.path.dirname(proxy_file)
             basename = os.path.basename(proxy_file)
@@ -644,28 +650,30 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
             read_milo_file = True
     elif obj_type == "CharCollide":
         read_coll(reader, name, self)
-   # elif obj_type == "WayPoint":
-   #     read_waypoint(reader, name, self)
-   # elif obj_type == "View":
-   #     read_view(reader, name, self)
+    elif obj_type == "WayPoint":
+        read_waypoint(reader, name, self)
+    elif obj_type == "View":
+        read_view(reader, name, self)
     elif obj_type == "Group":
         read_group(reader, name, self)
     elif obj_type == "Cam":
         read_cam(reader, name, self)
+    elif obj_type == "CharBone":
+        read_charbone(reader, name, self)
     elif obj_type == "Flow":
         read_flow(reader, False, is_entry, self)
         if is_entry == True:
             read_milo_file = True
     elif obj_type == "Mat":
         read_mat(reader, name, self)
-   # elif obj_type == "MatAnim":
-   #     read_matanim(reader, name, self)
+    elif obj_type == "MatAnim":
+        read_matanim(reader, name, self)
     elif obj_type == "Mesh":
         geom_owner, parent, mesh_name = read_mesh(reader, name, character_name, self)
     elif obj_type == "MeshAnim":
         read_meshanim(reader, name, self)
-   # elif obj_type == "MultiMesh":
-   #     read_multimesh(reader, name, self)
+    elif obj_type == "MultiMesh":
+        read_multimesh(reader, name, self)
    # elif obj_type == "MeshBlend":
    #     read_meshblend(reader, name, self)
     elif obj_type == "ObjectDir":
@@ -674,7 +682,7 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         read_panel_dir(reader, is_entry, False, self)
     elif obj_type == "PropAnim":
         if self.import_prop_anim == True:
-            read_prop_anim(reader, False)
+            read_prop_anim(reader, name, False)
         else:
             find_next_file(reader)
     elif obj_type == "RndDir":
@@ -690,17 +698,18 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         read_tex(reader, name, self)
     elif obj_type == "Light":
         read_lit(reader, name, self)
-    # lego rock band has some broken ones, WHY Tt GAMES
-    # sowwy cant fix :3 -neo
+
     elif obj_type == "Spotlight":
         read_spotlight(reader, name, self)
+    # lego rock band has some broken ones, WHY Tt GAMES
+    # sowwy cant fix :3 -neo
 
    # elif obj_type == "LightPreset":
    #     read_lightpreset(reader, name, self)
-   # elif obj_type == "LightAnim":
-   #     read_lightanim(reader, name, self)
-   # elif obj_type == "Flare":
-   #     read_flare(reader, name, self)
+    elif obj_type == "LightAnim":
+        read_lightanim(reader, name, self)
+    elif obj_type == "Flare":
+        read_flare(reader, name, self)
 
 
    # elif obj_type == "EventTrigger":
@@ -709,12 +718,12 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
    #     read_lightpreset(reader, name, self)
    # elif obj_type == "Set":
    #     read_set(reader, name, self)
-   # elif obj_type == "ParticleSys":
-   #     read_particlesys(reader, name, self)
-   # elif obj_type == "ParticleSysAnim":
-   #     read_particlesysanim(reader, name, self)
-   # elif obj_type == "CamShot":
-   #     read_caamshot(reader, name, self)
+    elif obj_type == "ParticleSys":
+        read_particlesys(reader, name, self)
+    elif obj_type == "ParticleSysAnim":
+        read_particlesysanim(reader, name, self)
+    elif obj_type == "CamShot":
+        read_caamshot(reader, name, self)
    # elif obj_type == "Environ":
    #     read_environ(reader, name, self)
    # elif obj_type == "EnvAnim":

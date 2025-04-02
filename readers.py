@@ -85,6 +85,11 @@ class Reader():
     def milo_bool(self) -> bool:
         return self.read("?")[0]
 
+    def quat4(self) -> tuple[float, float, float, float]:
+        return self.read("4f")
+
+    def sphere4(self) -> tuple[float, float, float, float]:
+        return self.read("4f")
 
     def vec2hf(self) -> tuple[float, float]:
         return self.read("2e")
@@ -118,6 +123,18 @@ class Reader():
     
     def vec8f(self) -> tuple[float, ...]:
         return self.read("8f")
-    
+
+    def box6(self) -> tuple[float, float, float, float, float, float]:
+        return self.read("6f")
+
+    def color3(self) -> tuple[float, float, float]:
+        return self.read("3f")
+
+    def color4(self) -> tuple[float, float, float, float]:
+        return self.read("4f")
+
+    def matrix3(self) -> tuple[float, ...]:
+        return self.read("9f")
+
     def matrix(self) -> tuple[float, ...]:
         return self.read("12f")

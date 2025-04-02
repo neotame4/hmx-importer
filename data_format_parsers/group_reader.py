@@ -35,6 +35,7 @@ def read_group(reader, name, super: bool) -> None:
     if version > 11 and version < 16:
         lod = reader.numstring()
         lod_screen_size = reader.float32()
+        print("lod, lod_screen_size", lod, lod_screen_size)
     elif version == 4:
         some_number_1 = reader.uint32()
         objects = []
@@ -50,8 +51,10 @@ def read_group(reader, name, super: bool) -> None:
         some_name = reader.numstring()
         lod_width = reader.float32()
         lod_height = reader.float32()
-    elif version > 13:
+        print("some_name, lod_width, lod_height", some_name, lod_width, lod_height)
+    if version > 13:
         sort_in_world = reader.milo_bool()
+        print("sort_in_world", sort_in_world)
     obj = bpy.data.objects.get(name)
     if obj == None:
         obj = bpy.data.objects.new(name, None)  
@@ -73,7 +76,8 @@ def read_group(reader, name, super: bool) -> None:
     try:
         bpy.context.scene.collection.objects.link(obj)
     except:
-        print("Object already in collection 'Scene Collection'")
+        print(obj, "Object already in collection 'Scene Collection'")
+        pass
     if obj.parent != None:
         obj.matrix_local = mathutils.Matrix((
             (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),

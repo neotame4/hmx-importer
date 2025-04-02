@@ -5,8 +5,8 @@ from .. bpy_util_funcs import *
 from . trans_reader import *
 
 
-def read_filler(reader, name, super: bool) -> None:
+def read_multimesh(reader, name, super: bool) -> None:
     version = reader.int32()
-    print("version", version)
+    print("multimesh", "name, version", name, version)
     find_next_file(reader)
     return

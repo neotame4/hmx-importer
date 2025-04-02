@@ -442,22 +442,31 @@ def create_mesh(mesh_data) -> None:
         index += 1
    # mesh = bpy.data.meshes.new(name=geom_owner)
    # mesh = bpy.data.meshes.get(geom_owner)
-    obj = bpy.data.objects.new(mesh_name, mesh)  
+
+    obj = bpy.data.objects.get(mesh_name)
+    if obj == None:  
+        obj = bpy.data.objects.new(mesh_name, mesh)  
+    else:
+        mesh = bpy.data.meshes.new(name=geom_owner)
     if len(parent) > 0 and "bone" not in parent:
         try:
             o = bpy.data.objects.get(parent)
             if o:
                 obj.parent = o
             else:
-                o = bpy.data.objects.new(parent, None)
+                meshparent = bpy.data.meshes.new(name=geom_owner)
+                o = bpy.data.objects.new(parent, meshparent)
                 bpy.context.scene.collection.objects.link(o)
-                o.empty_display_size = 2
-                o.empty_display_type = 'PLAIN_AXES'
+               # o.empty_display_size = 2
+               # o.empty_display_type = 'PLAIN_AXES'
                 obj.parent = o
         except:
             pass
-    bpy.context.scene.collection.objects.link(obj)
-    if obj.parent != None:
+    try:
+        bpy.context.scene.collection.objects.link(obj)
+    except:
+        print(obj, "Already exists")
+    if (obj.parent != None) or (parent != None):
         obj.matrix_local = mathutils.Matrix((
             (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
             (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
