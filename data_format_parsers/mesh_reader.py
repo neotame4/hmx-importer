@@ -436,18 +436,28 @@ def create_mesh(mesh_data) -> None:
    #     meshdata = bpy.data.meshes.get(geom_owner)
    # else:
    #     meshdata = bpy.data.meshes.new(name=geom_owner)
+
+ #   index = 0
+ #   if mesh:
+ #       mesh.name = mesh.name + f"_{index}"
+ #       index += 1
+   # mesh = bpy.data.meshes.new(name=geom_owner)
+   # mesh = bpy.data.meshes.get(geom_owner)
+
+
+#    stolen from older script version
     index = 0
     if mesh:
         mesh.name = mesh.name + f"_{index}"
         index += 1
-   # mesh = bpy.data.meshes.new(name=geom_owner)
-   # mesh = bpy.data.meshes.get(geom_owner)
+    mesh = bpy.data.meshes.new(name=mesh_name)
+    obj = bpy.data.objects.new(mesh_name, mesh)  
 
-    obj = bpy.data.objects.get(mesh_name)
-    if obj == None:  
-        obj = bpy.data.objects.new(mesh_name, mesh)  
-    else:
-        mesh = bpy.data.meshes.new(name=geom_owner)
+ #   obj = bpy.data.objects.get(mesh_name)
+ #   if obj == None:  
+ #       obj = bpy.data.objects.new(mesh_name, mesh)  
+ #   else:
+ #       mesh = bpy.data.meshes.new(name=geom_owner)
     if len(parent) > 0 and "bone" not in parent:
         try:
             o = bpy.data.objects.get(parent)
