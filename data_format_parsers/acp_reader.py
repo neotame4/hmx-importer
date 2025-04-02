@@ -12,11 +12,21 @@ def sample_set_header(reader):
     always_1 = reader.int32()
     return count_per_sample, bone_names
 
+def sample_set_header2(reader):
+    bone_count2 = reader.int32()
+    bone_names2 = []
+    for _ in range(bone_count2):
+        bone_names2.append(reader.numstring())
+    count_per_sample2= reader.int32()
+    always_12 = reader.int32()
+    return count_per_sample2, bone_names2
+
 def anim_clip(reader):
     version = reader.int32()
     count_per_sample, bone_names = sample_set_header(reader)
-    sample_set_header(reader)
-    return count_per_sample, bone_names
+    count_per_sample2, bone_names2 = sample_set_header2(reader)
+   # sample_set_header(reader)
+    return count_per_sample, bone_names, count_per_sample2, bone_names2
 
 def create_acp_anim(self):
     reader = Reader(open(self.filepath, "rb").read(), self.filepath)
@@ -31,7 +41,7 @@ def create_acp_anim(self):
     f4 = reader.float32()
     unknown = reader.int32()
     max_1 = reader.float32()
-    count_per_sample, bone_names = anim_clip(reader)
+    count_per_sample, bone_names, count_per_sample2, bone_names2 = anim_clip(reader)
     for i in range(count_per_sample):
         armature = bpy.context.active_object
         bpy.data.scenes["Scene"].frame_end = count_per_sample - 1
@@ -42,23 +52,29 @@ def create_acp_anim(self):
             if ".pos" in name:
                 name = name.replace(".pos", ".mesh")
                 bone = armature.pose.bones.get(name)
+                pos = reader.vec3f()
+                print("pos", pos, name)
                 if bone:
-                    pos = reader.vec3f()
-                    bone.location = pos
+                    bone.location[0] = pos[0]
+                    bone.location[1] = pos[1]
+                    bone.location[2] = pos[2]
                     bone.keyframe_insert("location")
             elif ".quat" in name:
                 name = name.replace(".quat", ".mesh")
                 bone = armature.pose.bones.get(name)
+                quat = quat_math4(reader.vec4s())
+                print("quat, name", quat, name)
                 if bone:
-                    quat = quat_math4(reader.vec4s())
                     bone.rotation_mode = "QUATERNION"
-                    bone.rotation_quaternion = quat
+                   # bone.rotation_quaternion = quat
+                    bone.rotation_quaternion = (quat[3], quat[0], quat[1], quat[2])
                     bone.keyframe_insert("rotation_quaternion")
             elif ".rotz" in name:
                 name = name.replace(".rotz", ".mesh")
                 bone = armature.pose.bones.get(name)
+                rotz = rotz_math(reader.short())
+                print("rotz, name", rotz, name)
                 if bone:
-                    rotz = rotz_math(reader.short())
                     bone.rotation_mode = "XYZ"
                     bone.rotation_euler[2] = rotz
                     bone.keyframe_insert("rotation_euler")        
