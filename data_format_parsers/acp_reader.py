@@ -50,7 +50,7 @@ def create_acp_anim(self):
                 name = name.replace(".quat", ".mesh")
                 bone = armature.pose.bones.get(name)
                 if bone:
-                    quat = quat_math(reader.vec4s())
+                    quat = quat_math4(reader.vec4s())
                     bone.rotation_mode = "QUATERNION"
                     bone.rotation_quaternion = quat
                     bone.keyframe_insert("rotation_quaternion")

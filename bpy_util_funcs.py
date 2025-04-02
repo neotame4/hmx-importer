@@ -22,8 +22,14 @@ def ps3_weights_math(weights: tuple[int, int, int, int]) -> tuple[float, float, 
 def pos_math(pos: int) -> float:
     return (pos / 32767.0)
 
+def pos_math3(pos: tuple[int, int, int]) -> tuple[float, float, float]:
+    return ((pos[0] / 32767.0 * 1280), (pos[1] / 32767.0 * 1280), (pos[2] / 32767.0 * 1280))
+
 def quat_math(quat: int) -> float:
     return (quat / 32767.0)
+
+def quat_math4(quat: tuple[int, int, int, int]) -> tuple[float, float, float, float]:
+    return (quat[0] / 32767.0, quat[1] / 32767.0, quat[2] / 32767.0, quat[3] / 32767.0)
 
 def rotz_math(rotz: int) -> float:
     return (rotz / 32767.0) / 0.5 * 10
