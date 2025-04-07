@@ -1,17 +1,21 @@
 # hmx-importer
 Blender script to import milo/rnd files from most HMX games.
 
-Very beta importer for HMX games.
+Buggy but very functional importer for HMX games.
 
-Only supports milos decompressed from arkhelper (look up Mackiloha)
+Milos decompressed from arkhelper (look up Mackiloha) are recomended to be used.
 
 (To get these, just include -m while extracting the ark)
 
-For GH1, some characters have a parent mesh which holds the transforms. (Usually the head from what I've seen)
-
-To fix the other meshes, select the meshes that dont have right transforms, then select the parent mesh and do Ctrl+P, then "Without Inverse".
-
 Games it currently supports:
+
+Frequency
+
+Amplitude
+
+Antigrav
+
+Karaoke Revolution (all of them)
 
 GH1
 
@@ -31,16 +35,19 @@ GDRB
 
 RB3
 
-Expect a lot of updates to the repo, as this is a daily project for me.
+DC1
+
+DC2
+
+DC3
+
+Expect a lot of updates to the repo, as this is a daily project for us.
 
 Also, feel free to submit a issue if one occurs. I'll do my best to fix it.
-
-Weights for TBRB/GDRB only work for Wii version.
 
 To make sure the mesh doesn't get distorted when an armature modifier is applied, select the skeleton and go into Pose Mode, and apply the pose as the rest pose.
 
 Then try it again.
 
-And if there's any game/platform you want me to add support for, do let me know.
+And if there's anything you want added, do let us know.
 
-Read endian_guide.txt on how to properly use the little endian setting.
