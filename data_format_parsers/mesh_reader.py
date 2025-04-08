@@ -211,8 +211,8 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
             find_next_file(reader)
             return geom_owner, parent_name, name
     if version > 25:
-        read_metadata(reader, False)                 
-    parent, local_xfm, world_xfm = read_trans(reader, True, name)
+        read_metadata(reader, False)           
+    trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
    # print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
     mesh_data["parent"] = parent
     if version == 25:
@@ -420,9 +420,14 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
         create_mesh(mesh_data)
     else:
         mesh_data["bone_name"] = name
+        mesh_data["trans_version"] = trans_version
+        if trans_version < 9:
+            mesh_data["trans_count"] = trans_count
+            mesh_data["trans_objects"] = trans_objects
+        mesh_data["parent"] = parent
         # flip transforms
-        mesh_data["local_xfm"] = world_xfm
-        mesh_data["world_xfm"] = local_xfm
+        mesh_data["local_xfm"] = local_xfm
+        mesh_data["world_xfm"] = world_xfm
         create_mesh(mesh_data)
         create_trans(mesh_data)
     return geom_owner, parent_name, name
@@ -444,13 +449,11 @@ def create_mesh(mesh_data) -> None:
     indices = mesh_data["indices"]
     bone_names = mesh_data.get("bone_names", [])
     print("Creating mesh:", mesh_name)
-    mesh = bpy.data.meshes.new(name=geom_owner)
+   # mesh = bpy.data.meshes.new(name=geom_owner)
+   # mesh = bpy.data.meshes.get(geom_owner)
     mesh = bpy.data.meshes.get(geom_owner)
-   # meshget = bpy.data.meshes.get(geom_owner)
-   # if meshget:
-   #     meshdata = bpy.data.meshes.get(geom_owner)
-   # else:
-   #     meshdata = bpy.data.meshes.new(name=geom_owner)
+    if mesh is None:
+        mesh = bpy.data.meshes.new(name=geom_owner)
 
  #   index = 0
  #   if mesh:
@@ -465,11 +468,11 @@ def create_mesh(mesh_data) -> None:
     if mesh:
         mesh.name = mesh.name + f"_{index}"
         index += 1
-    mesh = bpy.data.meshes.new(name=mesh_name)
+   # mesh = bpy.data.meshes.new(name=mesh_name)
    # obj = bpy.data.objects.new(mesh_name, mesh)  
 
     obj = bpy.data.objects.get(mesh_name)
-    if obj == None:  
+    if obj is None:  
         obj = bpy.data.objects.new(mesh_name, mesh)  
    # else:
    #     mesh = bpy.data.meshes.new(name=geom_owner)
@@ -492,7 +495,7 @@ def create_mesh(mesh_data) -> None:
         bpy.context.scene.collection.objects.link(obj)
     except:
         print(obj, "Already exists")
-    if (obj.parent != None) or (parent != None):
+    if (obj.parent != None) or (parent != None) or (parent != mesh_name):
         obj.matrix_local = mathutils.Matrix((
             (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
             (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
@@ -510,6 +513,11 @@ def create_mesh(mesh_data) -> None:
    # if character_obj:
    #     obj.parent = character_obj
     mesh.from_pydata(verts, [], faces)
+    index = 0
+   # if mesh:
+   #     mesh.name = mesh.name + f"_{index}"
+   #     index += 1
+    obj.data = bpy.data.meshes.get(mesh.name)
     uv_layer = mesh.uv_layers.new(name="UVMap")
     for loop in mesh.loops:
         uv = uvs[loop.vertex_index]

@@ -12,8 +12,10 @@ def read_spotlight(reader, name: str, self) -> None:
     if version > 3:
         read_metadata(reader, False)
     read_draw(reader, True)
-    parent, local_xfm, world_xfm = read_trans(reader, True, name)
-    print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
+   # parent, local_xfm, world_xfm = read_trans(reader, True, name)
+   # print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
+    trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
+    print("trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm", trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm)
     ignore_data = reader.uint32()
     ignore_data2 = reader.uint32()
     ignore_data3 = reader.uint32()

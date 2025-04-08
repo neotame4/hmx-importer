@@ -14,8 +14,10 @@ def read_group(reader, name, super: bool) -> None:
     if version > 7:
         read_metadata(reader, False)
     read_anim(reader, True)
-    parent, local_xfm, world_xfm = read_trans(reader, True, name)
-    print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
+   # parent, local_xfm, world_xfm = read_trans(reader, True, name)
+   # print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
+    trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
+    print("trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm", trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm)
     read_draw(reader, True)
     if version > 10:
         objects = []

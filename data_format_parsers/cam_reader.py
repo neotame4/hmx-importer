@@ -11,7 +11,10 @@ def read_cam(reader, name, super: bool) -> None:
     print("name, version", name, version)
     if version > 10:
         metadata = read_metadata(reader, False) 
-    parent, local_xfm, world_xfm = read_trans(reader, True, name)
+   # parent, local_xfm, world_xfm = read_trans(reader, True, name)
+   # print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
+    trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
+   # print("trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm", trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm)
     if version < 10:
         read_draw(reader, True)
     near_plane = reader.float32()

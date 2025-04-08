@@ -7,6 +7,7 @@ def read_trans(reader, super: bool, name: str = "", character_name: str = "") ->
     trans_data["bone_name"] = name
     trans_data["character_name"] = character_name
     version = reader.int32()
+    trans_data["trans_version"] = version
     print("trans_VERSION", version)
     read_metadata(reader, super)
     local_xfm = reader.matrix()
@@ -15,17 +16,19 @@ def read_trans(reader, super: bool, name: str = "", character_name: str = "") ->
     trans_data["world_xfm"] = world_xfm
     if version < 9:
         trans_count = reader.int32()
+        trans_data["trans_count"] = trans_count
         print("trans_count", trans_count)
         trans_objects = []
         for _ in range(trans_count):
             if reader.version <= 6:
                 trans_object = reader.string()
-               # print("trans_object", trans_object)
+                print("trans_object", trans_object)
                 trans_objects.append(trans_object)
             else:
                 trans_object = reader.numstring()
-               # print("trans_object", trans_object)
+                print("trans_object", trans_object)
                 trans_objects.append(trans_object)
+        trans_data["children_objects"] = trans_objects
     if version >= 6:
         constraint = reader.uint32()
     elif version < 3:
@@ -57,10 +60,19 @@ def read_trans(reader, super: bool, name: str = "", character_name: str = "") ->
         print("parent", parent)
         trans_data["parent"] = parent
     if super == False:
+       # if version < 9:
+       #     create_trans(trans_data, version, trans_objects, trans_count)
+       # else:
         create_trans(trans_data)
-    return parent, local_xfm, world_xfm
+    trans_version = version
+    trans_count = 0
+    trans_objects = None
+    return trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm
+#, version
 
 def create_trans(trans_data) -> None:
+    version = trans_data["trans_version"]
+    print("create_trans version", version)
     bone_name = trans_data["bone_name"]
     character_name = trans_data["character_name"]
     local_xfm = trans_data["local_xfm"]
@@ -124,25 +136,42 @@ def create_trans(trans_data) -> None:
         parent_bone.head = (0, 0, 0)
         parent_bone.tail = (0, 1, 0)
         parent_bone.use_deform = True
-    if parent_bone:
-        edit_bone.parent = parent_bone
+    
+    if version < 9:
+        trans_count = trans_data["trans_count"]
+        print("trans_count1", trans_count)
+        if trans_count > 0:
+            trans_objects = []
+            trans_objects = trans_data["trans_objects"]
+           # children_list = trans_objects
+            print("trans_objects1", trans_objects)
+            parent_to_bone = bone_name
+            print("parent_to_bone", parent_to_bone)
+            parent_bone1 = armature_obj.data.edit_bones.get(parent_to_bone)
+            if parent_bone1 is None:
+                parent_bone1 = armature_obj.data.edit_bones.new(parent_to_bone)
+            for i in range(trans_count):
+                bone = trans_objects[i]
+                print("bone", bone)
+               # print("count", i)
+                child_bone = armature_obj.data.edit_bones.get(bone)
+                if child_bone is None:
+                    child_bone = armature_obj.data.edit_bones.new(bone)
+                child_bone.parent = parent_bone1
+
+   # if parent_bone:
+   #     edit_bone.parent = parent_bone
     bpy.ops.object.mode_set(mode="POSE")
     pose_bone = armature_obj.pose.bones.get(bone_name)
     if pose_bone:
-        if "hair" in pose_bone.name:
-            pose_bone.matrix_basis = mathutils.Matrix((
-                (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9]),
-                (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10]),
-                (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11]),
-                (0.0, 0.0, 0.0, 1.0),
-            ))
-        else:
-            pose_bone.matrix_basis = mathutils.Matrix((
-                (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9]),
-                (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10]),
-                (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11]),
-                (0.0, 0.0, 0.0, 1.0),
-            ))
+       # if (pose_bone.parent != None):
+       # if trans_count != 0:
+        pose_bone.matrix_basis = mathutils.Matrix((
+            (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
+            (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
+            (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11],),
+            (0.0, 0.0, 0.0, 1.0),
+        ))  
     bpy.ops.object.mode_set(mode="OBJECT")
     character_obj = bpy.data.objects.get(character_name)
     if character_obj:

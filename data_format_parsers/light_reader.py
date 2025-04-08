@@ -11,8 +11,10 @@ def read_lit(reader, name: str, self) -> None:
     if version > 3:
         read_metadata(reader, False)
      # trans
-    parent, local_xfm, world_xfm = read_trans(reader, True, name)
-    print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
+   # parent, local_xfm, world_xfm = read_trans(reader, True, name)
+   # print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
+    trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
+    print("trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm", trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm)
     color = reader.vec3f()
     print("color", color)
     if version <= 3:
