@@ -473,7 +473,8 @@ def create_mesh(mesh_data) -> None:
         obj = bpy.data.objects.new(mesh_name, mesh)  
    # else:
    #     mesh = bpy.data.meshes.new(name=geom_owner)
-    if len(parent) > 0 and "bone" not in parent:
+   # if len(parent) > 0 and "bone" not in parent:
+    if len(parent) > 0:
         try:
             o = bpy.data.objects.get(parent)
             if o:
