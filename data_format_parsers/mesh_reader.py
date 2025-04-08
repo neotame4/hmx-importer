@@ -102,18 +102,33 @@ def vertices(reader, version: int) -> list:
         else:
             if reader.platform == "X360":
                 always_ff_1 = reader.uint32()
-            uvs.append(invert_uv_map(reader.vec2hf()))        
+            uvs.append(invert_uv_map(reader.vec2hf()))
+     
             normal_value = reader.uint32()
+            print("normal_value", normal_value)
+           # normalsv = signed_compressed_vec4(normal_value)
+           # normals.append(normalsv)
+           # print("normalsv", normalsv)
+
             tangent_value = reader.uint32()
+            print("tangent_value", tangent_value)
+           # tangentsv = signed_compressed_vec4(tangent_value)
+           # print("tangentsv", tangentsv)
+
             if reader.platform == "X360":
                 bone_weights.append(unsigned_compressed_vec4(reader.uint32()))
                 bone_ids.append(reverse_vector(reader.vec4ub()))
             else:
-                weights = ps3_weights_math(reader.vec4ub())
+                weight = reader.uint32()
+                print("weight", weight)
+                weights = unsigned_compressed_vec4(weight)
+                print("weights", weights)
                 bone_weights.append(weights)
                 if compression_type == 2:
                     unknown = reader.uint32()
-                bone_ids.append(reader.vec4us())     
+                ids = reader.vec4us()
+                print("ids", ids)
+                bone_ids.append(ids)     
     if version == 393254:
         reader.little_endian = False
     return vertices, normals, uvs, bone_weights, bone_ids 
@@ -451,13 +466,13 @@ def create_mesh(mesh_data) -> None:
         mesh.name = mesh.name + f"_{index}"
         index += 1
     mesh = bpy.data.meshes.new(name=mesh_name)
-    obj = bpy.data.objects.new(mesh_name, mesh)  
+   # obj = bpy.data.objects.new(mesh_name, mesh)  
 
- #   obj = bpy.data.objects.get(mesh_name)
- #   if obj == None:  
- #       obj = bpy.data.objects.new(mesh_name, mesh)  
- #   else:
- #       mesh = bpy.data.meshes.new(name=geom_owner)
+    obj = bpy.data.objects.get(mesh_name)
+    if obj == None:  
+        obj = bpy.data.objects.new(mesh_name, mesh)  
+   # else:
+   #     mesh = bpy.data.meshes.new(name=geom_owner)
     if len(parent) > 0 and "bone" not in parent:
         try:
             o = bpy.data.objects.get(parent)
