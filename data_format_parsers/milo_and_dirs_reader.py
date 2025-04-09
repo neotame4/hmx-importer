@@ -422,6 +422,7 @@ def read_rnd_dir(reader, inlined: bool, self):
     read_anim(reader, True)
     read_draw(reader, True)
     trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True)
+   # parent, local_xfm, world_xfm = read_trans(reader, True)
     if version < 9:
         read_poll(reader)
         some_string_1 = reader.numstring()

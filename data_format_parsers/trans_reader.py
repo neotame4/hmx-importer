@@ -8,6 +8,9 @@ def read_trans(reader, super: bool, name: str = "", character_name: str = "") ->
     trans_data["character_name"] = character_name
     version = reader.int32()
     trans_data["trans_version"] = version
+    trans_version = version
+    trans_count = 0
+    trans_objects = None
     print("trans_VERSION", version)
     read_metadata(reader, super)
     local_xfm = reader.matrix()
@@ -64,10 +67,8 @@ def read_trans(reader, super: bool, name: str = "", character_name: str = "") ->
        #     create_trans(trans_data, version, trans_objects, trans_count)
        # else:
         create_trans(trans_data)
-    trans_version = version
-    trans_count = 0
-    trans_objects = None
     return trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm
+   # return parent, local_xfm, world_xfm
 #, version
 
 def create_trans(trans_data) -> None:
@@ -159,8 +160,8 @@ def create_trans(trans_data) -> None:
                     child_bone = armature_obj.data.edit_bones.new(bone)
                 child_bone.parent = parent_bone1
 
-   # if parent_bone:
-   #     edit_bone.parent = parent_bone
+    if parent_bone != None:
+        edit_bone.parent = parent_bone
     bpy.ops.object.mode_set(mode="POSE")
     pose_bone = armature_obj.pose.bones.get(bone_name)
     if pose_bone:

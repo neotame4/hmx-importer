@@ -212,16 +212,16 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
             return geom_owner, parent_name, name
     if version > 25:
         read_metadata(reader, False)           
-    trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
-   # parent, local_xfm, world_xfm = read_trans(reader, True, name)
+   # trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
+    parent, local_xfm, world_xfm = read_trans(reader, True, name)
    # print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
     mesh_data["parent"] = parent
     if version == 25:
         parent_name = parent
-    mesh_data["local_xfm"] = local_xfm
-    mesh_data["world_xfm"] = world_xfm
-   # mesh_data["local_xfm"] = world_xfm
-   # mesh_data["world_xfm"] = local_xfm
+   # mesh_data["local_xfm"] = local_xfm
+   # mesh_data["world_xfm"] = world_xfm
+    mesh_data["local_xfm"] = world_xfm
+    mesh_data["world_xfm"] = local_xfm
     read_draw(reader, True)
    # print("VERSION", version)
     if version < 15:
@@ -423,14 +423,14 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
         create_mesh(mesh_data)
     else:
         mesh_data["bone_name"] = name
-        mesh_data["trans_version"] = trans_version
-        if trans_version < 9:
-            mesh_data["trans_count"] = trans_count
-            mesh_data["trans_objects"] = trans_objects
+      #  mesh_data["trans_version"] = trans_version
+      #  if trans_version < 9:
+      #      mesh_data["trans_count"] = trans_count
+      #      mesh_data["trans_objects"] = trans_objects
         mesh_data["parent"] = parent
         # flip transforms
-        mesh_data["local_xfm"] = local_xfm
-        mesh_data["world_xfm"] = world_xfm
+        mesh_data["local_xfm"] = world_xfm
+        mesh_data["world_xfm"] = local_xfm
         create_mesh(mesh_data)
         create_trans(mesh_data)
     return geom_owner, parent_name, name
@@ -498,14 +498,14 @@ def create_mesh(mesh_data) -> None:
         bpy.context.scene.collection.objects.link(obj)
     except:
         print(obj, "Already exists")
-    if (obj.parent != None) or (parent != None) or (parent != mesh_name):
+    if (obj.parent != None) or (parent != None):
         obj.matrix_local = mathutils.Matrix((
             (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
             (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
             (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11],),
             (0.0, 0.0, 0.0, 1.0),
         ))  
-    if "bone" in parent:
+    else:
         obj.matrix_world = mathutils.Matrix((
             (world_xfm[0], world_xfm[3], world_xfm[6], world_xfm[9],),
             (world_xfm[1], world_xfm[4], world_xfm[7], world_xfm[10],),
