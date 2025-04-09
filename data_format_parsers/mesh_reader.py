@@ -486,7 +486,7 @@ def create_mesh(mesh_data) -> None:
             if o:
                 obj.parent = o
             else:
-                meshparent = bpy.data.meshes.new(name=geom_owner)
+                meshparent = bpy.data.meshes.new(name= parent)
                 o = bpy.data.objects.new(parent, meshparent)
                 bpy.context.scene.collection.objects.link(o)
                # o.empty_display_size = 2
@@ -505,6 +505,13 @@ def create_mesh(mesh_data) -> None:
             (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11],),
             (0.0, 0.0, 0.0, 1.0),
         ))  
+    else:
+        obj.matrix_world = mathutils.Matrix((
+            (world_xfm[0], world_xfm[3], world_xfm[6], world_xfm[9],),
+            (world_xfm[1], world_xfm[4], world_xfm[7], world_xfm[10],),
+            (world_xfm[2], world_xfm[5], world_xfm[8], world_xfm[11],),
+            (0.0, 0.0, 0.0, 1.0),
+        ))
     if "bone" in parent:
         obj.matrix_world = mathutils.Matrix((
             (world_xfm[0], world_xfm[3], world_xfm[6], world_xfm[9],),
