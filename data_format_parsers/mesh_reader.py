@@ -105,13 +105,13 @@ def vertices(reader, version: int) -> list:
             uvs.append(invert_uv_map(reader.vec2hf()))
      
             normal_value = reader.uint32()
-            print("normal_value", normal_value)
+           # print("normal_value", normal_value)
            # normalsv = signed_compressed_vec4(normal_value)
            # normals.append(normalsv)
            # print("normalsv", normalsv)
 
             tangent_value = reader.uint32()
-            print("tangent_value", tangent_value)
+           # print("tangent_value", tangent_value)
            # tangentsv = signed_compressed_vec4(tangent_value)
            # print("tangentsv", tangentsv)
 
@@ -120,14 +120,14 @@ def vertices(reader, version: int) -> list:
                 bone_ids.append(reverse_vector(reader.vec4ub()))
             else:
                 weight = reader.uint32()
-                print("weight", weight)
+            #    print("weight", weight)
                 weights = unsigned_compressed_vec4(weight)
-                print("weights", weights)
+            #    print("weights", weights)
                 bone_weights.append(weights)
                 if compression_type == 2:
                     unknown = reader.uint32()
                 ids = reader.vec4us()
-                print("ids", ids)
+             #   print("ids", ids)
                 bone_ids.append(ids)     
     if version == 393254:
         reader.little_endian = False
@@ -163,11 +163,11 @@ def bone_trans(reader, version: int) -> list:
     for _ in range(bone_count):
         if version > 22:
             bone_name = reader.numstring()
-            print("bone_name", bone_name)
+           # print("bone_name", bone_name)
             bone_names.append(bone_name)
         if version >= 34:        
             matrix = reader.matrix()
-            print("matrix", matrix)
+          #  print("matrix", matrix)
     if (version <= 28) and (bone_count > 0):
         for _ in range(4):
             bone_transform = reader.matrix()

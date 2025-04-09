@@ -77,7 +77,7 @@ from . view_reader import *		#no extension or .view
 #from . uiproxy_reader import *		#no extension
 from . flare_reader import *		#.flare
 #from . mem_reader import *		#.mem
-#from . hair_reader import *		#.hair
+from . hair_reader import *		#.hair
 #from . walk_reader import *		#no extension
 #from . servo_reader import *		#.servo			#CharServoBone,FaceFXLip
 #from . faceservo_reader import *	#.faceservo
@@ -649,8 +649,10 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         inline_proxy = read_char_clip_set(reader, False, is_entry, self)
         if inline_proxy == True:
             read_milo_file = True
-    elif obj_type == "CharCollide":
-        read_coll(reader, name, self)
+    elif obj_type == "CharHair":
+        read_hair(reader, name, self)
+    elif obj_type == "Filler":
+        read_(reader, name, self)
     elif obj_type == "WayPoint":
         read_waypoint(reader, name, self)
     elif obj_type == "View":
@@ -735,8 +737,6 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
    #     read_animfilter(reader, name, self)
    # elif obj_type == "PostProc":
    #     read_postprocess(reader, name, self)
-   # elif obj_type == "Filler":
-   #     read_(reader, name, self)
    # elif obj_type == "Filler":
    #     read_(reader, name, self)
    # elif obj_type == "Filler":
