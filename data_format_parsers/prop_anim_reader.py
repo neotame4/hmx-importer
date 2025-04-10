@@ -150,6 +150,11 @@ def read_prop_anim(reader, name, super: bool):
                 emit_value = reader.float32()
                 pos = reader.float32()
                 print("pos", pos)
+            elif values[0] == "color":
+                color_value = reader.color4()
+                pos = reader.float32()
+                print("color_value", color_value)
+                print("pos", pos)
            # if values[1] == "x":
            #     print("X") 
            # elif values[1] == "y":

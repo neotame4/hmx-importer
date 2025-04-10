@@ -32,6 +32,7 @@ from . group_reader import *		#.grp
 
 from . light_reader import *		#.lit
 from . spotlight_reader import *	#.spot
+#from . spotlightdrawer_reader import *	#.
 #from . light_preset_reader import * 	#.pst
 from . lightanim_reader import *	#.lnm
 
@@ -133,21 +134,22 @@ from . interest_reader import *	#.intr
 #from . crowdmetericon_reader import *	#no extension		#lrb
 #from . crowdextrasmanager_reader import *	#.cdm		#gdrb
 #from . triggergroup_reader import *	#.tgrp			#gdrb
+
+#from . FlowEventListener_reader import *	#.
+#from . FlowAnimate_reader import *	#.
+#from . FlowWhile_reader import *	#.
+#from . FlowSwitchCase_reader import *	#.
+#from . FlowSetProperty_reader import *	#.
+#from . FlowTimer_reader import *	#.
+#from . FlowSequence_reader import *	#.
+#from . FlowIf_reader import *		#.
+#from . FlowRun_reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
+#from . PlotDef_reader import *		#.
+#from . PlotBeatAnims_reader import *	#.
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
@@ -768,6 +770,9 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         if (version >= 3) and (is_entry == True):
             read_milo_file = True
     else:
+        print("missing file type")
+        print("obj_type", obj_type)
+        print("name", name)
         find_next_file(reader)
     padding = reader.read_bytes(4)   
     current_offset = reader.tell()
