@@ -438,11 +438,11 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
 def create_mesh(mesh_data) -> None:
     mesh_name = mesh_data["mesh_name"]
     print("object name", mesh_name)
-    print("object name", mesh_name)
-    print("object name", mesh_name)
-    print("object name", mesh_name)
-    print("object name", mesh_name)
-    print("object name", mesh_name)
+   # print("object name", mesh_name)
+   # print("object name", mesh_name)
+   # print("object name", mesh_name)
+   # print("object name", mesh_name)
+   # print("object name", mesh_name)
     mat_name = mesh_data["mat_name"]
     parent = mesh_data["parent"]
     character_name = mesh_data["character_name"]
@@ -532,12 +532,12 @@ def create_mesh(mesh_data) -> None:
    #     obj.parent = character_obj
     obj.name = mesh_name
     obj.data = bpy.data.meshes.get(mesh.name)
-    print("object name2, obj.name", obj.name, obj)
-    print("object name2, obj.name", obj.name, obj)
-    print("object name2, obj.name", obj.name, obj)
-    print("object name2", mesh_name)
-    print("object name2", mesh_name)
-    print("object name2", mesh_name)
+   # print("object name2, obj.name", obj.name, obj)
+   # print("object name2, obj.name", obj.name, obj)
+   # print("object name2, obj.name", obj.name, obj)
+   # print("object name2", mesh_name)
+   # print("object name2", mesh_name)
+   # print("object name2", mesh_name)
     mesh.from_pydata(verts, [], faces)
    # index = 0
    # if mesh:
@@ -632,7 +632,7 @@ def create_mesh(mesh_data) -> None:
                             final_weight_map[group_name].add([vertex_index], weight1, "REPLACE") 
     mesh.update()
     print("Bone weights assigned to:", mesh_name)
-    print("object name3", obj.name, obj)
-    print("object name3", obj.name, obj)
-    print("object name3", obj.name, obj)
+   # print("object name3", obj.name, obj)
+   # print("object name3", obj.name, obj)
+   # print("object name3", obj.name, obj)
     obj.select_set(False)
