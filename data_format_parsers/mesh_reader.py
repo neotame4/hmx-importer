@@ -487,21 +487,22 @@ def create_mesh(mesh_data) -> None:
    #     mesh = bpy.data.meshes.new(name=geom_owner)
    # if len(parent) > 0 and "bone" not in parent:
     if len(parent) > 0:
-       # try:
-        o = bpy.data.objects.get(parent)
-        if o:
-            obj.parent = o
-        else:
-            meshparent = bpy.data.meshes.get("Cube")
-            if meshparent is None:
-                meshparent = bpy.data.meshes.new(name="Cube")
-            o = bpy.data.objects.new(parent, meshparent)
-            bpy.context.scene.collection.objects.link(o)
-           # o.empty_display_size = 2
-           # o.empty_display_type = 'PLAIN_AXES'
-            obj.parent = o
-       # except:
-       #     pass
+        try:
+            o = bpy.data.objects.get(parent)
+            if o:
+                obj.parent = o
+            else:
+                meshparent = bpy.data.meshes.get("Cube")
+                if meshparent is None:
+                    meshparent = bpy.data.meshes.new(name="Cube")
+                o = bpy.data.objects.new(parent, meshparent)
+                bpy.context.scene.collection.objects.link(o)
+               # o.empty_display_size = 2
+               # o.empty_display_type = 'PLAIN_AXES'
+                obj.parent = o
+        except:
+            print("parent failed", "parent", o.name, "to", obj.name,)
+            pass
     try:
         bpy.context.scene.collection.objects.link(obj)
     except:
