@@ -1,4 +1,5 @@
 from . data_format_parsers.acp_reader import create_acp_anim
+from . data_format_parsers.acg_reader import read_acg
 from . data_format_parsers.char_clip_samples_reader import read_ccs
 from . data_format_parsers.bitmap_reader import read_bitmap
 from . data_format_parsers.milo_and_dirs_reader import read_milo
@@ -95,13 +96,17 @@ class ImportACP(Operator, ImportHelper):
     filepath = StringProperty(subtype="FILE_PATH")
 
     filter_glob: StringProperty(
-        default="*.acp",
+        default="*.acp;*.acg",
         options={"HIDDEN"},
     )
 
     def execute(self, context):
-        create_acp_anim(self)
-        self.report({"INFO"}, "Successfully imported ACP animation!")
+        if self.filepath.endswith(".acp"):
+            create_acp_anim(self)
+            self.report({"INFO"}, "Successfully imported ACP animation!")
+        elif self.filepath.endswith(".acg"):
+            read_acg(self)
+            self.report({"INFO"}, "Successfully read ACG file!")
         return {"FINISHED"}
 
 class ImportCCS(Operator, ImportHelper):
@@ -184,7 +189,7 @@ class ExportMilo(Operator, ExportHelper):
     filename_ext = ".milo"
 
     filter_glob: StringProperty(
-        default="*.milo_ps3;*.milo_xbox;*.rnd_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd;*.rnd_gc",
+        default="*.milo_ps3;*.milo_xbox;*.rnd_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd;*.rnd_gc;*.milo_pc",
         options={"HIDDEN"},
     )
 
@@ -207,6 +212,9 @@ class ExportMilo(Operator, ExportHelper):
             ("PS2", "PS2", "Export a milo for PS2."),
             ("PS3", "PS3", "Export a milo for PS3."),
             ("Wii", "Wii", "Export a milo for Wii."),
+           # ("GC", "GC", "Export a rnd for GC."),
+           # ("XBOX", "XBOX", "Export a rnd for og XBOX."),
+           # ("PC", "PC", "Export a milo for PC."),
         ],
         default="X360",
     )
