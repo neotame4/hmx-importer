@@ -437,6 +437,12 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
 
 def create_mesh(mesh_data) -> None:
     mesh_name = mesh_data["mesh_name"]
+    print("object name", mesh_name)
+    print("object name", mesh_name)
+    print("object name", mesh_name)
+    print("object name", mesh_name)
+    print("object name", mesh_name)
+    print("object name", mesh_name)
     mat_name = mesh_data["mat_name"]
     parent = mesh_data["parent"]
     character_name = mesh_data["character_name"]
@@ -481,19 +487,21 @@ def create_mesh(mesh_data) -> None:
    #     mesh = bpy.data.meshes.new(name=geom_owner)
    # if len(parent) > 0 and "bone" not in parent:
     if len(parent) > 0:
-        try:
-            o = bpy.data.objects.get(parent)
-            if o:
-                obj.parent = o
-            else:
-                meshparent = bpy.data.meshes.new(name= parent)
-                o = bpy.data.objects.new(parent, meshparent)
-                bpy.context.scene.collection.objects.link(o)
-               # o.empty_display_size = 2
-               # o.empty_display_type = 'PLAIN_AXES'
-                obj.parent = o
-        except:
-            pass
+       # try:
+        o = bpy.data.objects.get(parent)
+        if o:
+            obj.parent = o
+        else:
+            meshparent = bpy.data.meshes.get("Cube")
+            if meshparent is None:
+                meshparent = bpy.data.meshes.new(name="Cube")
+            o = bpy.data.objects.new(parent, meshparent)
+            bpy.context.scene.collection.objects.link(o)
+           # o.empty_display_size = 2
+           # o.empty_display_type = 'PLAIN_AXES'
+            obj.parent = o
+       # except:
+       #     pass
     try:
         bpy.context.scene.collection.objects.link(obj)
     except:
@@ -522,12 +530,19 @@ def create_mesh(mesh_data) -> None:
     character_obj = bpy.data.objects.get(character_name)
    # if character_obj:
    #     obj.parent = character_obj
+    obj.name = mesh_name
+    obj.data = bpy.data.meshes.get(mesh.name)
+    print("object name2, obj.name", obj.name, obj)
+    print("object name2, obj.name", obj.name, obj)
+    print("object name2, obj.name", obj.name, obj)
+    print("object name2", mesh_name)
+    print("object name2", mesh_name)
+    print("object name2", mesh_name)
     mesh.from_pydata(verts, [], faces)
    # index = 0
    # if mesh:
    #     mesh.name = mesh.name + f"_{index}"
    #     index += 1
-    obj.data = bpy.data.meshes.get(mesh.name)
     uv_layer = mesh.uv_layers.new(name="UVMap")
     for loop in mesh.loops:
         uv = uvs[loop.vertex_index]
@@ -616,5 +631,8 @@ def create_mesh(mesh_data) -> None:
                         if wgt > 0:
                             final_weight_map[group_name].add([vertex_index], weight1, "REPLACE") 
     mesh.update()
-    print("Bone weights assigned to:", mesh_name)                
+    print("Bone weights assigned to:", mesh_name)
+    print("object name3", obj.name, obj)
+    print("object name3", obj.name, obj)
+    print("object name3", obj.name, obj)
     obj.select_set(False)
