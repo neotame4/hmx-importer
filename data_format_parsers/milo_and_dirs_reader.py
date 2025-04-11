@@ -669,8 +669,8 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         read_flow(reader, False, is_entry, self)
         if is_entry == True:
             read_milo_file = True
-    elif obj_type == "Mat":
-        read_mat(reader, name, self)
+   # elif obj_type == "Mat":
+   #     read_mat(reader, name, self)
     elif obj_type == "MatAnim":
         read_matanim(reader, name, self)
     elif obj_type == "Mesh":
