@@ -29,6 +29,11 @@ class Reader():
         result = struct.unpack_from(("" if self.little_endian else ">") + fmt, self.data, self.offset)
         self.offset += struct.calcsize(fmt)
         return result
+
+    def Lread(self, fmt) -> tuple:
+        result = struct.unpack_from((">" if self.little_endian else "") + fmt, self.data, self.offset)
+        self.offset += struct.calcsize(fmt)
+        return result
     
     def read_bytes(self, length: int) -> bytes:
         result = self.read_bytes_at(0, length)
@@ -62,6 +67,9 @@ class Reader():
 
     def hfloat16(self) -> float:
         return self.read("e")[0]
+
+    def Lhfloat16(self) -> float:
+        return self.Lread("e")[0]
     
     def float32(self) -> float:
         return self.read("f")[0]
@@ -108,6 +116,7 @@ class Reader():
     
     def vec4s(self) -> tuple[int, int, int, int]:
         return self.read("4h")
+
     
     def vec4us(self) -> tuple[int, int, int, int]:
         return self.read("4H")
@@ -117,6 +126,17 @@ class Reader():
     
     def vec4hf(self) -> tuple[float, float, float, float]:
         return self.read("4e")
+
+    def weird_Lvec4hf(self) -> tuple[float, float, float, float]:
+        x = self.read("e")[0]
+        x1 = self.read("e")[0]
+        y = self.read("e")[0]
+        y1 = self.read("e")[0]
+        z = self.read("e")[0]
+        z1 = self.read("e")[0]
+        w = self.read("f")[0]
+        print("x, x1, y, y1, z, z1, w", x, x1, y, y1, z, z1, w)
+        return x, y, z
     
     def vec4f(self) -> tuple[float, float, float, float]:
         return self.read("4f")

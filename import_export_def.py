@@ -18,7 +18,7 @@ class ImportMilo(Operator, ImportHelper):
     filepath = StringProperty(subtype="FILE_PATH")
 
     filter_glob: StringProperty(
-        default="*.milo_ps3;*.milo_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.lipsync",
+        default="*.milo_ps3;*.milo_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.milo_pc;*.rnd_pc;*.lipsync",
         options={"HIDDEN"},
     )
 
@@ -134,7 +134,7 @@ class ConvertHMXImage(Operator, ImportHelper):
     filepath = StringProperty(subtype="FILE_PATH")
 
     filter_glob: StringProperty(
-        default="*.bmp_ps2;*.png_ps2;*.bmp_ps3;*.png_ps3;*.bmp_xbox;*.png_xbox;*.bmp_wii;*.png_wii;*.bmp_gc;*.png_gc",
+        default="*.bmp_ps2;*.png_ps2;*.bmp_ps3;*.png_ps3;*.bmp_xbox;*.png_xbox;*.bmp_wii;*.png_wii;*.bmp_gc;*.png_gc;*.bmp_pc;*.png_pc",
         options={"HIDDEN"},
     )
 
