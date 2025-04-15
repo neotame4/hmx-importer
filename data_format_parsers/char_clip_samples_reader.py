@@ -212,8 +212,8 @@ def read_ccs(self):
 #   ^^^^comment out these three lines to import Dance Central anims
 #       hacky fix but it works
 
-    metadata = read_metadata(reader, False) 
-    print("metadata", metadata)
+    revision, metadata_type = read_metadatadetailed(reader, False) 
+    print("revision, metadata_type", revision, metadata_type)
     start_beat = reader.float32()
     print("start_beat", start_beat)
     end_beat = reader.float32()
@@ -334,12 +334,14 @@ def read_ccs(self):
                                     pos4 = pos44
                                 if bone:
                                     # just for viseme anim import
-                                   # bone.location[2] = ( pos1 / 32767 ) * 1280
-                                   # bone.location[1] = ( pos2 / 32767 ) * 1280
-                                   # bone.location[0] = ( pos3 / 32767 ) * 1280
-                                    bone.location[0] = ( pos1 / 32767 ) * 1280
-                                    bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[2] = ( pos3 / 32767 ) * 1280
+                                    if metadata_type == "viseme":
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    else:
+                                        bone.location[0] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[2] = ( pos3 / 32767 ) * 1280
                                     bone.keyframe_insert("location")
                         else:
                             pos1 = reader.short()
@@ -350,12 +352,14 @@ def read_ccs(self):
                             print("pos3", pos3)
                             if bone:
                                 # just for viseme anim import
-                              #  bone.location[2] = ( pos1 / 32767 ) * 1280
-                              #  bone.location[1] = ( pos2 / 32767 ) * 1280
-                              #  bone.location[0] = ( pos3 / 32767 ) * 1280
-                                bone.location[0] = ( pos1 / 32767 ) * 1280
-                                bone.location[1] = ( pos2 / 32767 ) * 1280
-                                bone.location[2] = ( pos3 / 32767 ) * 1280
+                                if metadata_type == "viseme":
+                                    bone.location[2] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[0] = ( pos3 / 32767 ) * 1280
+                                else:
+                                    bone.location[0] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[2] = ( pos3 / 32767 ) * 1280
                                 bone.keyframe_insert("location")
                     if ".quat" in name:
                         print("name", name)
@@ -519,12 +523,14 @@ def read_ccs(self):
                                 if version2 >= 17:
                                     pos4 = pos44
                                 if bone:
-                                   # bone.location[2] = pos1
-                                   # bone.location[1] = pos2
-                                   # bone.location[0] = pos3
-                                    bone.location[0] = pos1
-                                    bone.location[1] = pos2
-                                    bone.location[2] = pos3 
+                                    if metadata_type == "viseme":
+                                        bone.location[2] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[0] = pos3
+                                    else:
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3 
                                     bone.keyframe_insert("location")
                             else:
                                 pos1 = pos11
@@ -534,12 +540,14 @@ def read_ccs(self):
                                     pos4 = pos44
                                 if bone:
                                     # just for viseme anim import
-                                   # bone.location[2] = ( pos1 / 32767 ) * 1280
-                                   # bone.location[1] = ( pos2 / 32767 ) * 1280
-                                   # bone.location[0] = ( pos3 / 32767 ) * 1280
-                                    bone.location[0] = ( pos1 / 32767 ) * 1280
-                                    bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[2] = ( pos3 / 32767 ) * 1280
+                                    if metadata_type == "viseme":
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    else:
+                                        bone.location[0] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[2] = ( pos3 / 32767 ) * 1280
                                     bone.keyframe_insert("location")
                         else:
                             pos1 = reader.short()
@@ -550,12 +558,14 @@ def read_ccs(self):
                             print("pos3", pos3)
                             if bone:
                                 # just for viseme anim import
-                               # bone.location[2] = ( pos1 / 32767 ) * 1280
-                               # bone.location[1] = ( pos2 / 32767 ) * 1280
-                               # bone.location[0] = ( pos3 / 32767 ) * 1280
-                                bone.location[0] = ( pos1 / 32767 ) * 1280
-                                bone.location[1] = ( pos2 / 32767 ) * 1280
-                                bone.location[2] = ( pos3 / 32767 ) * 1280
+                                if metadata_type == "viseme":
+                                    bone.location[2] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[0] = ( pos3 / 32767 ) * 1280
+                                else:
+                                    bone.location[0] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[2] = ( pos3 / 32767 ) * 1280
                                 bone.keyframe_insert("location")
                     if ".quat" in name:
                         print("name", name)
@@ -781,12 +791,14 @@ def read_ccs(self):
                         pos3 = reader.float32()
                         print("pos3", pos3)
                         if bone:
-                           # bone.location[2] = pos1
-                           # bone.location[1] = pos2
-                           # bone.location[0] = pos3 
-                            bone.location[0] = pos1
-                            bone.location[1] = pos2
-                            bone.location[2] = pos3
+                            if metadata_type == "viseme":
+                                bone.location[2] = pos1
+                                bone.location[1] = pos2
+                                bone.location[0] = pos3 
+                            else:
+                                bone.location[0] = pos1
+                                bone.location[1] = pos2
+                                bone.location[2] = pos3
                             bone.keyframe_insert("location")
                     else:
                         pos1 = reader.short()
@@ -796,12 +808,14 @@ def read_ccs(self):
                         pos3 = reader.short()
                         print("pos3", pos3)
                         if bone:
-                           # bone.location[2] = ( pos1 / 32767 ) * 1280
-                           # bone.location[1] = ( pos2 / 32767 ) * 1280
-                           # bone.location[0] = ( pos3 / 32767 ) * 1280
-                            bone.location[0] = ( pos1 / 32767 ) * 1280
-                            bone.location[1] = ( pos2 / 32767 ) * 1280
-                            bone.location[2] = ( pos3 / 32767 ) * 1280
+                            if metadata_type == "viseme":
+                                bone.location[2] = ( pos1 / 32767 ) * 1280
+                                bone.location[1] = ( pos2 / 32767 ) * 1280
+                                bone.location[0] = ( pos3 / 32767 ) * 1280
+                            else:
+                                bone.location[0] = ( pos1 / 32767 ) * 1280
+                                bone.location[1] = ( pos2 / 32767 ) * 1280
+                                bone.location[2] = ( pos3 / 32767 ) * 1280
                             bone.keyframe_insert("location")
                 elif ".quat" in name:
                     print("name", name)
@@ -946,12 +960,14 @@ def read_ccs(self):
                         pos3 = reader.short()
                         print("pos3", pos3)
                         if bone:
-                           # bone.location[2] = ( pos1 / 32767 ) * 1280
-                           # bone.location[1] = ( pos2 / 32767 ) * 1280
-                           # bone.location[0] = ( pos3 / 32767 ) * 1280
-                            bone.location[0] = ( pos1 / 32767 ) * 1280
-                            bone.location[1] = ( pos2 / 32767 ) * 1280
-                            bone.location[2] = ( pos3 / 32767 ) * 1280
+                            if metadata_type == "viseme":
+                                bone.location[2] = ( pos1 / 32767 ) * 1280
+                                bone.location[1] = ( pos2 / 32767 ) * 1280
+                                bone.location[0] = ( pos3 / 32767 ) * 1280
+                            else:
+                                bone.location[0] = ( pos1 / 32767 ) * 1280
+                                bone.location[1] = ( pos2 / 32767 ) * 1280
+                                bone.location[2] = ( pos3 / 32767 ) * 1280
                             bone.keyframe_insert("location")
                 elif ".quat" in name:
                     print("name", name)
@@ -1149,12 +1165,14 @@ def read_ccs(self):
                                 if version3 >= 16:
                                     pos4 = pos44
                                 if bone:
-                                   # bone.location[2] = ( pos1 / 32767 ) * 1280
-                                   # bone.location[1] = ( pos2 / 32767 ) * 1280
-                                   # bone.location[0] = ( pos3 / 32767 ) * 1280
-                                    bone.location[0] = ( pos1 / 32767 ) * 1280
-                                    bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[2] = ( pos3 / 32767 ) * 1280
+                                    if metadata_type == "viseme":
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    else:
+                                        bone.location[0] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[2] = ( pos3 / 32767 ) * 1280
                                   # bone.location = pos
                                     bone.keyframe_insert("location")
                             else:
@@ -1164,12 +1182,14 @@ def read_ccs(self):
                                 if version3 >= 16:
                                     pos4 = pos44
                                 if bone:
-                                   # bone.location[2] = ( pos1 / 32767 ) * 1280
-                                   # bone.location[1] = ( pos2 / 32767 ) * 1280
-                                   # bone.location[0] = ( pos3 / 32767 ) * 1280
-                                    bone.location[0] = ( pos1 / 32767 ) * 1280
-                                    bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[2] = ( pos3 / 32767 ) * 1280
+                                    if metadata_type == "viseme":
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    else:
+                                        bone.location[0] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[2] = ( pos3 / 32767 ) * 1280
                                   # bone.location = pos
                                     bone.keyframe_insert("location")
                         else:
@@ -1180,12 +1200,14 @@ def read_ccs(self):
                             pos3 = reader.short()
                             print("pos3", pos3)
                             if bone:
-                              #  bone.location[2] = ( pos1 / 32767 ) * 1280
-                              #  bone.location[1] = ( pos2 / 32767 ) * 1280
-                              #  bone.location[0] = ( pos3 / 32767 ) * 1280
-                                bone.location[0] = ( pos1 / 32767 ) * 1280
-                                bone.location[1] = ( pos2 / 32767 ) * 1280
-                                bone.location[2] = ( pos3 / 32767 ) * 1280
+                                if metadata_type == "viseme":
+                                    bone.location[2] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[0] = ( pos3 / 32767 ) * 1280
+                                else:
+                                    bone.location[0] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[2] = ( pos3 / 32767 ) * 1280
                                # bone.location = pos
                                 bone.keyframe_insert("location")
                    # for name, quat in quat_samples:
@@ -1420,12 +1442,14 @@ def read_ccs(self):
                                     pos4 = pos44
                                 if bone:
                                     # just for viseme anim import
-                                   # bone.location[2] = ( pos1 / 32767 ) * 1280
-                                   # bone.location[1] = ( pos2 / 32767 ) * 1280
-                                   # bone.location[0] = ( pos3 / 32767 ) * 1280
-                                    bone.location[0] = ( pos1 / 32767 ) * 1280
-                                    bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[2] = ( pos3 / 32767 ) * 1280
+                                    if metadata_type == "viseme":
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    else:
+                                        bone.location[0] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[2] = ( pos3 / 32767 ) * 1280
                                   # bone.location = pos
                                     bone.keyframe_insert("location")
                         else:
@@ -1436,12 +1460,14 @@ def read_ccs(self):
                             pos3 = reader.short()
                             print("pos3", pos3)
                             if bone:
-                               # bone.location[2] = ( pos1 / 32767 ) * 1280
-                               # bone.location[1] = ( pos2 / 32767 ) * 1280
-                               # bone.location[0] = ( pos3 / 32767 ) * 1280
-                                bone.location[0] = ( pos1 / 32767 ) * 1280
-                                bone.location[1] = ( pos2 / 32767 ) * 1280
-                                bone.location[2] = ( pos3 / 32767 ) * 1280
+                                if metadata_type == "viseme":
+                                    bone.location[2] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[0] = ( pos3 / 32767 ) * 1280
+                                else:
+                                    bone.location[0] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[2] = ( pos3 / 32767 ) * 1280
                                # bone.location = pos
                                 bone.keyframe_insert("location")
                    # for name, quat in quat_samples:

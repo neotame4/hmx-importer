@@ -84,10 +84,28 @@ def metadata(reader) -> None:
         note = reader.numstring()
         print("note", note)
 
+def metadatadetailed(reader) -> None:
+    revision = reader.int32()
+    print("revision", revision)
+    metadata_type = reader.numstring()
+    print("metadata_type", metadata_type)
+    dtb(reader)
+    if revision > 0:
+        note = reader.numstring()
+        print("note", note)
+    return revision, metadata_type
+
 def read_metadata(reader, super: bool) -> None:
     if super == True:
         return
     metadata(reader)
+
+def read_metadatadetailed(reader, super: bool) -> None:
+    if super == True:
+        return
+    revision, metadata_type = metadatadetailed(reader)
+    print("metadata_type, revision", metadata_type, revision)
+    return revision, metadata_type
 
 def write_metadata(writer, super: bool) -> None:
     if super == True:
