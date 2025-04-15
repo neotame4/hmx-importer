@@ -46,7 +46,7 @@ def vertices(reader, version: int) -> list:
     bone_ids = []
     for i in range(vertex_count):
         if version == 30:
-            vertices.append(reader.weird_Lvec4hf())
+            vertices.append(reader.weird_vec3())
            # print("vertices", vertices)
         else:
             vertices.append(reader.vec3f())
@@ -71,7 +71,7 @@ def vertices(reader, version: int) -> list:
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2, 3)) 
         elif version <= 30:	# PHASE
-            weight_0, weight_1 , weight_2, weight_3 = reader.vec4f()
+            weight_0, weight_1, weight_2, weight_3 = reader.vec4f()
             print("weight_0, weight_1", weight_0, weight_1)
            # weight_2 = 1.0 - (weight_0 + weight_1)
             bone_weights.append((0.0, 0.0, 0.0))
@@ -79,7 +79,7 @@ def vertices(reader, version: int) -> list:
             print("normal", normal)
             normals.append((0.0, 0.0, 0.0))
            # unknown_0, unknown_1, unknown_2, unknown_3 = reader.vec4f()
-            unknown_0 = reader.float32()
+            pos_1 = reader.float32()
             uv = reader.vec2f()
             print("uv", uv)
             uvs.append((0.0, 0.0))

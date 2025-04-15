@@ -127,16 +127,17 @@ class Reader():
     def vec4hf(self) -> tuple[float, float, float, float]:
         return self.read("4e")
 
-    def weird_Lvec4hf(self) -> tuple[float, float, float, float]:
-        x = self.read("e")[0]
-        x1 = self.read("e")[0]
-        y = self.read("e")[0]
-        y1 = self.read("e")[0]
-        z = self.read("e")[0]
-        z1 = self.read("e")[0]
+    def weird_vec3(self) -> tuple[float, float, float, float]:
+        x = self.read("i")[0]
+       # x1 = self.read("e")[0]
+        y = self.read("i")[0]
+       # y1 = self.read("e")[0]
+        z = self.read("i")[0]
+       # z1 = self.read("e")[0]
         w = self.read("f")[0]
-        print("x, x1, y, y1, z, z1, w", x, x1, y, y1, z, z1, w)
-        return x, y, z
+       # print("x, x1, y, y1, z, z1, w", x, x1, y, y1, z, z1, w)
+        print("x, y, z, w", x, y, z, w)
+        return (x / 64) /10, (y / 64) /10, (z / 64) /10
     
     def vec4f(self) -> tuple[float, float, float, float]:
         return self.read("4f")
