@@ -1,5 +1,0 @@
-GH1, GH2, GH80s - Use Little Endian
-RB1, RB2 - Dont Use Little Endian
-RB2 Wii - Use Little Endian
-TBRB, LRB, GDRB - Dont Use Little Endian
-LRB Wii - Use Little Endian
