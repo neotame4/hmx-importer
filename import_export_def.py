@@ -18,7 +18,7 @@ class ImportMilo(Operator, ImportHelper):
     filepath = StringProperty(subtype="FILE_PATH")
 
     filter_glob: StringProperty(
-        default="*.milo_ps3;*.milo_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.lipsync",
+        default="*.milo_ps3;*.milo_xbox;*.rnd_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.lipsync",
         options={"HIDDEN"},
     )
 
