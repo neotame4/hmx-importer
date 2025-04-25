@@ -7,13 +7,18 @@ def anim_entry(reader) -> None:
 
 def read_anim(reader, super: bool) -> None:
     version = reader.int32()
+    print("version", version)
     read_metadata(reader, super)
     if version > 1:
         frame = reader.float32()
-    if version == 3:
-        unknown = reader.milo_bool()
+        print("frame", frame)
+    if version < 4:
+        if version > 2:
+            unknown = reader.milo_bool()
+            print("unknown", unknown)
     else:
         rate = reader.uint32()
+        print("rate", rate)
         return
     anim_entry_count = reader.int32()
     for _ in range(anim_entry_count):
