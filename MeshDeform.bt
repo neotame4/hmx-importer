@@ -1,0 +1,287 @@
+// BLACK MAGIC
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup: -Neo
+// Super: oooo what does this button doo
+// Ext: .deform
+// C++ Class: MeshDeform
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "MeshDeform"
+    #endif
+#endif
+
+#ifndef OBJECT_SPOTLIGHT
+#define OBJECT_SPOTLIGHT
+
+#include "anim.bt"
+#include "common.bt"
+#include "draw.bt"
+#include "trans.bt"
+
+
+typedef struct
+{
+    float x0;
+    float x1;
+    float x2;
+    float x3;
+    float x4;
+} Vector5<read=readVector5>;
+
+typedef struct
+{
+    float x0;
+    float x1;
+    float x2;
+    float x3;
+    float x4;
+    float x5;
+} Vector6<read=readVector6>;
+
+typedef struct
+{
+    float x0;
+    float x1;
+    float x2;
+    float x3;
+    float x4;
+    float x5;
+    float x6;
+} Vector7<read=readVector7>;
+
+typedef struct
+{
+    float x0;
+    float x1;
+    float x2;
+    float x3;
+    float x4;
+    float x5;
+    float x6;
+    float x7;
+} Vector8<read=readVector8>;
+
+typedef struct
+{
+    float x0;
+    float x1;
+    float x2;
+    float x3;
+    float x4;
+    float x5;
+    float x6;
+    float x7;
+    float x8;
+} Vector9<read=readVector9>;
+
+typedef struct
+{
+    float x0;
+    float x1;
+    float x2;
+    float x3;
+    float x4;
+    float x5;
+    float x6;
+    float x7;
+    float x8;
+    float x9;
+} Vector10<read=readVector10>;
+
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 3 (GH1), 6 (GH2), 9 (GH2 360), 14 (TBRB)
+   // int bread;
+    NumString mesh_target;
+   // Bool bread;
+    int count;
+    int something;
+    if (something == 1)
+    {
+        if (count > 0) float verts[count]<optimize=false>;
+        NumString bone1_0;
+        Matrix bonematrix1_0;
+    }
+    else if (something == 2)
+    {
+        if (count > 0) Vector2 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+    }
+    else if (something == 3)
+    {
+        if (count > 0) Vector3 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        NumString bone1_2;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+        Matrix bonematrix1_2;
+    }
+    else if (something == 4)
+    {
+        if (count > 0) Vector4 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        NumString bone1_2;
+        NumString bone1_3;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+        Matrix bonematrix1_2;
+        Matrix bonematrix1_3;
+    }
+    else if (something == 5)
+    {
+        if (count > 0) Vector5 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        NumString bone1_2;
+        NumString bone1_3;
+        NumString bone1_4;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+        Matrix bonematrix1_2;
+        Matrix bonematrix1_3;
+        Matrix bonematrix1_4;
+    }
+    else if (something == 6)
+    {
+        if (count > 0) Vector6 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        NumString bone1_2;
+        NumString bone1_3;
+        NumString bone1_4;
+        NumString bone1_5;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+        Matrix bonematrix1_2;
+        Matrix bonematrix1_3;
+        Matrix bonematrix1_4;
+        Matrix bonematrix1_5;
+    }
+    else if (something == 7)
+    {
+        if (count > 0) Vector7 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        NumString bone1_2;
+        NumString bone1_3;
+        NumString bone1_4;
+        NumString bone1_5;
+        NumString bone1_6;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+        Matrix bonematrix1_2;
+        Matrix bonematrix1_3;
+        Matrix bonematrix1_4;
+        Matrix bonematrix1_5;
+        Matrix bonematrix1_6;
+    }
+    else if (something == 8)
+    {
+        if (count > 0) Vector8 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        NumString bone1_2;
+        NumString bone1_3;
+        NumString bone1_4;
+        NumString bone1_5;
+        NumString bone1_6;
+        NumString bone1_7;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+        Matrix bonematrix1_2;
+        Matrix bonematrix1_3;
+        Matrix bonematrix1_4;
+        Matrix bonematrix1_5;
+        Matrix bonematrix1_6;
+        Matrix bonematrix1_7;
+    }
+    else if (something == 9)
+    {
+        if (count > 0) Vector9 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        NumString bone1_2;
+        NumString bone1_3;
+        NumString bone1_4;
+        NumString bone1_5;
+        NumString bone1_6;
+        NumString bone1_7;
+        NumString bone1_8;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+        Matrix bonematrix1_2;
+        Matrix bonematrix1_3;
+        Matrix bonematrix1_4;
+        Matrix bonematrix1_5;
+        Matrix bonematrix1_6;
+        Matrix bonematrix1_7;
+        Matrix bonematrix1_8;
+    }
+    else if (something == 10)
+    {
+        if (count > 0) Vector10 verts[count]<optimize=false>;
+        NumString bone1_0;
+        NumString bone1_1;
+        NumString bone1_2;
+        NumString bone1_3;
+        NumString bone1_4;
+        NumString bone1_5;
+        NumString bone1_6;
+        NumString bone1_7;
+        NumString bone1_8;
+        NumString bone1_9;
+        Matrix bonematrix1_0;
+        Matrix bonematrix1_1;
+        Matrix bonematrix1_2;
+        Matrix bonematrix1_3;
+        Matrix bonematrix1_4;
+        Matrix bonematrix1_5;
+        Matrix bonematrix1_6;
+        Matrix bonematrix1_7;
+        Matrix bonematrix1_8;
+        Matrix bonematrix1_9;
+    }
+    
+   // NumString bones[something];
+   // Matrix bonematrix[something];
+    int bonecount2;
+    if (bonecount2 > 0) NumString bone[bonecount2]<optimize=false>;
+    Matrix bone2_0;
+    
+
+
+} MeshDeform;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "MeshDeform")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    MeshDeform mesh_deform(info, False);
+}
+
+#endif
+
+
+#endif
