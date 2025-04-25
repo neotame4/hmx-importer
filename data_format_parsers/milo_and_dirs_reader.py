@@ -38,6 +38,12 @@ from . lightanim_reader import *	#.lnm
 
 from . mesh_reader import *
 from . meshanim_reader import *		#.msnm or .meshanim
+from . meshdeform_reader import *	#.deform		#KR
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+
 
 #from . meshblend_reader import *	#.blend
 #from . meshblendanim_reader import *	#.blendanim
@@ -150,11 +156,6 @@ from . interest_reader import *	#.intr
 #from . _reader import *		#.
 #from . PlotDef_reader import *		#.
 #from . PlotBeatAnims_reader import *	#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
@@ -675,6 +676,12 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         read_matanim(reader, name, self)
     elif obj_type == "Mesh":
         geom_owner, parent, mesh_name = read_mesh(reader, name, character_name, self)
+    elif obj_type == "MeshDeform":
+        read_meshdeform(reader, name, self)
+   # elif obj_type == "Filler":
+   #     read_(reader, name, self)
+   # elif obj_type == "Filler":
+   #     read_(reader, name, self)
     elif obj_type == "MeshAnim":
         read_meshanim(reader, name, self)
     elif obj_type == "MultiMesh":

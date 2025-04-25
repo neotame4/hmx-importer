@@ -31,7 +31,7 @@ def read_trans(reader, super: bool, name: str = "", character_name: str = "") ->
                 trans_object = reader.numstring()
                 print("trans_object", trans_object)
                 trans_objects.append(trans_object)
-        trans_data["children_objects"] = trans_objects
+        trans_data["trans_objects"] = trans_objects
     if version >= 6:
         constraint = reader.uint32()
     elif version < 3:
@@ -126,14 +126,18 @@ def create_trans(trans_data) -> None:
     bpy.context.view_layer.objects.active = armature_obj
     bpy.ops.object.mode_set(mode="EDIT")
     edit_bone = armature_obj.data.edit_bones.get(bone_name)
+    print("edit_bone", edit_bone, bone_name)
     if edit_bone is None:
         edit_bone = armature_obj.data.edit_bones.new(bone_name)
+        print("creating", "edit_bone", edit_bone, bone_name)
         edit_bone.head = (0, 0, 0)
         edit_bone.tail = (0, 1, 0)
         edit_bone.use_deform = True
     parent_bone = armature_obj.data.edit_bones.get(parent_name)
+    print("parent_bone", parent_bone)
     if parent_bone is None:
         parent_bone = armature_obj.data.edit_bones.new(parent_name)
+        print("creating", "parent_bone", parent_bone, bone_name)
         parent_bone.head = (0, 0, 0)
         parent_bone.tail = (0, 1, 0)
         parent_bone.use_deform = True
@@ -149,31 +153,81 @@ def create_trans(trans_data) -> None:
             parent_to_bone = bone_name
             print("parent_to_bone", parent_to_bone)
             parent_bone1 = armature_obj.data.edit_bones.get(parent_to_bone)
+            print("get", "parent_bone1", parent_bone1, parent_to_bone)
             if parent_bone1 is None:
                 parent_bone1 = armature_obj.data.edit_bones.new(parent_to_bone)
+                print("creating", "parent_bone1", parent_bone1, parent_to_bone)
+                parent_bone1.head = (0, 0, 0)
+                parent_bone1.tail = (0, 1, 0)
+                parent_bone1.use_deform = True
+                print("new", "parent_bone1", parent_bone1, parent_to_bone)
             for i in range(trans_count):
                 bone = trans_objects[i]
                 print("bone", bone)
                # print("count", i)
                 child_bone = armature_obj.data.edit_bones.get(bone)
+                print("get", "child_bone", child_bone, bone)
                 if child_bone is None:
                     child_bone = armature_obj.data.edit_bones.new(bone)
+                    print("new", "child_bone", child_bone, bone)
+                    print("creating", "child_bone", child_bone, bone)
+                    child_bone.head = (0, 0, 0)
+                    child_bone.tail = (0, 1, 0)
+                    child_bone.use_deform = True
+                parent_bone1_parent = parent_bone1.parent
+                print("parent_bone1.parent", parent_bone1.parent, parent_bone1_parent)
                 child_bone.parent = parent_bone1
 
-    if parent_bone != None:
+    if parent_bone != bone_name:
         edit_bone.parent = parent_bone
     bpy.ops.object.mode_set(mode="POSE")
     pose_bone = armature_obj.pose.bones.get(bone_name)
     if pose_bone:
-       # if (pose_bone.parent != None):
        # if trans_count != 0:
-        pose_bone.matrix_basis = mathutils.Matrix((
-            (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
-            (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
-            (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11],),
-            (0.0, 0.0, 0.0, 1.0),
-        ))  
+        if (pose_bone.parent != None):
+            pose_bone.matrix_basis = mathutils.Matrix((
+                (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
+                (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
+                (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11],),
+                (0.0, 0.0, 0.0, 1.0),
+            ))  
+        else:
+            pose_bone.matrix_basis = mathutils.Matrix((
+               # (world_xfm[0], world_xfm[3], world_xfm[6], world_xfm[9],),
+               # (world_xfm[1], world_xfm[4], world_xfm[7], world_xfm[10],),
+               # (world_xfm[2], world_xfm[5], world_xfm[8], world_xfm[11],),
+                (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
+                (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
+                (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11],),
+                (0.0, 0.0, 0.0, 1.0),
+            ))  
+       # if (parent_bone == None):
+       #     pose_bone.matrix_basis = mathutils.Matrix((
+       #         (world_xfm[0], world_xfm[3], world_xfm[6], world_xfm[9],),
+       #         (world_xfm[1], world_xfm[4], world_xfm[7], world_xfm[10],),
+       #         (world_xfm[2], world_xfm[5], world_xfm[8], world_xfm[11],),
+       #        # (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
+       #        # (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
+       #        # (local_xfm[2], local_xfm[5], local_xfm[8], local_xfm[11],),
+       #         (0.0, 0.0, 0.0, 1.0),
+       #     ))  
+    else:
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+        print("pose bone not found", pose_bone)
+
+    bpy.context.view_layer.objects.active = armature_obj
+    bpy.ops.object.mode_set(mode="EDIT")
+
+
     bpy.ops.object.mode_set(mode="OBJECT")
     character_obj = bpy.data.objects.get(character_name)
-    if character_obj:
-        armature_obj.parent = character_obj
+   # if character_obj:
+   #     armature_obj.parent = character_obj
