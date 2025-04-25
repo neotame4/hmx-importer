@@ -67,8 +67,8 @@ from . world_crowd_reader import *	#.crd
 
 from . particlesys_reader import *	#.part
 from . particlesysanim_reader import *	#.panim
-#from . environ_reader import *		#.env
-#from . envanim_reader import *		#.enm
+from . environ_reader import *		#.env
+from . envanim_reader import *		#.enm
 #from . eventtrigger_reader import *	#.trig
 #from . eventanim_reader import *	#.eventanm		#lrb
 #from . animfilter_reader import *	#.filt
@@ -654,6 +654,10 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
             read_milo_file = True
     elif obj_type == "CharHair":
         read_hair(reader, name, self)
+    elif obj_type == "Environ":
+        read_environ(reader, name, self)
+    elif obj_type == "EnvAnim":
+        read_envanim(reader, name, self)
     elif obj_type == "Filler":
         read_(reader, name, self)
     elif obj_type == "WayPoint":
