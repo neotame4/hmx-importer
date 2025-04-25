@@ -334,7 +334,7 @@ def read_ccs(self):
                                     pos4 = pos44
                                 if bone:
                                     # just for viseme anim import
-                                    if metadata_type == "viseme":
+                                    if (metadata_type == "viseme") and (version == 15):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -352,7 +352,7 @@ def read_ccs(self):
                             print("pos3", pos3)
                             if bone:
                                 # just for viseme anim import
-                                if metadata_type == "viseme":
+                                if (metadata_type == "viseme") and (version == 15):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -523,7 +523,7 @@ def read_ccs(self):
                                 if version2 >= 17:
                                     pos4 = pos44
                                 if bone:
-                                    if metadata_type == "viseme":
+                                    if (metadata_type == "viseme") and (version == 15):
                                         bone.location[2] = pos1
                                         bone.location[1] = pos2
                                         bone.location[0] = pos3
@@ -540,7 +540,7 @@ def read_ccs(self):
                                     pos4 = pos44
                                 if bone:
                                     # just for viseme anim import
-                                    if metadata_type == "viseme":
+                                    if (metadata_type == "viseme") and (version == 15):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -558,7 +558,7 @@ def read_ccs(self):
                             print("pos3", pos3)
                             if bone:
                                 # just for viseme anim import
-                                if metadata_type == "viseme":
+                                if (metadata_type == "viseme") and (version == 15):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -791,7 +791,7 @@ def read_ccs(self):
                         pos3 = reader.float32()
                         print("pos3", pos3)
                         if bone:
-                            if metadata_type == "viseme":
+                            if (metadata_type == "viseme") and (version == 15):
                                 bone.location[2] = pos1
                                 bone.location[1] = pos2
                                 bone.location[0] = pos3 
@@ -808,7 +808,7 @@ def read_ccs(self):
                         pos3 = reader.short()
                         print("pos3", pos3)
                         if bone:
-                            if metadata_type == "viseme":
+                            if (metadata_type == "viseme") and (version == 15):
                                 bone.location[2] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
                                 bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -960,7 +960,7 @@ def read_ccs(self):
                         pos3 = reader.short()
                         print("pos3", pos3)
                         if bone:
-                            if metadata_type == "viseme":
+                            if (metadata_type == "viseme") and (version == 15):
                                 bone.location[2] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
                                 bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -1165,7 +1165,7 @@ def read_ccs(self):
                                 if version3 >= 16:
                                     pos4 = pos44
                                 if bone:
-                                    if metadata_type == "viseme":
+                                    if (metadata_type == "viseme") and (version == 15):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -1182,7 +1182,7 @@ def read_ccs(self):
                                 if version3 >= 16:
                                     pos4 = pos44
                                 if bone:
-                                    if metadata_type == "viseme":
+                                    if (metadata_type == "viseme") and (version == 15):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -1200,7 +1200,7 @@ def read_ccs(self):
                             pos3 = reader.short()
                             print("pos3", pos3)
                             if bone:
-                                if metadata_type == "viseme":
+                                if (metadata_type == "viseme") and (version == 15):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -1442,7 +1442,7 @@ def read_ccs(self):
                                     pos4 = pos44
                                 if bone:
                                     # just for viseme anim import
-                                    if metadata_type == "viseme":
+                                    if (metadata_type == "viseme") and (version == 15):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = ( pos3 / 32767 ) * 1280
@@ -1460,7 +1460,7 @@ def read_ccs(self):
                             pos3 = reader.short()
                             print("pos3", pos3)
                             if bone:
-                                if metadata_type == "viseme":
+                                if (metadata_type == "viseme") and (version == 15):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[0] = ( pos3 / 32767 ) * 1280

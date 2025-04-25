@@ -492,9 +492,10 @@ def create_mesh(mesh_data) -> None:
             if o:
                 obj.parent = o
             else:
-                meshparent = bpy.data.meshes.get("Cube")
-                if meshparent is None:
-                    meshparent = bpy.data.meshes.new(name="Cube")
+               # meshparent = bpy.data.meshes.get("Cube")
+               # if meshparent is None:
+               #     meshparent = bpy.data.meshes.new(name="Cube")
+                meshparent = bpy.data.meshes.new(name= geom_owner)
                 o = bpy.data.objects.new(parent, meshparent)
                 bpy.context.scene.collection.objects.link(o)
                # o.empty_display_size = 2
@@ -507,7 +508,7 @@ def create_mesh(mesh_data) -> None:
         bpy.context.scene.collection.objects.link(obj)
     except:
         print(obj, "Already exists")
-    if (obj.parent != None) or (parent != None) or (parent != mesh_name):
+    if (obj.parent != None):
         obj.matrix_local = mathutils.Matrix((
             (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
             (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
@@ -521,7 +522,7 @@ def create_mesh(mesh_data) -> None:
             (world_xfm[2], world_xfm[5], world_xfm[8], world_xfm[11],),
             (0.0, 0.0, 0.0, 1.0),
         ))
-    if "bone" in parent:
+    if parent == None:
         obj.matrix_world = mathutils.Matrix((
             (world_xfm[0], world_xfm[3], world_xfm[6], world_xfm[9],),
             (world_xfm[1], world_xfm[4], world_xfm[7], world_xfm[10],),
