@@ -652,8 +652,8 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         inline_proxy = read_char_clip_set(reader, False, is_entry, self)
         if inline_proxy == True:
             read_milo_file = True
-    elif obj_type == "CharHair":
-        read_hair(reader, name, self)
+   # elif obj_type == "CharHair":
+   #     read_hair(reader, name, self)
     elif obj_type == "Environ":
         read_environ(reader, name, self)
     elif obj_type == "EnvAnim":
