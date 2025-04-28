@@ -696,7 +696,7 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
     elif obj_type == "ObjectDir":
         read_obj_dir(reader, False, False, self)
     elif obj_type == "PanelDir":
-        if self.panel_dir_fix == True:
+        if self.skip_dir_data == True:
             read_panel_dir(reader, is_entry, False, self)
         else:
             find_next_file(reader)
@@ -706,9 +706,12 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         else:
             find_next_file(reader)
     elif obj_type == "RndDir":
-        inline_proxy = read_rnd_dir(reader, False, self)[0]
-        if inline_proxy == True:
-            read_milo_file = True
+        if self.skip_dir_data == True:
+            inline_proxy = read_rnd_dir(reader, False, self)[0]
+            if inline_proxy == True:
+                read_milo_file = True
+        else:
+            find_next_file(reader)
     elif obj_type == "SynthDir":
         read_synth_dir(reader, False, self)
         read_milo_file = True
