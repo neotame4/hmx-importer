@@ -67,9 +67,9 @@ class ImportMilo(Operator, ImportHelper):
         default=False,
     )
 
-    panel_dir_fix: BoolProperty(
-        name="panel_dir_fix",
-        description="fix panel_dir for gh2 10 song demo. TURN OFF FOR FIX",
+    skip_dir_data: BoolProperty(
+        name="skip_dir_data",
+        description="skip stuff like rnd_dir and panel_dir . TURN OFF FOR FIX",
         default=False,
     )
 
@@ -87,7 +87,7 @@ class ImportMilo(Operator, ImportHelper):
         layout.prop(self, "import_lod")
         layout.prop(self, "import_trans_anim")
         layout.prop(self, "import_prop_anim")
-        layout.prop(self, "panel_dir_fix")
+        layout.prop(self, "skip_dir_data")
         layout.prop(self, "import_external")
 
     def execute(self, context):
