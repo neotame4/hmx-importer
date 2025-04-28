@@ -69,7 +69,7 @@ class ImportMilo(Operator, ImportHelper):
 
     skip_dir_data: BoolProperty(
         name="skip_dir_data",
-        description="skip stuff like rnd_dir and panel_dir . TURN OFF FOR FIX",
+        description="skip stuff like rnd_dir and panel_dir",
         default=False,
     )
 
