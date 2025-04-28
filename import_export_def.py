@@ -18,7 +18,7 @@ class ImportMilo(Operator, ImportHelper):
     filepath = StringProperty(subtype="FILE_PATH")
 
     filter_glob: StringProperty(
-        default="*.milo_ps3;*.milo_xbox;*.rnd_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.lipsync",
+        default="*.milo_ps3;*.milo_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.lipsync",
         options={"HIDDEN"},
     )
 
@@ -67,6 +67,12 @@ class ImportMilo(Operator, ImportHelper):
         default=False,
     )
 
+    panel_dir_fix: BoolProperty(
+        name="panel_dir_fix",
+        description="fix panel_dir for gh2 10 song demo. TURN OFF FOR FIX",
+        default=False,
+    )
+
     import_external: BoolProperty(
         name="Import External Milos",
         description="Import external milos for RB characters.",
@@ -81,6 +87,7 @@ class ImportMilo(Operator, ImportHelper):
         layout.prop(self, "import_lod")
         layout.prop(self, "import_trans_anim")
         layout.prop(self, "import_prop_anim")
+        layout.prop(self, "panel_dir_fix")
         layout.prop(self, "import_external")
 
     def execute(self, context):
@@ -134,7 +141,7 @@ class ConvertHMXImage(Operator, ImportHelper):
     filepath = StringProperty(subtype="FILE_PATH")
 
     filter_glob: StringProperty(
-        default="*.bmp_ps2;*.png_ps2;*.bmp_ps3;*.png_ps3;*.bmp_xbox;*.png_xbox;*.bmp_wii;*.png_wii;*.bmp_gc;*.png_gc",
+        default="*.bmp_ps2;*.png_ps2;*.bmp_ps3;*.png_ps3;*.bmp_xbox;*.png_xbox;*.bmp_wii;*.png_wii;*.bmp_gc;*.png_gc;*.bmp_pc;*.png_pc",
         options={"HIDDEN"},
     )
 
@@ -151,9 +158,20 @@ class ConvertHMXImage(Operator, ImportHelper):
         default="RB1",
     )
 
+    texture_format: EnumProperty(
+        name="Texture Export Format",
+        description="Select the format to export the textures to.",
+        items=[
+            ("png", "png", "Export textures to png."),
+            ("tga", "tga", "Export textures to tga."),
+        ],
+        default="tga",
+    )
+
     def draw(self, context):
         layout = self.layout
         layout.prop(self, "texture_selection")
+        layout.prop(self, "texture_format")
 
     def execute(self, context):
         read_bitmap(self, self.filepath)

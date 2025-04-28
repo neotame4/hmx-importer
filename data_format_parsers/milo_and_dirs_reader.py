@@ -644,6 +644,7 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
     parent = ""
     mesh_name = ""
     xfms = []
+    print("obj_type", obj_type)
     if obj_type == "Character":
         inline_proxy = read_character(reader, name, False, is_entry, self)
         if inline_proxy == True:
@@ -695,7 +696,10 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
     elif obj_type == "ObjectDir":
         read_obj_dir(reader, False, False, self)
     elif obj_type == "PanelDir":
-        read_panel_dir(reader, is_entry, False, self)
+        if self.panel_dir_fix == True:
+            read_panel_dir(reader, is_entry, False, self)
+        else:
+            find_next_file(reader)
     elif obj_type == "PropAnim":
         if self.import_prop_anim == True:
             read_prop_anim(reader, name, False)
