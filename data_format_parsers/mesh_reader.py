@@ -63,6 +63,14 @@ def vertices(reader, version: int) -> list:
             bone_weights.append(reader.vec4f())
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2, 3)) 
+
+        elif version <= 33:
+            normals.append(reader.vec3f())
+            bone_weights.append(reader.vec4f()) 
+            uvs.append(invert_uv_map(reader.vec2f()))
+            bone_ids.append(reader.vec4us())
+            tangent_0, tangent_1, tangent_2, tangent_3 = reader.vec4f()
+
         elif (version < 35) or (is_ng == False):
             if version == 38:
                 packed_1 = reader.uint32()
@@ -349,7 +357,7 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
     reader.seek(-4)
     bone_names = []
     if charcount > 0:
-        if version >= 34:
+        if version >= 33:
             bone_count = reader.uint32()
             print("bone_count", bone_count)
             for _ in range(bone_count):
@@ -486,7 +494,7 @@ def create_mesh(mesh_data) -> None:
    # else:
    #     mesh = bpy.data.meshes.new(name=geom_owner)
    # if len(parent) > 0 and "bone" not in parent:
-    if len(parent) > 0:
+    if (len(parent) > 0) and (parent != mesh_name):
         try:
             o = bpy.data.objects.get(parent)
             if o:
