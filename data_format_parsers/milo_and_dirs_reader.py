@@ -694,7 +694,10 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
    # elif obj_type == "MeshBlend":
    #     read_meshblend(reader, name, self)
     elif obj_type == "ObjectDir":
-        read_obj_dir(reader, False, False, self)
+        if self.skip_dir_data == True:
+            find_next_file(reader)
+        else:
+            read_obj_dir(reader, False, False, self)
     elif obj_type == "PanelDir":
         if self.skip_dir_data == True:
             find_next_file(reader)
@@ -724,7 +727,9 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         read_lit(reader, name, self)
 
     elif obj_type == "Spotlight":
-        read_spotlight(reader, name, self)
+        print("sorry, spotlight files are not working right now")
+        find_next_file(reader)
+       # read_spotlight(reader, name, self)
     # lego rock band has some broken ones, WHY Tt GAMES
     # sowwy cant fix :3 -neo
 
@@ -783,11 +788,17 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
     elif obj_type == "WorldCrowd":
         xfms = read_world_crowd(reader, name, False)
     elif obj_type == "WorldDir":
-        read_world_dir(reader, False, self)
+        if self.skip_dir_data == True:
+            find_next_file(reader)
+        else:
+            read_world_dir(reader, False, self)
     elif obj_type == "WorldInstance":
-        version = read_world_instance(reader, is_entry, True, name, self)
-        if (version >= 3) and (is_entry == True):
-            read_milo_file = True
+        if self.skip_dir_data == True:
+            find_next_file(reader)
+        else:
+            version = read_world_instance(reader, is_entry, True, name, self)
+            if (version >= 3) and (is_entry == True):
+                read_milo_file = True
     else:
         print("missing file type")
         print("obj_type", obj_type)
