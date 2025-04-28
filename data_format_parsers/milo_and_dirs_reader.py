@@ -697,9 +697,9 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         read_obj_dir(reader, False, False, self)
     elif obj_type == "PanelDir":
         if self.skip_dir_data == True:
-            read_panel_dir(reader, is_entry, False, self)
-        else:
             find_next_file(reader)
+        else:
+            read_panel_dir(reader, is_entry, False, self)
     elif obj_type == "PropAnim":
         if self.import_prop_anim == True:
             read_prop_anim(reader, name, False)
@@ -707,11 +707,12 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
             find_next_file(reader)
     elif obj_type == "RndDir":
         if self.skip_dir_data == True:
+            find_next_file(reader)
+        else:
             inline_proxy = read_rnd_dir(reader, False, self)[0]
             if inline_proxy == True:
                 read_milo_file = True
-        else:
-            find_next_file(reader)
+
     elif obj_type == "SynthDir":
         read_synth_dir(reader, False, self)
         read_milo_file = True
