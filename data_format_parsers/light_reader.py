@@ -45,6 +45,9 @@ def read_lit(reader, name: str, self) -> None:
 #    kLightFloorSpot,
 #    kLightShadowRef
 
+    if version == 5:
+        Huh = reader.milo_bool()
+
     if version > 11:
         falloff_start = reader.float32()
     if version > 5:
