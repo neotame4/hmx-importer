@@ -23,6 +23,8 @@ GH2 PS2 + 360
 
 GH80s
 
+PHASE (NOT DONE)
+
 RB1
 
 RB2
