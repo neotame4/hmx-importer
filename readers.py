@@ -97,6 +97,9 @@ class Reader():
     def vec2f(self) -> tuple[float, float]:
         return self.read("2f")
     
+    def vec3s(self) -> tuple[int, int, int]:
+        return self.read("3h")
+    
     def vec3us(self) -> tuple[int, int, int]:
         return self.read("3H")
     
