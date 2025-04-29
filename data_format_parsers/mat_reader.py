@@ -33,7 +33,40 @@ def read_mat(reader, name: str, self) -> None:
     print("Reading material", name, "at offset", reader.tell())
     version = reader.int32()
     print("version", version)
-    if version <= 9:
+    if version == 43:
+        junk = reader.int32()
+        print("junk", junk)
+        beans = reader.short()
+        print("beans", junk)
+        beans2 = reader.milo_bool()
+        print("beans2", beans2)
+        junk1 = reader.int32()
+        print("junk1", junk1)
+        junk2 = reader.int32()
+        print("junk2", junk2)
+        junk3 = reader.int32()
+        print("junk3", junk3)
+        junk4 = reader.int32()
+        print("junk4", junk4)
+        junk5 = reader.int32()
+        print("junk5", junk5)
+        tex_count = reader.short()
+        print("tex_count", tex_count)
+        texs = []
+        for _ in range(tex_count):
+            tex_name = reader.numstring()
+            print("tex_name", tex_name)
+            texs.append(tex_name)
+        if len(texs) > 0:
+            diffuse_tex = texs[0].rsplit(".", 1)[0] + f".{self.texture_format}"
+            mat_data["diffuse"] = diffuse_tex
+        else:
+            mat_data["diffuse"] = ""
+            create_mat(mat_data, reader.platform)
+        HUh = reader.int32()
+        print("HUh", HUh)
+        return
+    elif version <= 9:
         tex_count = reader.int32()
         print("tex_count", tex_count)
         texs = []

@@ -42,15 +42,24 @@ def vertices(reader, version: int) -> list:
     bone_weights = []
     bone_ids = []
     for i in range(vertex_count):
-        vertices.append(reader.vec3f())
+        if version == 30:
+            x1 = reader.short()
+            x = reader.short()
+            y1 = reader.short()
+            y = reader.short()
+            z1 = reader.short()
+            z = reader.short()
+            vertices.append((x, y, z))
+        else:
+            vertices.append(reader.vec3f())
         if (version == 34 and reader.little_endian == False) or (version == 36 and is_og_ng == True):
             w = reader.float32()
-        if version <= 10:
+        if version <= 10:	# Freq (56 bytes)
             normals.append((reader.vec3f()))
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_weights.append(reader.vec4f())
             bone_ids.append(reader.vec4us())
-        elif version <= 22:
+        elif version <= 22:	# Amp/AntiGrav (56 bytes)
             weight_0, weight_1 = reader.vec2f()
             weight_2 = 1.0 - (weight_0 + weight_1)
             bone_weights.append((weight_0, weight_1, weight_2))
@@ -58,19 +67,28 @@ def vertices(reader, version: int) -> list:
             unknown_0, unknown_1, unknown_2, unknown_3 = reader.vec4f()
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2))
-        elif version <= 25:
+        elif version <= 25:	# Amp/AntiGrav (56 bytes)
             normals.append(reader.vec3f())
             bone_weights.append(reader.vec4f())
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2, 3)) 
 
-        elif version <= 28:
+        elif version <= 28:	# GH2 (56 bytes)
             bone_weights.append(reader.vec4f())
             normals.append(reader.vec3f())
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2, 3)) 
 
-        elif version <= 33:
+        elif version <= 30:	# Phase (56 bytes)
+            bone_weights.append(reader.vec4s())
+            unknown_0 = reader.int32()
+            unknown_1 = reader.short()
+            normals.append(reader.vec3f())
+            uvs.append(invert_uv_map(reader.vec2f()))
+            unknown_2 = reader.short()
+            bone_ids.append(reader.vec4s()) 
+
+        elif version <= 33:	# Unused (48 bytes)
             normals.append(reader.vec3f())
             bone_weights.append(reader.vec4f()) 
             uvs.append(invert_uv_map(reader.vec2f()))
@@ -306,7 +324,8 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
     if version > 17:
         volume = reader.uint32()
     if version > 18:
-        bsp_node(reader)
+        if version != 30:
+            bsp_node(reader)
     if version == 7:
         some_bool = reader.milo_bool()
     if version < 11:
