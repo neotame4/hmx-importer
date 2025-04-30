@@ -24,8 +24,10 @@ def read_cam(reader, name, super: bool) -> None:
     z_range = reader.vec2f()
     target_tex = reader.numstring()  
     print("near_plane, far_plane, y_fov, screen_rect, z_range, target_tex", near_plane, far_plane, y_fov, screen_rect, z_range, target_tex)
-    bpy.ops.object.camera_add()
-    camera = bpy.context.object
+    camera = bpy.data.objects.get(name)
+    if camera == None:
+        bpy.ops.object.camera_add()
+        camera = bpy.context.object
     camera.name = name
     camera.data.clip_start = near_plane
     camera.data.clip_end = far_plane

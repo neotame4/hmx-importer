@@ -81,10 +81,11 @@ def vertices(reader, version: int) -> list:
 
         elif version <= 30:	# Phase (56 bytes)
             bone_weights.append(reader.vec4s())
-            unknown_0 = reader.int32()
-            unknown_1 = reader.short()
-            normals.append(reader.vec3f())
+            unknown_0 = reader.short()
+            unknown_1 = reader.int32()
+            normals.append(reader.vec3i())
             uvs.append(invert_uv_map(reader.vec2f()))
+           # junk3 = reader.short()
             unknown_2 = reader.short()
             bone_ids.append(reader.vec4s()) 
 
@@ -453,6 +454,8 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
                     vertOffsets = reader.ushort()
                     print("vertOffsets", vertOffsets)
     if "bone" not in name:
+        create_mesh(mesh_data)
+    elif "char" not in name:
         create_mesh(mesh_data)
     else:
         mesh_data["bone_name"] = name

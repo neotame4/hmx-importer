@@ -18,7 +18,7 @@ class ImportMilo(Operator, ImportHelper):
     filepath = StringProperty(subtype="FILE_PATH")
 
     filter_glob: StringProperty(
-        default="*.milo_ps3;*.milo_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.lipsync",
+        default="*.milo_ps3;*.milo_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.milo_pc;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.lipsync",
         options={"HIDDEN"},
     )
 
@@ -149,6 +149,7 @@ class ConvertHMXImage(Operator, ImportHelper):
         name="Texture Selection",
         description="Select the texture from the game you're importing.",
         items=[
+            ("PHASE", "PHASE", "Import textures from PHASE."),
             ("RB1", "RB1", "Import textures from RB1."),
             ("LRB", "LRB", "Import textures from LRB."),
             ("GDRB", "GDRB", "Import textures from GDRB."),

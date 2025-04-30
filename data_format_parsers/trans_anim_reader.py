@@ -8,14 +8,18 @@ def read_trans_anim(name, reader, super: bool) -> None:
     print("trans_anim", "name, version", name, version)
     if version > 4:
         read_metadata(reader, super)
-    read_anim(reader, True)
+    readanim = read_anim(reader, True)
     if version < 6:
         version_min = reader.int32()
+        print("version_min", version_min)
         unknown = reader.milo_bool()
+        print("unknown", unknown)
         if version_min < 2:
-            string_count = reader.int32()
+            string_count = reader.uint32()
+            print("string_count", string_count)
             for _ in range(string_count):
                 some_string = reader.numstring()
+                print("some_string", some_string)
         if version_min > 0:
             num_1 = reader.int32()
             num_2 = reader.int32()
@@ -27,16 +31,23 @@ def read_trans_anim(name, reader, super: bool) -> None:
             drawable = reader.numstring()
     trans_object = reader.numstring()
     obj = bpy.data.objects.get(trans_object)
-    if obj is None:
+    if (obj is None) and (".cam" in trans_object):
+        bpy.ops.object.camera_add()
+        camera = bpy.context.object
+        camera.name = name
+       # bpy.context.scene.collection.objects.link(obj)
+       # obj.empty_display_size = 2
+       # obj.empty_display_type = 'PLAIN_AXES'
+    elif obj is None:
         obj = bpy.data.objects.new(trans_object, None)
         bpy.context.scene.collection.objects.link(obj)
         obj.empty_display_size = 2
         obj.empty_display_type = 'PLAIN_AXES'
-    if len(trans_object) < 4:
-        obj = bpy.data.objects.new(name, None)
-        bpy.context.scene.collection.objects.link(obj)
-        obj.empty_display_size = 2
-        obj.empty_display_type = 'PLAIN_AXES'
+   # if len(trans_object) < 4:
+   #     obj = bpy.data.objects.new(name, None)
+   #     bpy.context.scene.collection.objects.link(obj)
+   #     obj.empty_display_size = 2
+   #     obj.empty_display_type = 'PLAIN_AXES'
     trans_anim_data["object"] = obj
     if version != 2:
         rot_keys_count = reader.int32()
@@ -55,7 +66,9 @@ def read_trans_anim(name, reader, super: bool) -> None:
     else:
         trans_spline = reader.milo_bool()
     repeat_trans = reader.milo_bool()
-    if version >= 4:
+    if version < 4:
+        print("TODO")
+    else:
         scale_keys_count = reader.int32()
         scale_keys = []
         for _ in range(scale_keys_count):
@@ -63,11 +76,16 @@ def read_trans_anim(name, reader, super: bool) -> None:
         trans_anim_data["scale_keys"] = scale_keys
         scale_spline = reader.milo_bool()
     if version < 2:
-        print("todo, Determine by keys_owner? (0x4c)")
+        print("TODO, Determine by keys_owner? (0x4c)")
     else:
         follow_path = reader.milo_bool()
+        if follow_path == True:
+            vec4 = reader.vec4f()
     if version > 3:
         rot_slerp = reader.milo_bool()
+    if version == 3:
+        bone1 = reader.uint32()
+        bone2 = reader.uint32()
     if version > 6:
         rot_spline = reader.milo_bool()
     create_anim(trans_anim_data)

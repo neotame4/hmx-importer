@@ -6,36 +6,52 @@ from .. writers import *
 from .. common import *
 from .. image_helpers.image_writer import write_image
 from .. image_helpers.decode_dxt import decode_dxt1, decode_dxt5, decode_ati2
+#from .. image_helpers.decode_rgb import decode_rgb
 from .. image_helpers.decode_rgba import decode_rgba
 from .. image_helpers.tpl_to_dxt1 import shuffle_wii_blocks
 from .. image_helpers.swap_x360_bytes import swap_x360_bytes
 
 def bitmap_encoding(encoding: int) -> str:
     if encoding == 1:
+        print("encoding = 1", "ARGB")
         return "ARGB"
-    elif (encoding == 0) or (encoding == 3) or (encoding == 259) or (encoding == 515):
+    elif (encoding == 0) or (encoding == 2) or (encoding == 3) or (encoding == 259) or (encoding == 515):
+        print("encoding = 0/2/3/259/515", "RGBA")
         return "RGBA"
     elif encoding == 8:
+        print("encoding = 8", "DXT1")
         return "DXT1"
     elif encoding == 24:
+        print("encoding = 24", "DXT5")
         return "DXT5"
     elif encoding == 32:
+        print("encoding = 32", "ATI2")
         return "ATI2"
     elif (encoding == 72) or (encoding == 583):
+        print("encoding = 72/583", "CMP")
         return "CMP"
     elif encoding == 328:
+        print("encoding = 328", "CMP_ALPHA")
         return "CMP_ALPHA"
+   # elif encoding == 583:
+   #     return "CMP_2"
 
 def export_bitmap(reader, bitmap_data: dict, platform: str, filepath: str, name: str, self) -> None:
     width = bitmap_data["width"]
     height = bitmap_data["height"]
+    print("width, height", width, height)
     bpp = bitmap_data["bpp"]
+    print("bpp", bpp)
     encoding = bitmap_encoding(bitmap_data["encoding"])
+    print("encoding", encoding)
     mip_maps = bitmap_data.get("mip_maps", 0)
+    print("mip_maps", mip_maps)
     wii_alpha_num = bitmap_data.get("wii_alpha_num", 0)
+    print("wii_alpha_num", wii_alpha_num)
     dirname = os.path.dirname(filepath)
     out_name = name.rsplit(".", 1)[0]
     output_path = os.path.join(dirname, out_name + f".{self.texture_format}")
+   # output_path = os.path.join(dirname, out_name + f".{self.texture_selection}")
     if encoding == "RGBA":
         if (bpp == 4) or (bpp == 8):
             color_palette = reader.read_bytes(1 << (bpp + 2))
@@ -52,7 +68,7 @@ def export_bitmap(reader, bitmap_data: dict, platform: str, filepath: str, name:
             i += 1
         if (bpp == 4) or (bpp == 8):
             bitmap = decode_rgba(bitmaps[0], width, height, bpp, color_palette)
-        elif bpp == 24:
+        elif (bpp == 16) or (bpp == 24):
             bitmap = decode_rgba(bitmaps[0], width, height, bpp)
         else:
             bitmap = bitmaps[0]
@@ -158,8 +174,11 @@ def bitmap(reader, filepath: str, self) -> None:
     bitmap_data["height"] = height
     bpl = reader.ushort()
     if version > 0:
-        wii_alpha_num = reader.ushort()
-        bitmap_data["wii_alpha_num"] = wii_alpha_num
+        if (self.texture_selection == "PHASE"):
+            bitmap_data["wii_alpha_num"] = 0
+        else:
+            wii_alpha_num = reader.ushort()
+            bitmap_data["wii_alpha_num"] = wii_alpha_num
     if (reader.version == 32) or (self.texture_selection == "DC2 / DC3"):
         padding = reader.read_bytes(13)
     else:

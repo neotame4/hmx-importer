@@ -2,8 +2,8 @@ from .. common import *
 from . bitmap_reader import *
 
 def read_tex(reader, name: str, self) -> None:
-    print("Reading texture", name, "at offset", reader.tell())
     version = reader.int32()
+    print("Reading texture", name, "at offset", reader.tell(), "version", version)
     if version > 8:
         read_metadata(reader, False)
     if self.texture_selection == "GDRB":

@@ -1,8 +1,13 @@
 def decode_rgba(bitmap: bytes, width: int, height: int, bpp: int, color_palette: bytes = None) -> list:
     image = [0] * (width * height * 4)
+   # print("image", image)
+   # print("width, height", width, height)
+   # print("bpp", bpp)
     if bpp == 4:
         o = (len(color_palette) // 32) * 32
+       # print("bpp = 4", "o", o)
         bitmap = color_palette + bitmap
+       # print("bitmap", bitmap)
         r = 0
         p1 = p2 = p3 = p4 = 0
         for i in range(0, len(image), 16):
@@ -30,7 +35,9 @@ def decode_rgba(bitmap: bytes, width: int, height: int, bpp: int, color_palette:
         image = fix_alpha(image)
     elif bpp == 8:
         o = (len(color_palette) // 32) * 32
+       # print("bpp = 8", "o", o)
         bitmap = color_palette + bitmap
+       # print("bitmap", bitmap)
         r = 0
         p1 = p2 = p3 = p4 = 0     
         for i in range(0, len(image), 16):
@@ -56,7 +63,52 @@ def decode_rgba(bitmap: bytes, width: int, height: int, bpp: int, color_palette:
             image[i + 15] = color_palette[p4 + 3]
             r += 4      
         image = fix_alpha(image)
+    elif bpp == 16:
+       # print("bpp = 16")
+        r = 0
+        for i in range(0, len(image), 16):
+            image[i] = 0xFF
+            image[i + 1] = bitmap[r + 1]
+            image[i + 2] = 0xFF
+            image[i + 3] = bitmap[r]
+            image[i + 4] = 0xFF
+            image[i + 5] = bitmap[r + 3]
+            image[i + 6] = 0xFF
+            image[i + 7] = bitmap[r + 2]
+            image[i + 8] = 0xFF
+            image[i + 9] = bitmap[r + 5]
+            image[i + 10] = 0xFF
+            image[i + 11] = bitmap[r + 4]
+            image[i + 12] = 0xFF
+            image[i + 13] = bitmap[r + 7]
+            image[i + 14] = 0xFF
+            image[i + 15] = bitmap[r + 6]
+            r += 8
+        image = fix_alpha(image)
+    elif bpp == 160:
+       # print("bpp = 16")
+        r = 0
+        for i in range(0, len(image), 16):
+            image[i] = bitmap[r]
+            image[i + 1] = bitmap[r]
+            image[i + 2] = bitmap[r + 1]
+            image[i + 3] = bitmap[r + 1]
+            image[i + 4] = bitmap[r + 2]
+            image[i + 5] = bitmap[r + 2]
+            image[i + 6] = bitmap[r + 3]
+            image[i + 7] = bitmap[r + 3]
+            image[i + 8] = bitmap[r + 4]
+            image[i + 9] = bitmap[r + 4]
+            image[i + 10] = bitmap[r + 5]
+            image[i + 11] = bitmap[r + 5]
+            image[i + 12] = bitmap[r + 6]
+            image[i + 13] = bitmap[r + 6]
+            image[i + 14] = bitmap[r + 7]
+            image[i + 15] = bitmap[r + 7]
+            r += 8
+        image = fix_alpha(image)
     elif bpp == 24:
+       # print("bpp = 24")
         r = 0
         for i in range(0, len(image), 16):
             image[i] = bitmap[r + 2]
