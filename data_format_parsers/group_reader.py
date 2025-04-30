@@ -31,9 +31,10 @@ def read_group(reader, name, super: bool) -> None:
             print("environ", environ)
         if version < 13:
             print("Releases some object resource here...")
-        elif version == 13:
-            egg = reader.int32()
-            return
+    #   this was just for PHASE
+       # elif version == 13:
+       #     egg = reader.int32()
+       #     return
         else:
             draw_only = reader.numstring()
             print("draw_only", draw_only)
