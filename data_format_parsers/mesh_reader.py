@@ -59,7 +59,7 @@ def vertices(reader, version: int) -> list:
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_weights.append(reader.vec4f())
             bone_ids.append(reader.vec4us())
-        elif version <= 22:	# Amp/AntiGrav (56 bytes)
+        elif version <= 22:	# AntiGrav (56 bytes)
             weight_0, weight_1 = reader.vec2f()
             weight_2 = 1.0 - (weight_0 + weight_1)
             bone_weights.append((weight_0, weight_1, weight_2))
@@ -67,7 +67,7 @@ def vertices(reader, version: int) -> list:
             unknown_0, unknown_1, unknown_2, unknown_3 = reader.vec4f()
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2))
-        elif version <= 25:	# Amp/AntiGrav (56 bytes)
+        elif version <= 25:	# Amp (56 bytes)
             normals.append(reader.vec3f())
             bone_weights.append(reader.vec4f())
             uvs.append(invert_uv_map(reader.vec2f()))
@@ -528,10 +528,10 @@ def create_mesh(mesh_data) -> None:
             if o:
                 obj.parent = o
             else:
-               # meshparent = bpy.data.meshes.get("Cube")
-               # if meshparent is None:
-               #     meshparent = bpy.data.meshes.new(name="Cube")
-                meshparent = bpy.data.meshes.new(name= geom_owner)
+                meshparent = bpy.data.meshes.get("Cube")
+                if meshparent is None:
+                    meshparent = bpy.data.meshes.new(name="Cube")
+               # meshparent = bpy.data.meshes.new(name= geom_owner)
                 o = bpy.data.objects.new(parent, meshparent)
                 bpy.context.scene.collection.objects.link(o)
                # o.empty_display_size = 2
@@ -544,7 +544,22 @@ def create_mesh(mesh_data) -> None:
         bpy.context.scene.collection.objects.link(obj)
     except:
         print(obj, "Already exists")
-    if (obj.parent != None):
+#
+#	THE CAT123 FIX
+#	TO MAKE OBJECTS THAT ARE PARENTED TO BONES(like eyes and some teeth) USE LOCAL TRANSFORM
+
+#	NOTE
+#    johns skeleton is a little buggy
+#    so constraints will need to be used to fix it
+#    this bug effects his eye positions for john
+#
+#    to fix the skeleton
+#    just make bone_headscale.mesh have the same rotation and location as bone_head_nod.mesh
+
+    if (obj.parent != None) and ("bone" not in parent):
+#  ^put a # here
+   # if (obj.parent != None):
+#  ^ and remove this #
         obj.matrix_local = mathutils.Matrix((
             (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
             (local_xfm[1], local_xfm[4], local_xfm[7], local_xfm[10],),
@@ -647,7 +662,8 @@ def create_mesh(mesh_data) -> None:
                 if wgt > 0:
                     final_weight_map[group_name].add([vertex_index], wgt, "REPLACE")
              except:
-                 print("issue happened")
+                 pass
+                # print("issue happened in weights code")
     if mesh_version <= 22:
         for vertex_index, (id_group, weight_group) in enumerate(zip(indices, weights)):
             for idx, wgt in zip(id_group, weight_group):

@@ -50,7 +50,13 @@ def export_bitmap(reader, bitmap_data: dict, platform: str, filepath: str, name:
     print("wii_alpha_num", wii_alpha_num)
     dirname = os.path.dirname(filepath)
     out_name = name.rsplit(".", 1)[0]
-    output_path = os.path.join(dirname, out_name + f".{self.texture_format}")
+   # print("dirname, out_name", dirname, out_name)
+    if (out_name.endswith(".bmp")) or (out_name.endswith(".png")):
+        out_name2 = out_name.rsplit(".", 1)[0]
+        output_path = os.path.join(dirname, out_name2 + f".{self.texture_format}")
+    else:
+        output_path = os.path.join(dirname, out_name + f".{self.texture_format}")
+
    # output_path = os.path.join(dirname, out_name + f".{self.texture_selection}")
     if encoding == "RGBA":
         if (bpp == 4) or (bpp == 8):
@@ -197,10 +203,17 @@ def bitmap(reader, filepath: str, self) -> None:
 
 def read_bitmap(self, filepath: str):
     if filepath.endswith(".gz"):
+        print("filepath ends with .gz", filepath)
         reader = Reader(decompress_gzip(open(filepath, "rb").read()), filepath)
     elif filepath.endswith(".z"):
+        print("filepath ends with .z", filepath)
+       # filepath2 = filepath.rsplit(".", 1)[0]
+       # print("filepath2",filepath2)
+       # filepath3 = filepath2.rsplit(".", 1)[0]
+       # print("filepath3",filepath3)
         reader = Reader(decompress_zlib_deflate(open(filepath, "rb").read()), filepath)
     else:
+        print("filepath has normal end", filepath)
         reader = Reader(open(filepath, "rb").read(), filepath)
     platform = get_platform(filepath)
     reader.platform = platform

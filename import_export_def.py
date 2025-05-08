@@ -73,6 +73,12 @@ class ImportMilo(Operator, ImportHelper):
         default=False,
     )
 
+ #   something4: BoolProperty(
+ #       name="something4",
+ #       description="blank",
+ #       default=False,
+ #   )
+
     import_external: BoolProperty(
         name="Import External Milos",
         description="Import external milos for RB characters.",
@@ -88,6 +94,7 @@ class ImportMilo(Operator, ImportHelper):
         layout.prop(self, "import_trans_anim")
         layout.prop(self, "import_prop_anim")
         layout.prop(self, "skip_dir_data")
+       # layout.prop(self, "something4")
         layout.prop(self, "import_external")
 
     def execute(self, context):

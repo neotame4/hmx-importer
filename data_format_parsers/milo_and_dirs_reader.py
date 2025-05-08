@@ -74,12 +74,13 @@ from . envanim_reader import *		#.enm
 #from . animfilter_reader import *	#.filt
 #from . set_reader import *		#.set
 #from . postproc_reader import *	#.pp
-from . waypoint_reader import *	#.way
+from . waypoint_reader import *		#.way
 #from . cubetex_reader import *		#.cube
 from . view_reader import *		#no extension or .view
 #from . font_reader import *		#.font
 #from . text_reader import *		#.txt
 #from . bandlabel_reader import *	#.lbl
+#from . label3d_reader import *		#.lbl3d
 #from . uitrigger_reader import *	#.trig
 #from . uiproxy_reader import *		#no extension
 from . flare_reader import *		#.flare
@@ -637,6 +638,33 @@ def ext_resources(reader, self) -> None:
                                 print("Found external path:", final_path)
                                 read_bitmap(self, final_path)
                                 print("Successfully opened external path:", final_path)                     
+#    for path in ext_paths:
+#        if len(path) > 0:
+#            dirname = os.path.dirname(reader.filepath)
+#            remaining_path = path.lstrip("/\\")
+#            path_dir = os.path.dirname(remaining_path)
+#            path_name = os.path.basename(remaining_path)
+#            os.chdir(dirname + "/" + path_dir + "/gen")
+#           # os.chdir(dirname + "\\" + path_dir + "\\gen")
+#            for root, dirs, files in os.walk(os.getcwd()):
+#                for file in files:
+#                    if path_name in file:
+#                        final_path = os.path.join(root, file)
+#                        if final_path.endswith(".gz"):
+#                            print("Found external path:", final_path)
+#                            decompressed = decompress_gzip(open(final_path, "rb").read())
+#                            filepath = final_path.rsplit(".", 1)[0]
+#                            read_bitmap(self, final_path)
+#                        elif final_path.endswith(".z"):
+#                           # print("filepath ends with .z")
+#                            print("Found external path:", final_path)
+#                            decompressed = decompress_zlib_deflate(open(final_path, "rb").read())
+#                            filepath = final_path.rsplit(".", 1)[0]
+#                           # filepath2 = filepath.rsplit(".", 1)[0]
+#                           # print("filepath, final_path, filepath2", filepath, final_path, filepath2)
+#                           # print("filepath, final_path", filepath, final_path)
+#                            read_bitmap(self, final_path)   
+
     
 def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, self) -> tuple[str, str, str, list]:   
     read_milo_file = False
@@ -695,21 +723,26 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
    #     read_meshblend(reader, name, self)
     elif obj_type == "ObjectDir":
         if self.skip_dir_data == True:
+            print("skipping", name, obj_type)
             find_next_file(reader)
         else:
             read_obj_dir(reader, False, False, self)
     elif obj_type == "PanelDir":
         if self.skip_dir_data == True:
+            print("skipping", name, obj_type)
             find_next_file(reader)
         else:
             read_panel_dir(reader, is_entry, False, self)
+
     elif obj_type == "PropAnim":
         if self.import_prop_anim == True:
+            print("skipping", name, obj_type)
             read_prop_anim(reader, name, False)
         else:
             find_next_file(reader)
     elif obj_type == "RndDir":
         if self.skip_dir_data == True:
+            print("skipping", name, obj_type)
             find_next_file(reader)
         else:
             inline_proxy = read_rnd_dir(reader, False, self)[0]
@@ -717,8 +750,12 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
                 read_milo_file = True
 
     elif obj_type == "SynthDir":
-        read_synth_dir(reader, False, self)
-        read_milo_file = True
+        if self.skip_dir_data == True:
+            print("skipping", name, obj_type)
+            find_next_file(reader)
+        else:
+            read_synth_dir(reader, False, self)
+            read_milo_file = True
     elif obj_type == "SynthSample":
         read_synth_sample(reader, name, self)
     elif obj_type == "Tex":
@@ -780,29 +817,31 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
 
     elif obj_type == "Trans":
         read_trans(reader, False, name, character_name)
+
     elif obj_type == "TransAnim":
         if self.import_trans_anim == True:
             read_trans_anim(name, reader, False)
         else:
             find_next_file(reader)
+
     elif obj_type == "WorldCrowd":
         xfms = read_world_crowd(reader, name, False)
     elif obj_type == "WorldDir":
         if self.skip_dir_data == True:
+            print("skipping", name, obj_type)
             find_next_file(reader)
         else:
             read_world_dir(reader, False, self)
     elif obj_type == "WorldInstance":
         if self.skip_dir_data == True:
+            print("skipping", name, obj_type)
             find_next_file(reader)
         else:
             version = read_world_instance(reader, is_entry, True, name, self)
             if (version >= 3) and (is_entry == True):
                 read_milo_file = True
     else:
-        print("missing file type")
-        print("obj_type", obj_type)
-        print("name", name)
+        print("missing file type","name", name, "obj_type", obj_type)
         find_next_file(reader)
     padding = reader.read_bytes(4)   
     current_offset = reader.tell()
