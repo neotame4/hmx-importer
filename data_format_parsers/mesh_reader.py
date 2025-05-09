@@ -367,9 +367,9 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
             print("some_short", some_short)
         if version >= 22:
             group_section_ag(reader)
-        if version == 16 or version == 17:
-            unknown_3 = reader.numstring()
-            print("unknown_3", unknown_3)
+       # if version == 16 or version == 17:
+       #     unknown_3 = reader.numstring()
+       #     print("unknown_3", unknown_3)
         if version <= 22:
             something = reader.numstring()
             print("something", something)
