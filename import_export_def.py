@@ -68,6 +68,12 @@ class ImportMilo(Operator, ImportHelper):
         default=False,
     )
 
+    import_world_crowd: BoolProperty(
+        name="Import World_Crowds",
+        description="Import World_Crowds (common in venues).",
+        default=True,
+    )
+
     skip_dir_data: BoolProperty(
         name="skip_dir_data",
         description="skip stuff like rnd_dir and panel_dir",
@@ -94,6 +100,7 @@ class ImportMilo(Operator, ImportHelper):
         layout.prop(self, "import_lod")
         layout.prop(self, "import_trans_anim")
         layout.prop(self, "import_prop_anim")
+        layout.prop(self, "import_world_crowd")
         layout.prop(self, "skip_dir_data")
        # layout.prop(self, "something4")
         layout.prop(self, "import_external")

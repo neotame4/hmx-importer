@@ -825,7 +825,11 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
             find_next_file(reader)
 
     elif obj_type == "WorldCrowd":
-        xfms = read_world_crowd(reader, name, False)
+        if self.import_world_crowd == True:
+            xfms = read_world_crowd(reader, name, False)
+        else:
+            print("skipping", name, obj_type)
+            find_next_file(reader)
     elif obj_type == "WorldDir":
         if self.skip_dir_data == True:
             print("skipping", name, obj_type)

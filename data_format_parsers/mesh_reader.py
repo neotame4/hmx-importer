@@ -7,8 +7,10 @@ from . draw_reader import *
     
 def bsp_node(reader) -> None:
     has_value = reader.milo_bool()
+    print("has_value", has_value)
     if has_value == True:
         vec = reader.vec4f()
+        print("vec", vec)
         bsp_node(reader)
         bsp_node(reader)
 
@@ -26,7 +28,12 @@ def vertices(reader, version: int) -> list:
         # FF FF FF FF, probably padding or vertex color?
         padding = reader.read_bytes(4)
         unknown = reader.read_bytes(8)
+    if version == 19:
+        filler1 = reader.int32()
+        filler2 = reader.int32()
+        print("filler1, filler2", filler1, filler2)
     vertex_count = reader.int32()
+    print("vertex_count", vertex_count)
     is_ng = False
     is_og_ng = False
     if version >= 36:
@@ -51,7 +58,9 @@ def vertices(reader, version: int) -> list:
             z = reader.short()
             vertices.append((x, y, z))
         else:
-            vertices.append(reader.vec3f())
+            xyz = reader.vec3f()
+            print("xyz", xyz)
+            vertices.append((xyz))
         if (version == 34 and reader.little_endian == False) or (version == 36 and is_og_ng == True):
             w = reader.float32()
         if version <= 10:	# Freq (56 bytes)
@@ -271,19 +280,24 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
     if version < 20:
         num_1 = reader.uint32()
         num_2 = reader.uint32()
+        print("num_1, num_2", num_1, num_2)
     if version < 3:
         some_value = reader.numstring()
     if version <= 10:
         mat = reader.string()
+        print("mat", mat)
     else:
         mat = reader.numstring()
+        print("mat", mat)
     mesh_data["mat_name"] = mat
     if version == 27:
         mat_2 = reader.numstring()
     if version <= 10:
         geom_owner = reader.string()
+        print("geom_owner", geom_owner)
     else:
         geom_owner = reader.numstring()
+        print("geom_owner", geom_owner)
     mesh_data["geom_owner"] = geom_owner
     if version < 13:
         if version <= 10:
@@ -319,14 +333,20 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
             some_bool = reader.milo_bool()
     else:
         mutable = reader.uint32()
+        print("mutable", mutable)
         if version == 17:
             unknown = reader.uint32()
             unknown_2 = reader.uint32()
     if version > 17:
         volume = reader.uint32()
+        print("volume", volume)
     if version > 18:
-        if version != 30:
-            bsp_node(reader)
+        if version == 19:
+            something = reader.ubyte()
+            print("something", something)
+        else:
+            if version != 30:
+                bsp_node(reader)
     if version == 7:
         some_bool = reader.milo_bool()
     if version < 11:
@@ -341,14 +361,20 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
     mesh_data["faces"] = mesh_faces
     if version < 24:
         short_count = reader.uint32()
+        print("short_count", short_count)
         for _ in range(short_count * 2):
             some_short = reader.ushort()
+            print("some_short", some_short)
         if version >= 22:
             group_section_ag(reader)
         if version == 16 or version == 17:
             unknown_3 = reader.numstring()
+            print("unknown_3", unknown_3)
         if version <= 22:
+            something = reader.numstring()
+            print("something", something)
             bone_1 = reader.numstring()
+            print("bone_1", bone_1)
             bone_names = []
             bone_names.append(parent)
             bone_count = 1
@@ -356,12 +382,16 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
                 bone_count = 2
                 bone_names.append(bone_1)
                 bone_2 = reader.numstring()
+                print("bone_2", bone_2)
                 if len(bone_2) > 5:
                     bone_names.append(bone_2)
                     bone_count = 3
                 bone_1_xfm = reader.matrix()
+                print("bone_1_xfm", bone_1_xfm)
                 bone_2_xfm = reader.matrix()
+                print("bone_2_xfm", bone_2_xfm)
             mesh_data["bone_names"] = bone_names
+            find_next_file(reader)
         if version >= 14:
             if version >= 25:
                 bone_names = bone_trans(reader, 4, version)
@@ -556,9 +586,9 @@ def create_mesh(mesh_data) -> None:
 #    to fix the skeleton
 #    just make bone_headscale.mesh have the same rotation and location as bone_head_nod.mesh
 
-    if (obj.parent != None) and ("bone" not in parent):
+   # if (obj.parent != None) and ("bone" not in parent):
 #  ^put a # here
-   # if (obj.parent != None):
+    if (obj.parent != None):
 #  ^ and remove this #
         obj.matrix_local = mathutils.Matrix((
             (local_xfm[0], local_xfm[3], local_xfm[6], local_xfm[9],),
