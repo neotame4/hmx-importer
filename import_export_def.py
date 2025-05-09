@@ -18,7 +18,8 @@ class ImportMilo(Operator, ImportHelper):
     filepath = StringProperty(subtype="FILE_PATH")
 
     filter_glob: StringProperty(
-        default="*.milo_ps3;*.milo_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.milo_pc;*.rnd_gc;*.rnd;*.ccs;*.vsm;*.vss;*.lipsync",
+        default="*.milo_ps3;*.milo_xbox;*.rnd_xbox;*.milo_wii;*.rnd_ps2;*.milo_ps2;*.milo_pc;*.rnd_gc;*.rnd",
+# ;*.ccs;*.vsm;*.vss;*.lipsync
         options={"HIDDEN"},
     )
 
@@ -121,6 +122,24 @@ class ImportACP(Operator, ImportHelper):
         elif self.filepath.endswith(".acg"):
             read_acg(self)
             self.report({"INFO"}, "Successfully read ACG file!")
+        return {"FINISHED"}
+
+class ImportLipSync(Operator, ImportHelper):
+    """This appears in the tooltip of the operator and in the generated docs"""
+    bl_idname = "import.lipsync"
+    bl_label = "Import LipSync"
+
+    filepath = StringProperty(subtype="FILE_PATH")
+
+    filter_glob: StringProperty(
+        default="*.lipsync",
+        options={"HIDDEN"},
+    )
+
+    def execute(self, context):
+       # create_lipsync_anim(self)
+        print("work in progress, not even started yet")
+        self.report({"INFO"}, "Successfully imported LipSync animation!")
         return {"FINISHED"}
 
 class ImportCCS(Operator, ImportHelper):

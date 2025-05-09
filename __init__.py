@@ -18,6 +18,7 @@ bl_info = {
 def menu_func_import(self, context):
     self.layout.operator(ImportMilo.bl_idname, text="Import HMX Milo")
     self.layout.operator(ImportACP.bl_idname, text="Import ACP Animation")
+    self.layout.operator(ImportLipSync.bl_idname, text="Import LipSync Animation")
     self.layout.operator(ImportCCS.bl_idname, text="Import CCS Animation")
     self.layout.operator(ConvertHMXImage.bl_idname, text="Convert HMX Image")
     self.layout.operator(ConvertHMXAudio.bl_idname, text="Convert HMX Audio")
@@ -30,6 +31,7 @@ def register():
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
     bpy.utils.register_class(ImportMilo)
     bpy.utils.register_class(ImportACP)
+    bpy.utils.register_class(ImportLipSync)
     bpy.utils.register_class(ImportCCS)
     bpy.utils.register_class(ConvertHMXImage)
     bpy.utils.register_class(ConvertHMXAudio)
@@ -40,6 +42,7 @@ def unregister():
     bpy.types.TOPBAR_MT_file_export.append(menu_func_export)
     bpy.utils.unregister_class(ImportMilo)
     bpy.utils.unregister_class(ImportACP)
+    bpy.utils.unregister_class(ImportLipSync)
     bpy.utils.unregister_class(ImportCCS)
     bpy.utils.unregister_class(ConvertHMXImage)
     bpy.utils.unregister_class(ConvertHMXAudio)
