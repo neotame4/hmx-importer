@@ -222,13 +222,18 @@ def read_character(reader, name: str, inlined: bool, is_entry: bool, self):
         return inline_proxy
     if version < 17:
         always_10 = reader.int32()
+    elif version == 17:
+        group = reader.numstring()
     else:
         always_0 = reader.int32()
         if version == 21:
             unknown = reader.read_bytes(4)
         always_15 = reader.int32()
     unknown = reader.numstring()
-    empty_bytes_1 = reader.read_bytes(16)
+    if version == 17:
+        empty_bytes_1 = reader.read_bytes(5)
+    else:
+        empty_bytes_1 = reader.read_bytes(16)
     str_1 = reader.numstring()
     always_0 = reader.int32()
     always_true = reader.milo_bool()
