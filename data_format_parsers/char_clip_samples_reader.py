@@ -653,6 +653,7 @@ def read_ccs(self):
         print("node_count", node_count)
         for i in range(node_count):
             name = reader.numstring()
+            print("name", name)
             float_count = reader.uint32()
             print("float_count", float_count)
             for i in range(float_count):
@@ -660,12 +661,13 @@ def read_ccs(self):
                 weight = reader.float32()
                 print("frame, weight", frame, weight)
     else:
-        node_count = reader.uint32()
-        print("node_count", node_count)
         node_size = reader.uint32()
         print("node_size", node_size)
+        node_count = reader.uint32()
+        print("node_count", node_count)
         for i in range(node_count):
             name = reader.numstring()
+            print("name", name)
             float_count = reader.uint32()
             print("float_count", float_count)
             for i in range(float_count):
