@@ -370,9 +370,10 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
        # if version == 16 or version == 17:
        #     unknown_3 = reader.numstring()
        #     print("unknown_3", unknown_3)
-        if version <= 22:
-            something = reader.numstring()
-            print("something", something)
+        if version >= 15:
+            if version != 22:
+                something = reader.numstring()
+                print("something", something)
             bone_1 = reader.numstring()
             print("bone_1", bone_1)
             bone_names = []

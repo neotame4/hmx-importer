@@ -527,10 +527,12 @@ def read_world_instance(reader, is_entry: bool, inlined: bool, name: str, self) 
                 read_mesh(reader, name)
     else:
         if len(meshes) > 0:
-            o = bpy.data.objects.new(dir_name, None)
-            bpy.context.scene.collection.objects.link(o)
-            o.empty_display_size = 2
-            o.empty_display_type = "PLAIN_AXES"
+            o = bpy.data.objects.get(dir_name)
+            if o is None:
+                o = bpy.data.objects.new(dir_name, None)
+                bpy.context.scene.collection.objects.link(o)
+                o.empty_display_size = 2
+                o.empty_display_type = "PLAIN_AXES"
             o.matrix_world = mathutils.Matrix((
                 (world_xfm[0], world_xfm[3], world_xfm[6], world_xfm[9]),
                 (world_xfm[1], world_xfm[4], world_xfm[7], world_xfm[10]),
