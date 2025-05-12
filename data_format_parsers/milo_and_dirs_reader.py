@@ -16,7 +16,8 @@ from . filler_reader import *		#.
 #from . bandcharacter_reader import *	#no extension
 
 from . compression import *
-from . coll_reader import *
+from . coll_reader import *		#.coll
+#from . collideable_cylander_reader import *	#.col		#gdrb
 
 from . cam_reader import *		#.cam
 from . camshot_reader import *		#no extension or .shot
