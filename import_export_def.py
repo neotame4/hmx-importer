@@ -1,6 +1,7 @@
 from . data_format_parsers.acp_reader import create_acp_anim
 from . data_format_parsers.acg_reader import read_acg
 from . data_format_parsers.char_clip_samples_reader import read_ccs
+from . data_format_parsers.char_clip_reader import read_charclip
 from . data_format_parsers.bitmap_reader import read_bitmap
 from . data_format_parsers.milo_and_dirs_reader import read_milo
 from . data_format_parsers.str_reader import read_str
@@ -146,7 +147,8 @@ class ImportLipSync(Operator, ImportHelper):
     def execute(self, context):
        # create_lipsync_anim(self)
         print("work in progress, not even started yet")
-        self.report({"INFO"}, "Successfully imported LipSync animation!")
+       # self.report({"INFO"}, "Successfully imported LipSync animation!")
+        self.report({"INFO"}, "Work in progress, Not even started yet!")
         return {"FINISHED"}
 
 class ImportCCS(Operator, ImportHelper):
@@ -163,6 +165,32 @@ class ImportCCS(Operator, ImportHelper):
 
     def execute(self, context):
         read_ccs(self)
+        self.report({"INFO"}, "Successfully imported CCS animation!")
+        return {"FINISHED"}
+
+class ImportCharClip(Operator, ImportHelper):
+    """RB3, DC1, DC2, DC3 animations"""
+    bl_idname = "import.cc"
+    bl_label = "Import Char Clip"
+
+    filepath = StringProperty(subtype="FILE_PATH")
+
+    filter_glob: StringProperty(
+        default="*.cc;*.clip",
+        options={"HIDDEN"},
+    )
+
+#    GameToggle: BoolProperty(
+#        name="Rb3 Toggle",
+#        description="RB3 or DC1",
+#        default=True,
+#    )
+#
+#    def draw(self, context):
+#        layout.prop(self, "GameToggle")
+
+    def execute(self, context):
+        read_charclip(self)
         self.report({"INFO"}, "Successfully imported CCS animation!")
         return {"FINISHED"}
 

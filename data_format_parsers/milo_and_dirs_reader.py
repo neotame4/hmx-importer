@@ -120,7 +120,7 @@ from . interest_reader import *	#.intr
 #from . charclipset_reader import *	#.set or no extension	#lrb snake told me .set
 #from . charclipgroup_reader import *	#.clipgrp or no extension	#lrb told me .cligrp
 #from . charclipfilter_reader import *	#.ccf or no extension	#lrb told me .ccf
-#from . _reader import *		#.
+#from . char_clip_reader import *	#no extension set to .cc for now
 
 #from . compositechar_reader import *	#no extension		#lrb
 #from . colorpalette_reader import *	#.pal
