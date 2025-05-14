@@ -1510,6 +1510,62 @@ def read_ccs(self):
                           #  bone.rotation_quaternion = (quat[3], quat[1], quat[2], quat[3])
                             bone.rotation_quaternion = (quat4, quat1, quat2, quat3)
                             bone.keyframe_insert("rotation_quaternion")
+                    elif ".rotx" in name:
+                        print("rotX found")
+                        print("rotX found")
+                        print("rotX found")
+                        print("rotX found")
+                        print("rotX found")
+                        print("rotX found")
+                        print("rotX found")
+                        print("rotX found")
+                        print("rotX found")
+                        print("rotX found")
+                        print("name", name)
+                        name = name.replace(".rotx", ".mesh")
+                        bone = armature.pose.bones.get(name)
+                        if compression == 0:
+                            rotx = reader.float32()
+                            print("rotx", rotx)
+                        else:
+                            rot1 = reader.short()
+                            rotx = (rot1 / 32767.0) / 0.5 * 10.0
+                          # dont know what the real values are sooo
+                          # ¯\_(ツ)_/¯
+                           # rotx = (rot1 / 32767.0) / 0.512 * 10.24
+                            print("rotx", rotx)
+                        if bone:
+                            bone.rotation_mode = "XYZ"
+                            bone.rotation_euler[0] = rotx
+                            bone.keyframe_insert("rotation_euler") 
+                    elif ".roty" in name:
+                        print("rotY found")
+                        print("rotY found")
+                        print("rotY found")
+                        print("rotY found")
+                        print("rotY found")
+                        print("rotY found")
+                        print("rotY found")
+                        print("rotY found")
+                        print("rotY found")
+                        print("rotY found")
+                        print("name", name)
+                        name = name.replace(".roty", ".mesh")
+                        bone = armature.pose.bones.get(name)
+                        if compression == 0:
+                            roty = reader.float32()
+                            print("roty", roty)
+                        else:
+                            rot1 = reader.short()
+                            roty = (rot1 / 32767.0) / 0.5 * 10.0
+                          # dont know what the real values are sooo
+                          # ¯\_(ツ)_/¯
+                           # roty = (rot1 / 32767.0) / 0.512 * 10.24
+                            print("roty", roty)
+                        if bone:
+                            bone.rotation_mode = "XYZ"
+                            bone.rotation_euler[1] = roty
+                            bone.keyframe_insert("rotation_euler") 
                    # for name, rotz in rotz_samples:
                    # for name in rotz_samples:
                     elif ".rotz" in name:
@@ -1528,7 +1584,7 @@ def read_ccs(self):
                             print("rotz", rotz)
                         if bone:
                             bone.rotation_mode = "XYZ"
-                            bone.rotation_euler[0] = rotz
+                            bone.rotation_euler[2] = rotz
                             bone.keyframe_insert("rotation_euler") 
                     else:
                         print("unknown bone suffix", name)

@@ -579,6 +579,8 @@ def read_charclip(self):
                             bone.rotation_mode = "QUATERNION"
                             bone.rotation_quaternion = (quat4, quat1, quat2, quat3)
                             bone.keyframe_insert("rotation_quaternion")
+                   # for name, rotz in rotz_samples:
+                   # for name in rotz_samples:
                     elif ".rotz" in name:
                         print("name", name)
                         name = name.replace(".rotz", ".mesh")
@@ -597,6 +599,30 @@ def read_charclip(self):
                             bone.rotation_mode = "XYZ"
                             bone.rotation_euler[2] = rotz
                             bone.keyframe_insert("rotation_euler")
+                    else:
+                        print("unknown bone suffix", name)
+                End = reader.tell()
+                print("end", End)
+                datasize = End - Start
+                print("datasize", datasize)
+                print("Count", Count)
+                computed_sizes = [0] * count_size  # Initialize computed_sizes with zeroes
+                # Iteratively calculate each computed size
+                for i in range(count_size - 1):
+                    curr_count = Counts[i]
+                    next_count = Counts[i + 1]
+                    type_size = get_type_size(compression, i)
+                    # Compute size for the current index
+                    computed_sizes[i + 1] = computed_sizes[i] + (next_count - curr_count) * type_size
+                # print(f"Computed size at index {i + 1}: {computed_sizes[i + 1]}")
+                # Compute sample size with alignment
+                sample_size = (computed_sizes[-1] + 0xF) & 0xFFFFFFF0
+                # print(f"Final sample size (aligned): {sample_size}")
+                # print("computed_sizes sample_size", computed_sizes, sample_size)
+                Final_value = sample_size - (End - Start)
+                print("padding_value", Final_value)
+                reader.seek(Final_value)
+
 
     bone_count = reader.int32()
    # char_bones = []
@@ -605,10 +631,10 @@ def read_charclip(self):
         weight = reader.float32()
         print("char_bone, weight", char_bone, weight)
        # char_bones.append(char_bone)
-    extras_count = reader.int32()
+    float_count = reader.int32()
     beans = reader.float32()
-    print("extras_count, beans", extras_count, beans)
-    for _ in range(extras_count * 2):
+    print("float_count, beans", float_count, beans)
+    for _ in range(float_count * 2):
         value = reader.float32()
         print("value", value)
 

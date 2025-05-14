@@ -707,6 +707,12 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         read_cam(reader, name, self)
     elif obj_type == "CharBone":
         read_charbone(reader, name, self)
+    elif obj_type == "CharCollide":
+        if self.import_colliders == True:
+            read_coll(reader, name, self)
+        else:
+            print("skipping", name, obj_type)
+            find_next_file(reader)
     elif obj_type == "Flow":
         read_flow(reader, False, is_entry, self)
         if is_entry == True:

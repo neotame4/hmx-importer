@@ -57,6 +57,12 @@ class ImportMilo(Operator, ImportHelper):
         default=False,
     )
 
+    import_colliders: BoolProperty(
+        name="Import colliders",
+        description="Import colliders.",
+        default=False,
+    )
+
     import_trans_anim: BoolProperty(
         name="Import TransAnim Animations",
         description="Import TransAnim animations (common in venues).",
@@ -99,6 +105,7 @@ class ImportMilo(Operator, ImportHelper):
         layout.prop(self, "texture_format")
         layout.prop(self, "import_shadow")
         layout.prop(self, "import_lod")
+        layout.prop(self, "import_colliders")
         layout.prop(self, "import_trans_anim")
         layout.prop(self, "import_prop_anim")
         layout.prop(self, "import_world_crowd")
@@ -112,7 +119,7 @@ class ImportMilo(Operator, ImportHelper):
         return {"FINISHED"} 
 
 class ImportACP(Operator, ImportHelper):
-    """This appears in the tooltip of the operator and in the generated docs"""
+    """Import ACP and ACG files from GH1"""
     bl_idname = "import.acp"
     bl_label = "Import ACP"
 
