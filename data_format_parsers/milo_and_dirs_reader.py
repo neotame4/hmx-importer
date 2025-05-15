@@ -37,13 +37,24 @@ from . spotlight_reader import *	#.spot
 #from . light_preset_reader import * 	#.pst
 from . lightanim_reader import *	#.lnm
 
+#from . midiparser_reader import *	#.no extension
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+
 from . mesh_reader import *
-from . meshanim_reader import *		#.msnm or .meshanim
+from . meshanim_reader import *		#.msnm or .meshanim or .deform
 from . meshdeform_reader import *	#.deform		#KR
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
+
+#from . motionblur_reader import *	#.blur
+#from . ambientocculsion_reader import *	#.ao
 
 
 #from . meshblend_reader import *	#.blend
@@ -53,15 +64,24 @@ from . multimesh_reader import *	#.mm
 #from . blendshapedriver_reader import *	#.bdrv		#lrb
 
 
-from . charbone_reader import *	#.mesh or .cb
+from . charbone_reader import *		#.mesh or .cb
+#from . charbonesblender_reader import *	#.blender
+#from . charbonetwist_reader import *	#.bonetwist
+#from . charblendbone_reader import *	#.blendbone
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
 
 from . poll_reader import *
+#from . charpollgroup_reader import *	#.pgrp
 from . prop_anim_reader import *	#.anim
 #from . synth_dir_reader import *	#no extension
 from . synth_sample_reader import *	#.wav
 #from . synth_fader_reader import *	#.fade
 #from . texrenderer_reader import *	#.rndtex		#gdrb
 from . tex_reader import *
+#from . texblendcontroller_reader import *	#.texblendctl
+#from . texblender_reader import *	#.texblend
 from . trans_anim_reader import *	#.tnm or .anim
 from . trans_reader import *		#.trans or .mesh
 from . world_crowd_reader import *	#.crd
@@ -93,20 +113,44 @@ from . hair_reader import *		#.hair
 
 #from . uppertwist_reader import *	#.ik
 #from . foretwist_reader import *	#.ik
-#from . necktwist_reader import *	#.
-#from . ikhand_reader import *		#.ik
-#from . ikmidi_reader import *		#.ik
+#from . necktwist_reader import *	#.ntwist
+#from . ikhand_reader import *		#.ikhand
+#from . ikmidi_reader import *		#.ikmidi
 #from . ikhead_reader import *		#.ikhead
 #from . ikfoot_reader import *		#.ikfoot
+#from . ikscale_reader import *		#.ikscale
+#from . ikfingers_reader import *	#.ikfingers
+#from . charikslidemidi_reader import *	#.ikslide
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . ikrod_reader import *		#.rod
 
+#from . charguitarstring_reader import *	#.string
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . charweightsetter_reader import *	#.weight
+
+#from . charkeyhandmidi_reader import *	#.keyhand
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+#from . _reader import *		#.
+
 #from . lookat_reader import *		#.lookat		#EYES
 #from . eyes_reader import *		#.eyes			#EVEN MORE EYES
 #from . weightsetter_reader import *	#.weight
 #from . driver_reader import *		#.drv			#CharDriver,CharDriverMidi
+#from . drivermidi_reader import *	#.dmidi
+#from . _reader import *		#.
 #from . posconstraint_reader import *	#.pcon
 #from . outfit_reader import *		#.outfit
 #from . outfitconfig_reader import *	#.cfg
@@ -158,11 +202,14 @@ from . interest_reader import *	#.intr
 #from . _reader import *		#.
 #from . PlotDef_reader import *		#.
 #from . PlotBeatAnims_reader import *	#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
-#from . _reader import *		#.
+
+#      Dance Central stuff
+
+#from . hamcharacter_reader import *	#.no extension
+#from . hamdriver_reader import *	#.hdrv
+#from . hamikeffector_reader import *	#.ikf
+#from . hamikskeleton_reader import *	#.iks
+#from . hamregulate_reader import *	#.hreg
 #from . _reader import *		#.
 #from . _reader import *		#.
 #from . _reader import *		#.

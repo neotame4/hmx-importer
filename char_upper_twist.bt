@@ -1,0 +1,53 @@
+// Does all interpolation for the upperarm, assuming upperArm, upperTwist1 and 2 are under clavicle.
+//  Rotation about x is evenly distributed from clavicle->twist1->twist2->upperarm
+//  Feeds the bones when executed.
+// Super: CharPollable
+// Ext: .utwist, .ik
+// C++ Class: CharUpperTwist
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharUpperTwist"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_UPPER_TWIST
+#define OBJECT_CHAR_UPPER_TWIST
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (GH2/GH2 360, RB3)
+    read_metadata(info, super);
+
+    NumString upper_arm; // Trans - The upper arm bone
+    NumString twist1;    // Trans - The upper arm twist1 bone
+    NumString twist2;    // Trans - The upper arm twist2 bone
+} CharUpperTwist;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharUpperTwist")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharUpperTwist char_upper_twist(info, False);
+}
+
+#endif
+
+
+#endif

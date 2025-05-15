@@ -157,10 +157,23 @@ typedef struct (SystemInfo& info, Bool super)
 
         int beats_per_sec;
     }
+    
+    else
+    {
+        float end_beat;
+
+        float beats_per_sec;
+    }
+    
 
     if (version >= 19)
     {
         FSkip(17);
+      //  int egg;
+      //  int egg;
+      //  int egg;
+      //  int egg;
+      //  byte egg;
 
         struct Transitions
         {
@@ -173,7 +186,7 @@ typedef struct (SystemInfo& info, Bool super)
         if (Junk == 1)
             CharBones char_bones(version);
 // if metadata type is viseme uncomment this
-        int junk;
+      //  int junk;
         CharBonesSamples full(info, False, -1);
         CharBonesSamples one(info, False, -1);
 

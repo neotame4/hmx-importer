@@ -1,0 +1,56 @@
+// BLACK MAGIC
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .lookat
+// C++ Class: Spotlight
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "NeckTwist"
+    #endif
+#endif
+
+#ifndef OBJECT_NECKTWIST
+#define OBJECT_NECKTWIST
+
+#include "anim.bt"
+#include "common.bt"
+#include "draw.bt"
+#include "trans.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 3 (), 6 ()
+    read_metadata(info, super);
+    NumString Mesh;
+    NumString target;
+
+} NeckTwist;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "NeckTwist")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    NeckTwist neck_twist(info, False);
+}
+
+#endif
+
+
+#endif
