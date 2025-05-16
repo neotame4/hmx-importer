@@ -146,6 +146,10 @@ def read_prop_anim(reader, name, super: bool):
                 amb_color = reader.vec4f()
                 pos = reader.float32()
                 print("pos", pos)
+            elif values[0] == "shot":
+                shot = reader.numstring()
+                pos = reader.float32()
+                print("pos", pos)
             elif values[0] == "emit_rate":
                 emit_value = reader.float32()
                 pos = reader.float32()
@@ -163,15 +167,37 @@ def read_prop_anim(reader, name, super: bool):
            #     print("Z") 
             else:
                 print("value not found", value)
-                print("value not found", value)
-                print("value not found", value)
-                print("value not found", value)
-                print("value not found", value)
-                print("value not found", value)
-                print("value not found", value)
-                print("value not found", value)
-                print("value not found", value)
-                print("value not found", value)
+                if type1 == 0:			#kPropFloat
+                    value = reader.float32()
+                    pos = reader.float32()
+                    print("pos", pos)
+                elif type1 == 1:		#kPropColor
+                   value = reader.color4()
+                   pos = reader.float32()
+                   print("pos", pos) 
+                elif type1 == 2:		#kPropObject
+                    text1 = reader.numstring()
+                    text2 = reader.numstring()
+                    pos = reader.float32()
+                    print("pos", pos)
+                elif type1 == 3:		#kPropBool
+                    value = reader.milo_bool()
+                    pos = reader.float32()
+                    print("pos", pos)
+                elif type1 == 4:		#kPropQuat
+                    value = reader.quat4()
+                    pos = reader.float32()
+                    print("pos", pos) 
+                elif type1 == 5:		#kPropVector3
+                    value = reader.vec3f()
+                    pos = reader.float32()
+                    print("pos", pos)
+                elif type1 == 6:		#kPropSymbol
+                    text = reader.numstring()
+                    pos = reader.float32()
+                    print("pos", pos)
+                else:
+                    print("type not found", type1)
     if version >= 13:
         unknown_bool2 = reader.milo_bool()
         print("unknown_bool2", unknown_bool2)

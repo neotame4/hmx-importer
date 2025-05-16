@@ -1,5 +1,6 @@
 from . data_format_parsers.acp_reader import create_acp_anim
 from . data_format_parsers.acg_reader import read_acg
+from . data_format_parsers.lipsync_reader import read_lipsync
 from . data_format_parsers.char_clip_samples_reader import read_ccs
 from . data_format_parsers.char_clip_reader import read_charclip
 from . data_format_parsers.bitmap_reader import read_bitmap
@@ -152,10 +153,10 @@ class ImportLipSync(Operator, ImportHelper):
     )
 
     def execute(self, context):
-       # create_lipsync_anim(self)
-        print("work in progress, not even started yet")
-       # self.report({"INFO"}, "Successfully imported LipSync animation!")
-        self.report({"INFO"}, "Work in progress, Not even started yet!")
+        read_lipsync(self)
+       # print("work in progress, not even started yet")
+        self.report({"INFO"}, "Successfully imported LipSync animation!")
+       # self.report({"INFO"}, "Work in progress, Not even started yet!")
         return {"FINISHED"}
 
 class ImportCCS(Operator, ImportHelper):
