@@ -1,4 +1,5 @@
 import bpy
+import os 
 from .. readers import *
 from .. common import *
 from .. bpy_util_funcs import *
@@ -1625,8 +1626,14 @@ def read_ccs(self):
             weight = reader.float32()
             print("weight", weight)
             char_bones2.append(char_bone)
-   # bpy.data.actions["ArmatureAction"].name = bpy.path.basename(self.filepath)
-    print("file", bpy.path.basename(self.filepath))
+    if (metadata_type == "viseme"):
+        extension = ".vsm"
+       # extension = ".ccs"
+        bpy.data.actions["ArmatureAction"].name = os.path.splitext(os.path.basename(self.filepath))[0] + extension
+        print("file", bpy.path.basename(os.path.splitext(os.path.basename(self.filepath))[0] + extension))
+    else:
+       # bpy.data.actions["ArmatureAction"].name = bpy.path.basename(self.filepath)
+        print("file", bpy.path.basename(self.filepath))
    # bpy.ops.nla.action_pushdown(track_index=1)
    # bpy.ops.action.push_down()
    # create_anim(self, reader)

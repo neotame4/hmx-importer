@@ -37,6 +37,7 @@ def read_lipsync(self):
         print("changeCount", changeCount)
         for x in range(changeCount):
             extension = ".vsm"
+           # extension = ".ccs"
             visemeIndex = reader.byte()
            # visemeIndex = int.from_bytes(visemeIndex1, "big")
             print("visemeIndex", visemeIndex)
@@ -52,6 +53,9 @@ def read_lipsync(self):
                 bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].frame_end_ui = keyFrameCount
 
                 bpy.data.scenes["Scene"].frame_end = keyFrameCount 
+
+               # bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].extrapolation = ‘NOTHING’
+               # bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].blend_type = ‘COMBINE’
 
                 bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].use_animated_influence
 
