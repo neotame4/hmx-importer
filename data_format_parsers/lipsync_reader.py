@@ -41,8 +41,8 @@ def read_lipsync(self):
             visemeIndex = reader.byte()
            # visemeIndex = int.from_bytes(visemeIndex1, "big")
             print("visemeIndex", visemeIndex)
-            Weight1 = reader.byte()
-            Weight = Weight1 / 255
+            Weight1 = reader.ubyte()
+            Weight = Weight1 / 256
             print("Weight, Weight1", Weight, Weight1)
           # ^^^^^^  divide by 255 for -1/0/1 value
            # print("changeCount", changeCount, changeCount1, "visemeIndex", visemeIndex, "visemeNames", visemeNames[visemeIndex], "Weight", Weight)

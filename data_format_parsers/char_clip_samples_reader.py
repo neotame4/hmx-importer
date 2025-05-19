@@ -336,9 +336,15 @@ def read_ccs(self):
                                 if bone:
                                     # just for viseme anim import
                                     if (metadata_type == "viseme") and (version == 15):
+                                        print("Version is 15, TBRB")
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
-                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif (metadata_type == "viseme") and (version == 16):
+                                        print("Version is 16, GDRB")
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -354,9 +360,15 @@ def read_ccs(self):
                             if bone:
                                 # just for viseme anim import
                                 if (metadata_type == "viseme") and (version == 15):
+                                    print("Version is 15, TBRB")
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                elif (metadata_type == "viseme") and (version == 16):
+                                    print("Version is 16, GDRB")
+                                    bone.location[2] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                 else:
                                     bone.location[0] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -542,9 +554,15 @@ def read_ccs(self):
                                 if bone:
                                     # just for viseme anim import
                                     if (metadata_type == "viseme") and (version == 15):
+                                        print("Version is 15, TBRB")
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
-                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif (metadata_type == "viseme") and (version == 16):
+                                        print("Version is 16, GDRB")
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -560,9 +578,15 @@ def read_ccs(self):
                             if bone:
                                 # just for viseme anim import
                                 if (metadata_type == "viseme") and (version == 15):
+                                    print("Version is 15, TBRB")
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                elif (metadata_type == "viseme") and (version == 16):
+                                    print("Version is 16, GDRB")
+                                    bone.location[2] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                 else:
                                     bone.location[0] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -812,9 +836,15 @@ def read_ccs(self):
                         print("pos3", pos3)
                         if bone:
                             if (metadata_type == "viseme") and (version == 15):
+                                print("Version is 15, TBRB")
                                 bone.location[2] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
-                                bone.location[0] = ( pos3 / 32767 ) * 1280
+                                bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                            elif (metadata_type == "viseme") and (version == 16):
+                                print("Version is 16, GDRB")
+                                bone.location[2] = ( pos1 / 32767 ) * 1280
+                                bone.location[1] = ( pos2 / 32767 ) * 1280
+                                bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                             else:
                                 bone.location[0] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -964,9 +994,15 @@ def read_ccs(self):
                         print("pos3", pos3)
                         if bone:
                             if (metadata_type == "viseme") and (version == 15):
+                                print("Version is 15, TBRB")
                                 bone.location[2] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
-                                bone.location[0] = ( pos3 / 32767 ) * 1280
+                                bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                            elif (metadata_type == "viseme") and (version == 16):
+                                print("Version is 16, GDRB")
+                                bone.location[2] = ( pos1 / 32767 ) * 1280
+                                bone.location[1] = ( pos2 / 32767 ) * 1280
+                                bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                             else:
                                 bone.location[0] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1169,9 +1205,15 @@ def read_ccs(self):
                                     pos4 = pos44
                                 if bone:
                                     if (metadata_type == "viseme") and (version == 15):
+                                        print("Version is 15, TBRB")
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
-                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif (metadata_type == "viseme") and (version == 16):
+                                        print("Version is 16, GDRB")
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1186,9 +1228,15 @@ def read_ccs(self):
                                     pos4 = pos44
                                 if bone:
                                     if (metadata_type == "viseme") and (version == 15):
+                                        print("Version is 15, TBRB")
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
-                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif (metadata_type == "viseme") and (version == 16):
+                                        print("Version is 16, GDRB")
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1206,7 +1254,11 @@ def read_ccs(self):
                                 if (metadata_type == "viseme") and (version == 15):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                elif (metadata_type == "viseme") and (version == 16):
+                                    bone.location[2] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                 else:
                                     bone.location[0] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1446,9 +1498,15 @@ def read_ccs(self):
                                 if bone:
                                     # just for viseme anim import
                                     if (metadata_type == "viseme") and (version == 15):
+                                        print("Version is 15, TBRB")
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
-                                        bone.location[0] = ( pos3 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif (metadata_type == "viseme") and (version == 16):
+                                        print("Version is 16, GDRB")
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1464,9 +1522,15 @@ def read_ccs(self):
                             print("pos3", pos3)
                             if bone:
                                 if (metadata_type == "viseme") and (version == 15):
+                                    print("Version is 15, TBRB")
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
-                                    bone.location[0] = ( pos3 / 32767 ) * 1280
+                                    bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                elif (metadata_type == "viseme") and (version == 16):
+                                    print("Version is 16, GDRB")
+                                    bone.location[2] = ( pos1 / 32767 ) * 1280
+                                    bone.location[1] = ( pos2 / 32767 ) * 1280
+                                    bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
                                 else:
                                     bone.location[0] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
