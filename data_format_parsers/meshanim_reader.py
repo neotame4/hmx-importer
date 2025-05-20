@@ -29,7 +29,10 @@ def VertTextKey(reader) -> list:
     print("TextKey_count", TextKey_count)
     VertTexts = []
     for _ in range(TextKey_count):
-        texts = reader.vec2f()
+        if version >= 2: 
+            texts = reader.vec3f()
+        else:
+            texts = reader.vec2f()
         print("texts", texts)
         VertTexts.append(texts)
     pos = reader.float32() 

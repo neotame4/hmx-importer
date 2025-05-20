@@ -45,6 +45,8 @@ from . lightanim_reader import *	#.lnm
 #from . _reader import *		#.
 #from . _reader import *		#.
 
+#from . bandfacedeform_reader import *	#.fdm	RB3
+
 from . mesh_reader import *
 from . meshanim_reader import *		#.msnm or .meshanim or .deform
 from . meshdeform_reader import *	#.deform		#KR

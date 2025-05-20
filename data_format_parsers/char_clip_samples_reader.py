@@ -1693,10 +1693,9 @@ def read_ccs(self):
     if (metadata_type == "viseme"):
         extension = ".vsm"
        # extension = ".ccs"
-        bpy.data.actions["ArmatureAction"].name = os.path.splitext(os.path.basename(self.filepath))[0] + extension
+        bpy.data.actions[bpy.context.active_object.name + "Action"].name = os.path.splitext(os.path.basename(self.filepath))[0] + extension
         print("file", bpy.path.basename(os.path.splitext(os.path.basename(self.filepath))[0] + extension))
     else:
-       # bpy.data.actions["ArmatureAction"].name = bpy.path.basename(self.filepath)
         print("file", bpy.path.basename(self.filepath))
    # bpy.ops.nla.action_pushdown(track_index=1)
    # bpy.ops.action.push_down()
