@@ -152,6 +152,16 @@ class ImportLipSync(Operator, ImportHelper):
         options={"HIDDEN"},
     )
 
+    LRB_toggle: BoolProperty(
+        name="LRB",
+        description="Import lipsync onto LRB mesh",
+        default=False,
+    )
+
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "LRB_toggle")
+
     def execute(self, context):
         read_lipsync(self)
        # print("work in progress, not even started yet")

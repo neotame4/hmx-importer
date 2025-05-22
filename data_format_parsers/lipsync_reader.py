@@ -49,21 +49,36 @@ def read_lipsync(self):
     #   if nla track name is not in the viseme name list then set animation influence to 0
     #    no clue how to do this
             selarmature = bpy.context.object
-            try:
-                bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].frame_end_ui = keyFrameCount
+            if self.LRB_toggle == True:
+                try:
+                   # object = bpy.context.active_object
+                    bpy.context.object.name = bpy.context.active_object.name
 
-                bpy.data.scenes["Scene"].frame_end = keyFrameCount 
+                    bpy.context.object.data.shape_keys.key_blocks[visemeNames[visemeIndex]].value = 0
+                    bpy.context.object.data.shape_keys.key_blocks[visemeNames[visemeIndex]].keyframe_insert(data_path='value', frame= 0)
 
-                bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].extrapolation = 'NOTHING'
-                bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].blend_type = 'COMBINE'
+                    bpy.data.scenes["Scene"].frame_end = keyFrameCount 
+                   # bpy.data.shape_keys["Key.001"].key_blocks[viseme].value = Weight
+                    bpy.context.object.data.shape_keys.key_blocks[visemeNames[visemeIndex]].value = Weight
+                    bpy.context.object.data.shape_keys.key_blocks[visemeNames[visemeIndex]].keyframe_insert(data_path='value', frame= current_frame)
+                except:
+                    print("viseme doesnt exist", visemeNames[visemeIndex], visemeIndex,"skipping", visemeNames[visemeIndex])
+            else: 
+                try:
+                    bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].frame_end_ui = keyFrameCount
 
-                bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].use_animated_influence = True
+                    bpy.data.scenes["Scene"].frame_end = keyFrameCount 
 
-                bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].influence = Weight
+                    bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].extrapolation = 'NOTHING'
+                    bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].blend_type = 'COMBINE'
 
-                bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].keyframe_insert(data_path='influence', frame=current_frame)
-            except:
-                print("viseme doesnt exist", visemeNames[visemeIndex], visemeIndex,"skipping", visemeNames[visemeIndex] + extension)
+                    bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].use_animated_influence = True
+
+                    bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].influence = Weight
+
+                    bpy.context.object.animation_data.nla_tracks[visemeNames[visemeIndex] + extension].strips[visemeNames[visemeIndex] + extension].keyframe_insert(data_path='influence', frame=current_frame)
+                except:
+                    print("viseme doesnt exist", visemeNames[visemeIndex], visemeIndex,"skipping", visemeNames[visemeIndex] + extension)
 
 #       COMMENT BLOB
 #       woohoo
