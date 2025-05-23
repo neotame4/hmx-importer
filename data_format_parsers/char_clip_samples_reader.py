@@ -317,15 +317,23 @@ def read_ccs(self):
                                 pos44 = reader.float32()
                                 print("pos44", pos44)
                             if version3 > 12:
+                                print("version3 > 12")
+                                print("version", version)
+                                print("version3", version3)
                                 pos1 = pos11
                                 pos2 = pos22
                                 pos3 = pos33
                                 if version >= 16:
                                     pos4 = pos44
                                 if bone:
-                                    bone.location[0] = pos1
-                                    bone.location[1] = pos2
-                                    bone.location[2] = pos3 
+                                    if version3 < 16:
+                                        bone.location[2] = ( pos1 / 32767 ) * 1280
+                                        bone.location[1] = ( pos2 / 32767 ) * 1280
+                                        bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    else:
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3 
                                     bone.keyframe_insert("location")
                             else:
                                 pos1 = pos11
@@ -345,6 +353,11 @@ def read_ccs(self):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif version == 14:
+                                        print("Version is 14, LRB")
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3 
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -369,6 +382,11 @@ def read_ccs(self):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                elif version == 14:
+                                    print("Version is 14, LRB")
+                                    bone.location[0] = pos1
+                                    bone.location[1] = pos2
+                                    bone.location[2] = pos3 
                                 else:
                                     bone.location[0] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -563,6 +581,11 @@ def read_ccs(self):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif version == 14:
+                                        print("Version is 14, LRB")
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3 
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -587,6 +610,11 @@ def read_ccs(self):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                elif version == 14:
+                                    print("Version is 14, LRB")
+                                    bone.location[0] = pos1
+                                    bone.location[1] = pos2
+                                    bone.location[2] = pos3 
                                 else:
                                     bone.location[0] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -811,6 +839,9 @@ def read_ccs(self):
                     name = name.replace(".pos", ".mesh")
                     bone = armature.pose.bones.get(name)
                     if compression1 < 2:
+                        print("Floats")
+                        print("version", version)
+                        print("version3", version3)
                         pos1 = reader.float32()
                         print("pos1", pos1)
                         pos2 = reader.float32()
@@ -845,6 +876,11 @@ def read_ccs(self):
                                 bone.location[2] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
                                 bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                            elif version == 14:
+                                print("Version is 14, LRB")
+                                bone.location[0] = pos1
+                                bone.location[1] = pos2
+                                bone.location[2] = pos3 
                             else:
                                 bone.location[0] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1003,6 +1039,11 @@ def read_ccs(self):
                                 bone.location[2] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
                                 bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                            elif version == 14:
+                                print("Version is 14, LRB")
+                                bone.location[0] = pos1
+                                bone.location[1] = pos2
+                                bone.location[2] = pos3 
                             else:
                                 bone.location[0] = ( pos1 / 32767 ) * 1280
                                 bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1187,6 +1228,7 @@ def read_ccs(self):
                         name = name.replace(".pos", ".mesh")
                         bone = armature.pose.bones.get(name)
                         if compression < 2:
+
                             pos11 = reader.float32()
                             print("pos11", pos11)
                             pos22 = reader.float32()
@@ -1214,6 +1256,11 @@ def read_ccs(self):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif version == 14:
+                                        print("Version is 14, LRB")
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3 
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1237,6 +1284,11 @@ def read_ccs(self):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif version == 14:
+                                        print("Version is 14, LRB")
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3 
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1259,6 +1311,11 @@ def read_ccs(self):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                elif version == 14:
+                                    print("Version is 14, LRB")
+                                    bone.location[0] = pos1
+                                    bone.location[1] = pos2
+                                    bone.location[2] = pos3 
                                 else:
                                     bone.location[0] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1507,6 +1564,11 @@ def read_ccs(self):
                                         bone.location[2] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                    elif version == 14:
+                                        print("Version is 14, LRB")
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3 
                                     else:
                                         bone.location[0] = ( pos1 / 32767 ) * 1280
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
@@ -1531,6 +1593,11 @@ def read_ccs(self):
                                     bone.location[2] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[0] = (( pos3 / 32767 ) * 1280) * -1
+                                elif version == 14:
+                                    print("Version is 14, LRB")
+                                    bone.location[0] = pos1
+                                    bone.location[1] = pos2
+                                    bone.location[2] = pos3 
                                 else:
                                     bone.location[0] = ( pos1 / 32767 ) * 1280
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
