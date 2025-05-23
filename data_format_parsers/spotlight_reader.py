@@ -12,10 +12,10 @@ def read_spotlight(reader, name: str, self) -> None:
     if version > 3:
         read_metadata(reader, False)
     read_draw(reader, True)
-    parent, local_xfm, world_xfm = read_trans(reader, True, name)
-    print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
-   # trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
-   # print("trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm", trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm)
+   # parent, local_xfm, world_xfm = read_trans(reader, True, name)
+   # print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)
+    trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
+    print("trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm", trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm)
     ignore_data = reader.uint32()
     ignore_data2 = reader.uint32()
     ignore_data3 = reader.uint32()
@@ -33,10 +33,27 @@ def read_spotlight(reader, name: str, self) -> None:
     ignore_data2 = reader.uint32()
     ignore_data3 = reader.uint32()
     ignore_data4 = reader.uint32()
-    ignore_data5 = reader.uint32()
-    ignore_data6 = reader.uint32()
-    ignore_data7 = reader.uint32()
-    print("ignore_data, ignore_data2, ignore_data3, ignore_data4, ignore_data5, ignore_data6, ignore_data7", ignore_data, ignore_data2, ignore_data3, ignore_data4, ignore_data5, ignore_data6, ignore_data7)
+    print("ignore_data, ignore_data2, ignore_data3, ignore_data4", ignore_data, ignore_data2, ignore_data3, ignore_data4)
+   # print("ignore_data, ignore_data2, ignore_data3, ignore_data4, ignore_data5, ignore_data6, ignore_data7", ignore_data, ignore_data2, ignore_data3, ignore_data4, ignore_data5, ignore_data6, ignore_data7)
+
+    tex1 = reader.numstring()
+    print("tex1", tex1)
+
+    ignore_data = reader.uint32()
+    ignore_data2 = reader.uint32()
+    print("ignore_data, ignore_data2", ignore_data, ignore_data2)
+    char_count = reader.int32()
+    print("char_count", char_count)
+    for _ in range(char_count):
+        char_name = reader.numstring()
+        print("char_name", char_name)
+
+    ignore_data = reader.uint32()
+    print("ignore_data", ignore_data)
+    ignore_data = reader.uint32()
+    print("ignore_data", ignore_data)
+    #ignore_data = reader.uint32()
+    #print("ignore_data", ignore_data)
 
     meshname = reader.numstring()
     print("meshname", meshname)
@@ -46,11 +63,11 @@ def read_spotlight(reader, name: str, self) -> None:
     filler = reader.vec3f()
     print("filler", filler)
     if meshname != None:
-        mesh = bpy.data.meshes.get(meshname)
+        mesh = bpy.data.meshes.get(meshname + "_0")
         print("mesh, meshname", mesh, meshname)
-    else:
-        print("mesh", mesh, "doesnt exist, Creating", meshname)
-        mesh = bpy.data.meshes.new(meshname)
+        if mesh == None:
+            print("mesh", mesh, "doesnt exist, Creating", meshname)
+            mesh = bpy.data.meshes.new(meshname)
     print("name, mesh, meshname", name, mesh, meshname)
     spotlight_obj = bpy.data.objects.new(name, mesh)
    # spotlight_obj = bpy.data.objects.get(name, mesh)  
@@ -108,10 +125,10 @@ def read_spotlight(reader, name: str, self) -> None:
         light.parent = o
     else:
         print("light parent doesnt exist, Creating")
-        o = bpy.data.objects.new(spotlight_obj, None)
+        o = bpy.data.objects.new(spotlight_obj, mesh)
         bpy.context.scene.collection.objects.link(o)
-        o.empty_display_size = 2
-        o.empty_display_type = 'PLAIN_AXES'
+       # o.empty_display_size = 2
+       # o.empty_display_type = 'PLAIN_AXES'
         light.parent = o
     bpy.context.scene.collection.objects.link(light)
    # except:

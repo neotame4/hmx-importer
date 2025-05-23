@@ -827,9 +827,9 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
         read_lit(reader, name, self)
 
     elif obj_type == "Spotlight":
-        print("sorry, spotlight files are not working right now")
-        find_next_file(reader)
-       # read_spotlight(reader, name, self)
+       # print("sorry, spotlight files are not working right now")
+       # find_next_file(reader)
+        read_spotlight(reader, name, self)
     # lego rock band has some broken ones, WHY Tt GAMES
     # sowwy cant fix :3 -neo
 
