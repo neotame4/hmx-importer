@@ -144,9 +144,9 @@ def read_charclip(self):
                                         bone.location[1] = (pos2)
                                         bone.location[0] = (pos3) * -1
                                     else:
-                                        bone.location[0] = ( pos1 / 32767 ) * 1280
-                                        bone.location[1] = ( pos2 / 32767 ) * 1280
-                                        bone.location[2] = ( pos3 / 32767 ) * 1280
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3
                                     bone.keyframe_insert("location")
                             else:
                                 pos1 = pos11
@@ -159,9 +159,9 @@ def read_charclip(self):
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[2] = (( pos3 / 32767 ) * 1280) * -1
                                     else:
-                                        bone.location[0] = ( pos1 / 32767 ) * 1280
-                                        bone.location[1] = ( pos2 / 32767 ) * 1280
-                                        bone.location[2] = ( pos3 / 32767 ) * 1280
+                                        bone.location[0] = pos1
+                                        bone.location[1] = pos2
+                                        bone.location[2] = pos3
                                     bone.keyframe_insert("location")
                         else:
                             pos1 = reader.short()
