@@ -47,6 +47,7 @@ def vertices(reader, version: int) -> list:
     normals = []
     uvs = []
     bone_weights = []
+   # colors = []
     bone_ids = []
     for i in range(vertex_count):
         if version == 30:
@@ -59,7 +60,7 @@ def vertices(reader, version: int) -> list:
             vertices.append((x, y, z))
         else:
             xyz = reader.vec3f()
-            print("xyz", xyz)
+           # print("xyz", xyz)
             vertices.append((xyz))
         if (version == 34 and reader.little_endian == False) or (version == 36 and is_og_ng == True):
             w = reader.float32()
@@ -106,12 +107,13 @@ def vertices(reader, version: int) -> list:
             tangent_0, tangent_1, tangent_2, tangent_3 = reader.vec4f()
 
         elif (version < 35) or (is_ng == False):
+            normal_eggs = reader.vec3f()
             if version == 38:
-                packed_1 = reader.uint32()
-                unknown_1 = reader.float32()
-                packed_2 = reader.uint32()
-                unknown_2 = reader.float32()
-            normals.append(reader.vec3f())
+                colors = reader.vec4f()
+                print("colors", colors)
+               # maybe_normals = reader.vec3f()
+               # print("maybe_normals", maybe_normals)
+            normals.append(normal_eggs)
             if (version == 34 and reader.little_endian == False) or (version == 36 and is_og_ng == True):
                 nw = reader.float32()
             if version == 38:
@@ -355,6 +357,7 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
     mesh_data["vertices"] = verts
     mesh_data["normals"] = normals
     mesh_data["uvs"] = uvs
+   # mesh_data["colors"] = colors
     mesh_data["weights"] = weights
     mesh_data["indices"] = indices
     mesh_faces = faces(reader)
@@ -521,6 +524,7 @@ def create_mesh(mesh_data) -> None:
     faces = mesh_data["faces"]
     normals = mesh_data["normals"]
     uvs = mesh_data["uvs"]
+   # colors = mesh_data["colors"]
     weights = mesh_data["weights"]
     indices = mesh_data["indices"]
     bone_names = mesh_data.get("bone_names", [])
