@@ -852,7 +852,7 @@ def obj(reader, obj_type: str, name: str, character_name: str, is_entry: bool, s
     elif obj_type == "ParticleSysAnim":
         read_particlesysanim(reader, name, self)
     elif obj_type == "CamShot":
-        read_caamshot(reader, name, self)
+        read_camshot(reader, name, self)
    # elif obj_type == "Environ":
    #     read_environ(reader, name, self)
    # elif obj_type == "EnvAnim":

@@ -695,7 +695,7 @@ def create_mesh(mesh_data) -> None:
                     new_vtx_group = obj.vertex_groups.new(name=group_name)
                     final_weight_map[group_name] = new_vtx_group
                 if wgt > 0:
-                    final_weight_map[group_name].add([vertex_index], wgt, "REPLACE")
+                    final_weight_map[group_name].add([vertex_index], wgt, "ADD")
              except:
                  pass
                 # print("issue happened in weights code")
@@ -708,7 +708,7 @@ def create_mesh(mesh_data) -> None:
                         new_vtx_group = obj.vertex_groups.new(name=group_name)
                         final_weight_map[group_name] = new_vtx_group
                     if wgt > 0:
-                        final_weight_map[group_name].add([vertex_index], wgt, "REPLACE") 
+                        final_weight_map[group_name].add([vertex_index], wgt, "ADD") 
                 else:
                     max_group_name_idx = 3
                     for idx in range(min(len(bone_names), max_group_name_idx)):
@@ -718,7 +718,7 @@ def create_mesh(mesh_data) -> None:
                             new_vtx_group = obj.vertex_groups.new(name=group_name)
                             final_weight_map[group_name] = new_vtx_group
                         if wgt > 0:
-                            final_weight_map[group_name].add([vertex_index], weight1, "REPLACE") 
+                            final_weight_map[group_name].add([vertex_index], weight1, "ADD") 
     mesh.update()
     print("Bone weights assigned to:", mesh_name)
    # print("object name3", obj.name, obj)
