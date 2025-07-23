@@ -1,0 +1,145 @@
+// N/A
+// Super: Object
+// Ext: .font
+// C++ Class: RndFont
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Font"
+    #endif
+#endif
+
+#ifndef OBJECT_FONT
+#define OBJECT_FONT
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 7 (GH1), 15 (GH2/GH2 360), 17 (TBRB)
+
+    if (version > 7)
+    {
+        read_metadata(info, super);
+    }
+
+    NumString mat; // RndMat
+
+    // Double cell size in pixels. Used for kerning?
+    float width;
+    float height;
+    float num_1; // 0, 32
+    float num_2; // Always 0
+
+    uint character_count;
+    if (version >= 16)
+    {
+        wchar_t characters[character_count];
+    }
+    else
+    {
+        char characters[character_count];
+    }
+
+    Bool some_bool;
+    if (some_bool != False)
+    {
+        uint kerning_entries_count;
+        if (version < 17)
+        {
+            // 8 bytes
+            struct KerningEntry
+            {
+                char char_1;
+                char char_2;
+                ushort reserved; // Always 0?
+
+                float space;
+            } kerning_entries[kerning_entries_count]<read=Str("\"%c\" \"%c\" (%f)", this.char_1, this.char_2, this.space)>;
+        }
+        else
+        {
+            // 8 bytes
+            struct KerningEntryWide
+            {
+                wchar_t char_1;
+                wchar_t char_2;
+                float space;
+            } kerning_entries[kerning_entries_count]<read=Str("\"%c\" \"%c\" (%f)", this.char_1, this.char_2, this.space)>;
+        }
+    }
+
+    if (version < 8) return; // No more data for GH1 version
+
+    NumString font_name; // RndFont: Owner?
+
+    Bool bool_1;
+    Bool bool_2;
+
+    // Matches resolution of texture linked in material
+    uint tex_width;
+    uint tex_height;
+
+    // Multiply by bitmap dimensions to get size in pixels
+    Vector2 cellSize;
+
+    // Indexed bounding box dimensions for characters?
+    // x = char abs x_pos in bitmap
+    // y = char abs y_pos in bitmap
+    // w = char width
+    // h = char height
+    if (version < 17)
+    {
+        local uint entry_count = 256;
+        
+        // 16 bytes
+        struct SomeEntry
+        {
+            Vector4 value;
+        } entries[entry_count]<read=Str("%s", readVector4(this.value))>;
+    }
+    else
+    {
+        uint entry_count;
+        
+        // 18 bytes
+        struct SomeEntryIndexed
+        {
+            ushort index;
+            Vector4 value;
+        } entries[entry_count]<read=Str("%d %s", this.index, readVector4(this.value))>;
+    }
+
+    // Usually empty
+    if (version > 16) NumString unknown_font; // RndFont ObjPtr
+} Font;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Font")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        // TODO
+        /*if (obj_version <= 15)
+        {
+            info.version = 24;
+        }*/
+    }
+
+    Font font(info, False);
+}
+
+#endif
+
+#endif

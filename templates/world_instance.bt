@@ -1,0 +1,50 @@
+// Shared instance of a RndDir
+// Super: RndDir
+// Ext: inst
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "world_instance"
+    #endif
+#endif
+
+#ifndef WORLD_INSTANCE
+#define WORLD_INSTANCE
+
+#include "common.bt"
+#include "rnd_dir.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (TBRB/GDRB), 2 (DC1)
+    read_metadata(info, super);
+   // NumString instance_file;
+
+    // ObjectDir::SaveInlined
+   // RndDir rnd_dir(info, True, inlined);
+} WorldInstance;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "world_instance")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    WorldInstance world_instance(info, False);
+}
+
+#endif
+
+
+#endif

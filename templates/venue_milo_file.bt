@@ -1,0 +1,325 @@
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "MiloFile"
+    #endif
+
+    #define IN_MILO_FILE 1
+#endif
+
+#ifndef MILO_FILE
+#define MILO_FILE
+
+struct MiloFile;
+
+#include "char_clip_set.bt"
+#include "character.bt"
+#include "common.bt"
+#include "object_dir.bt"
+#include "objects.bt"
+#include "p9_character.bt"
+#include "panel_dir.bt"
+#include "particle_sys.bt"
+#include "random_group_seq.bt"
+#include "rnd_dir.bt"
+#include "sfx.bt"
+#include "synth_dir.bt"
+#include "ui_label_dir.bt"
+#include "world_dir.bt"
+#include "world_instance.bt"
+
+typedef struct
+{
+    NumString type;
+    NumString name;
+
+    local uint offset;
+    local uint size;
+
+    local string type_text = type.text;
+    local string name_text = name.text;
+} MiloEntry<read=read_milo_entry>;
+
+string read_milo_entry(MiloEntry& me)
+{
+    local string s;
+    SPrintf(s, "%s: %s", me.type.text, me.name.text);
+    return s;
+}
+
+typedef struct (int milo_version)
+{
+    if (milo_version > 10)
+    {
+        NumString dir_type; // class_name
+        NumString dir_name;
+
+        // String table info for names/classes
+        uint string_table_string_count;
+        uint string_table_used_size;
+
+        if (version >= 32) Bool unknown; // Always false?
+    }
+
+    int entry_count;
+    if (entry_count > 0)
+    {
+        if (version <= 6)
+        {
+            struct MiloEntryFreq
+            {
+                string type;
+                string name;
+                Bool unknown_bool; // Always 1?
+                
+                local uint offset;
+                local uint size;
+
+                local string type_text = type;
+                local string name_text = name;
+            } entries[entry_count]<read=Str("%s: %s", this.type, this.name), optimize=false>;
+        }
+        else
+        {
+            MiloEntry entries[entry_count]<optimize=false>;
+        }
+    }
+} MiloEntries<read=read_milo_entries>;
+
+string read_milo_entries(MiloEntries& mes)
+{
+    local string s;
+    
+    if (exists(mes.dir_type))
+    {
+        SPrintf(s, "%s: %s (%d entries)", mes.dir_type.text, mes.dir_name.text, mes.entry_count);
+    }
+    else
+    {
+        SPrintf(s, "(%d entries)", mes.entry_count);
+    }
+    
+    return s;
+}
+
+typedef struct
+{
+    int ext_count;
+    NumString ext_paths[ext_count]<optimize=false>;
+} ExternalResources<read=read_ext_resources>;
+
+
+string read_ext_resources(ExternalResources& er)
+{
+    local string s;
+    SPrintf(s, "(%d external resources)", er.ext_count);    
+    return s;
+}
+
+typedef struct (SystemInfo& info, string class_name, string name, Bool is_entry)
+{
+    local string class_name = class_name;
+    local string name = name;
+
+    local byte is_dir = 0;
+    local byte should_read_milo = 0;
+
+    switch (class_name)
+    {
+        case "Cam":
+            Cam object(info, False);
+            break;
+        case "Character":
+            Character object(info, False, False, is_entry);
+            is_dir = 1;
+
+            if (object.rnd_dir.obj_dir.inline_proxy == True)
+            {
+                should_read_milo = 1;
+            }
+            break;
+        case "CharClipSet":
+            CharClipSet object(info, False, False, is_entry);
+            is_dir = 1;
+
+            // proxy_file can still be specified even when inlined
+            // TODO: Use same check for other types?
+            if (object.obj_dir.inline_proxy == True)
+            {
+                should_read_milo = 1;
+            }
+            break;
+        case "Group":
+            Group object(info, False);
+            break;
+        case "ObjectDir":
+            ObjectDir object(info, False, False);
+            is_dir = 1;
+            should_read_milo = 1;
+            break;
+        case "Mat":
+            Mat object(info, False);
+            break;
+        case "MoggClip":
+            MoggClip object(info, False);
+            break;
+        case "P9Character":
+            P9Character object(info, False, False, is_entry);
+            is_dir = 1;
+            break;
+        case "P9SongPref":
+            P9SongPref object(info, False);
+            break;
+        case "PanelDir":
+            PanelDir object(info, False, False, is_entry);
+            is_dir = 1;
+            break;
+        case "ParticleSys":
+            ParticleSys object(info, False);
+            break;
+        case "RandomGroupSeq":
+            RandomGroupSeq object(info, False);
+            break;
+        case "RndDir":
+            // Doesn't seem to ever write dir for gh2 milos
+            RndDir object(info, False, False);
+            break;
+        case "Sfx":
+            Sfx object(info, False);
+            break;
+        case "SynthDir":
+            SynthDir object(info, False, False);
+            is_dir = 1;
+            should_read_milo = 1;
+            break;
+        case "SynthSample":
+            SynthSample object(info, False);
+            break;
+        case "Tex":
+            Tex object(info, False);
+            break;
+        case "Trans":
+            Trans object(info, False);
+            break;
+        case "UILabelDir":
+            UILabelDir object(info, False, False);
+            is_dir = 1;
+            break;
+        case "WorldDir":
+            WorldDir object(info, False, False);
+            is_dir = 1;
+            break;
+        case "WorldInstance":
+            // Inlined so DirLoader::SaveObjects not needed
+            WorldInstance object(info, False, True);
+            break;
+        default:
+            local int file_size = findNextFile();
+            if (file_size == -1) return;
+
+            byte data[file_size];
+            break;
+    }
+
+    uint padding<format=hex>;
+
+    if (!FEof() && is_dir == 1 && is_entry == True && (should_read_milo == 1 /*|| (ReadInt() == info.version)*/))
+    {
+        MiloFile dir(info);
+    }
+} Object<read=read_object>;
+
+string read_object(Object& obj)
+{
+    local string s;
+    SPrintf(s, "%s: %s", obj.class_name, obj.name);
+    return s;
+}
+
+
+// DirLoader::SaveObjects
+void read_milo_files(SystemInfo& info, MiloFile& milo)
+{
+    local uint i;
+
+    local string type;
+    local string name;
+
+    for (i = 0; i < milo.meta.entry_count; i++)
+    {
+        type = milo.meta.entries[i].type_text;
+        name = milo.meta.entries[i].name_text;
+
+        Object objects(info, type, name, True);
+    }
+}
+
+typedef struct (SystemInfo& info, MiloFile& milo)
+{
+    read_milo_files(info, milo);
+} MiloFileEntries;
+
+typedef struct (SystemInfo& info)
+{
+    int version; // 6 (Freq), 10 (GH1), 24 (GH2), 25 (GDRB), 28 (RB3/DC1), 32 (DC2/RBB/DC3)
+    MiloEntries meta(version);
+
+    if (version == 10)
+    {
+        // Used in GH1-era games
+        // Paths usually reference external textures
+        // Note: Can be collection of nulls
+        ExternalResources ext_resources;
+    }
+    else if (version > 10)
+    {
+        local string type = meta.dir_type.text;
+        local string name = meta.dir_name.text;
+
+        Object dir_entry(info, type, name, False);
+    }
+
+    if (meta.entry_count > 0)
+    {
+        MiloFileEntries children(info, this);
+    }
+} MiloFile;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "MiloFile")
+{
+    local int milo_version = guess_version();
+
+    if (milo_version == -1)
+    {
+        // Read magic
+        LittleEndian();
+        local uint magic = ReadUInt(FTell());
+
+        if (magic != 0xCABEDEAF)
+        {
+            Printf("FATAL: Milo is compressed. Can't read.");
+            return;
+        }
+
+        // Skip to first block offset
+        local uint block_start = ReadUInt(FTell() + 4);
+        FSeek(FTell() + block_start);
+        milo_version = guess_version();
+    }
+
+    local SystemInfo info;
+    info.version = milo_version;
+    info.platform = X360; // TODO: Get platform from file extension
+
+    MiloFile milo(info);
+
+    if (!FEof())
+    {
+        Printf("WARNING: End of file not reached. Milo may not have been properly parsed.");
+    }
+}
+
+#endif
+
+#endif

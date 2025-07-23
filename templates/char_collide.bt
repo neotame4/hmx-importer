@@ -1,0 +1,82 @@
+// Does all interpolation for the forearm.
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .coll
+// C++ Class: CharCollide
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharCollide"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_COLLIDE
+#define OBJECT_CHAR_COLLIDE
+
+#include "common.bt"
+#include "trans.bt"
+
+
+typedef enum
+{
+    kPlane,    kSphere,    kInsideSphere,    kCigar,    kInsideCigar
+} SHAPE_ENUM;
+
+
+typedef struct (SystemInfo& info, Bool super)
+{
+        int version; // 1-4 ??, 5 (TBRB/GRDB/some RB3), 6 ??, 7(RB3),)
+        read_metadata(info, super);
+       // int unk0;
+        Trans trans(info, True);
+        SHAPE_ENUM mShape;
+        float mOrigRadius;
+        float mOrigLength;
+        float brass_monky;
+        int that_funky_monky;
+        float brass_monky_junky;
+        if (version >= 7) // RB3
+        {
+            float bread;
+            float bread;
+            float bread;
+            float bread;
+            float bread;
+            float bread;
+            float mCurRadius; // 0x178            float mCurLength; // 0x180           // Bool mMeshYBias; // 0x188            float unk18c;            float unk190;            Vector3 unk194;            Vector3 unk1a0;
+            NumString some_name;
+            Bool sort_in_world; // Sort by distance to current camera per frame.\nThis has a CPU cost if there are many objects
+        }
+        
+  //  Shape mShape; // 0x90  //  int mFlags; // 0x94  //  ObjPtr<RndMesh, ObjectDir> mMesh; // 0x98  //  CSHA1::Digest mDigest; // 0xa4  //  CharCollideStruct unk_structs[8]; // 0xb8 - 0x134, inclusive  //  float mOrigRadius[2]; // 0x138 - radius0 at 0x138, radius1 at 0x13c  //  float mOrigLength[2]; // 0x140 - length0 at 0x140, length1 at 0x144  //  Transform unk148; // 0x148  //  float mCurRadius[2]; // 0x178  //  float mCurLength[2]; // 0x180  //  bool mMeshYBias; // 0x188  //  float unk18c;  //  float unk190;
+
+
+} CharCollide;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharCollide")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharCollide char_collide(info, False);
+}
+
+#endif
+
+
+#endif

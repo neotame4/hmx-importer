@@ -1,0 +1,101 @@
+// An environment object is drawable. When drawn it sets up dynamic lighting and fogging for subsequently drawn siblings.
+// Super: Draw
+// Ext: .env
+// C++ Class: RndEnviron
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Environ"
+    #endif
+#endif
+
+#ifndef OBJECT_ENVIRON
+#define OBJECT_ENVIRON
+
+#include "common.bt"
+#include "draw.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (GH1), 5 (GH2/GH2 360), 9 (TBRB/GDRB)
+
+    if (version > 1) read_metadata(info, super);
+    if (version < 3) Draw draw(info, True);
+    
+    // Dynamic lights for this environment
+    struct Lights
+    {
+        uint lights_count;
+        NumString lights[lights_count]<optimize=false>; // Light
+    } lights;
+
+    Color ambient_color; // Ambient color for this environment
+    float ambient_alpha;
+
+    float fog_start;     // Fog start distance
+    float fog_end;       // Fog end distance
+
+    if (version < 1) uint ignore_num;
+
+    Color fog_color; // Fog color
+    float fog_alpha; // (Guessing field name...)
+
+    // Whether fog is enabled for this environment
+    if (version < 1) uint fog_enable;
+    else Bool fog_enable;
+
+    if (version > 3) Bool animate_from_preset; // Whether this environment should be animated by light presets
+
+    if (version > 4)
+    {
+        // Next-generation graphics settings
+        Bool fade_out;    // Fade out the scene over distance
+        float fade_start; // World space distance from camera to start fading
+        float fade_end;   // World space distance fade out completely
+
+        if (version > 5) float fade_max;
+    }
+
+    if (version > 8)
+    {
+        NumString fade_ref; // RndTransformable
+
+        float left_out;
+        float left_opaque;
+        float right_opaque;
+        float right_out;
+    }
+
+    if (version > 7)
+    {
+        Bool use_color_adjust;
+        
+        // TODO: RndColorXfm::Load()
+    }
+} Environ;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Environ")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    Environ env(info, False);
+}
+
+#endif
+
+#endif

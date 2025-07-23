@@ -1,0 +1,68 @@
+// Does all interpolation for the forearm.
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .texblend
+// C++ Class: texblend
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "TexBlend"
+    #endif
+#endif
+
+#ifndef OBJECT_TEX_BLEND
+#define OBJECT_TEX_BLEND
+
+#include "common.bt"
+
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 2 (TBRB)
+    read_metadata(info, super);
+    int tex_count;
+    Bool something;
+    float brass_monky;          // no clue
+    float that_funky_monky;     // no clue
+    float brass_monky_junky;    // no clue
+    float funky_monky;          // no clue
+    float funky_monky;          // no clue
+    local int i;
+    for (i = -1; i < tex_count; i++)
+    {
+        NumString tex;     // Trans - The filename
+    }
+    int texblendctl_count; 
+    if (texblendctl_count > 0) NumString texblendctl[texblendctl_count]<optimize=false>;
+    float unk6c;
+    float mControllerInfluence;  // no clue
+
+} TexBlend;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "TexBlend")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    TexBlend texblend(info, False);
+}
+
+#endif
+
+
+#endif

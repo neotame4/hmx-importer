@@ -1,0 +1,81 @@
+// Button with jitter, text fitting, alignment, and kerning options
+// Super: UIButton
+// Ext: .btn
+// C++ Class: BandButton
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "BandButton"
+    #endif
+#endif
+
+#ifndef OBJECT_BAND_BUTTON
+#define OBJECT_BAND_BUTTON
+
+#include "common.bt"
+#include "ui_button.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 10 (GH2/GH2 360)
+    UIButton ui_button(info, False);
+
+    if (version < 12)
+    {
+        FIT_TEXT_ENUM fit_text; // Whether or not to force this label into specified width/height
+        float width;            // Maximum width this label should take up
+        float height;           // Maximum height this label should take up
+    }
+
+    // Note: leading/kerning might be switched. Not 100% sure yet.
+    if (version < 11)
+    {
+        float leading; // Space between lines
+        ALIGNMENT_ENUM alignment; // Text alignment
+    }
+
+    if (version < 14)
+    {
+        // deltaX, deltaZ, deltaRot?
+        Vector4 vector_1;
+    }
+
+    if (version < 11)
+    {
+        Bool all_caps;   // Set text to uppercase?
+        float kerning;   // Additional kerning applied to text object
+        float text_size; // Text size of underlying text object 
+    }
+
+    if (version < 12)
+    {
+        float wrap_width; // Corresponds to RndText wrap width
+    }
+
+    // Still more io for version > 10
+} BandButton;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "BandButton")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    BandButton band_button(info, False);
+}
+
+#endif
+
+#endif

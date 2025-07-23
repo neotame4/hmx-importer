@@ -1,0 +1,77 @@
+// A Character system bone, conveys degrees of freedom to animate in a CharClip, lives in CharBoneDir (CharClipSet in GH2)
+// Super: Trans
+// Ext: .mesh
+// C++ Class: ??
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharBone"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_BONE
+#define OBJECT_CHAR_BONE
+
+#include "common.bt"
+#include "trans.bt"
+
+typedef enum
+{
+    kRotNone = 9,
+    kRotFull = 2,
+    kRotX = 3,
+    kRotY = 4,
+    kRotZ = 5,
+} ROTATION_ENUM;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 2 (GH2), 3 (GH2 360), 8 (TBRB)
+    if (version >= 2) read_metadata(info, super);
+
+    Trans trans(info, True);
+
+    if (version < 7)
+    {
+        Bool position; // Animate position or not
+        Bool scale;    // Animate scale or not
+    }
+    else
+    {
+        uint position_context;
+        uint scale_context;
+    }
+
+    ROTATION_ENUM rotation; // What axis or axes to animate
+    if (version < 5) ROTATION_ENUM rotation2; // Not sure... ignored in later games
+
+    if (version >= 3) float unknown; // 1.0
+} CharBone;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharBone")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        if (obj_version == 2)
+        {
+            info.version = 24;
+        }
+    }
+
+    CharBone char_bone(info, False);
+}
+
+#endif
+
+#endif

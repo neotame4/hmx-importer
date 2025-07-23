@@ -1,0 +1,155 @@
+// A camera shot. This is an animated camera path with keyframed settings.
+// Super: Anim
+// Ext: .shot
+// C++ Class: CamShot
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CamShot"
+    #endif
+#endif
+
+#ifndef OBJECT_CAM_SHOT
+#define OBJECT_CAM_SHOT
+
+#include "anim.bt"
+#include "common.bt"
+
+typedef enum
+{
+    kCrowdRotateNone,
+    kCrowdRotateFace,
+    kCrowdRotateAway
+} CROWD_ROTATE;
+
+typedef struct
+{
+    int version; // 42 (TBRB), 49 (GDRB)
+
+    // Both RndTransformable
+    NumString entity;  // The entity to attach to
+    NumString subpart; // Subpart of the parent to attach to
+} ShotTarget;
+
+typedef struct
+{
+    float floats[22];
+
+    int targets_count;
+    if (targets_count > 0) ShotTarget targets[targets_count]<optimize=false>;
+
+    ShotTarget parent;       // Whether to take the parent object's rotation into account
+    ShotTarget focal_target; // The focal point when calculated depth of field
+
+    Bool use_parent_rotation;
+
+    float more_floats[5];
+    Bool parent_first_frame;
+} CamShotFrame;
+
+typedef struct
+{
+    int value_1;
+    int value_2;
+} CamShotCrowdEntry;
+
+typedef struct // Inherit from WorldCrowd?
+{
+    NumString crowd; // WorldCrowd
+    CROWD_ROTATE crowd_rotate;
+
+    int entries_count;
+    if (entries_count > 0) CamShotCrowdEntry entries[entries_count]<optimize=false>;
+
+    int unknown; // 5 (Default: -1?)
+} CamShotCrowd;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 42 (TBRB), 49 (GDRB)
+    read_metadata(info, super);
+
+    Anim anim(info, True);
+
+    int keyframes_count;
+    if (keyframes_count > 0) CamShotFrame keyframes[keyframes_count]<optimize=false>;
+
+    Bool looping;
+    int loop_keyframe;
+    float near_plane;
+    float far_plane; // 100, 3000
+
+    Bool use_depth_of_field;
+    float filter;
+    float clamp_height;
+
+    NumString path; // RndTransAnim symbol
+    
+    if (version >= 49)
+    {
+        NumString unk_1;
+        NumString unk_2;
+        NumString relative_to; // Trans
+    }
+
+    float fade_time;
+    NumString category; // Symbol
+    int platform_only; // Enum
+
+    if (version >= 49)
+    {
+        Bool unk_bool_1;
+        NumString unk_3;
+    }
+
+    int hide_list_count; // RndDrawable
+    if (hide_list_count > 0) NumString hide_list[hide_list_count]<optimize=false>;
+
+    int show_list_count; // RndDrawable
+    if (show_list_count > 0) NumString show_list[show_list_count]<optimize=false>;
+
+    NumString glow_spot; // Spotlight
+
+    int draw_overrides_count; // RndDrawable
+    if (draw_overrides_count > 0) NumString draw_overrides[draw_overrides_count]<optimize=false>;
+
+    int postproc_overrides_count; // PostProc
+    if (postproc_overrides_count > 0) NumString postproc_overrides[postproc_overrides_count]<optimize=false>;
+
+    Bool ps3_per_pixel;
+    int flags; // 0, 1, 493119, 463393, 476159
+
+    NumString sync_anim; // Anim
+
+    int crowds_count;
+    if (crowds_count > 0) CamShotCrowd crowds[crowds_count]<optimize=false>;
+
+    if (version >= 49)
+    {
+        Bool unk_bool_2; // Always 0?
+    }
+} CamShot;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CamShot")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CamShot cam_shot(info, False);
+}
+
+#endif
+
+#endif

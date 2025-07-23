@@ -1,0 +1,174 @@
+#ifndef TBRB_PROPANIM
+#define TBRB_PROPANIM
+
+/*
+    local string s;
+    SPrintf(s, "(%f, %f, %f), r=%f", sp.x, sp.y, sp.z, sp.radius);
+    return s;
+*/
+
+#include "anim.bt"
+#include "common.bt"
+
+typedef struct
+{
+    float evValue;
+    float evTime;
+} TimeEvent0<read=getTimeEvent0Text>;
+
+string getTimeEvent0Text(TimeEvent0& ev)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %.2f", ev.evTime, ev.evValue);
+    return s;
+}
+
+typedef struct
+{
+    Color color;
+    float evTime;
+} TimeEvent1<read=getTimeEvent1Text>;
+
+string getTimeEvent1Text(TimeEvent1& ev)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %s", ev.evTime, readColor(ev.color));
+    return s;
+}
+
+typedef struct
+{
+    NumString evName1; // Milo source? Usually empty for song.anim
+    NumString evName2;
+    float evTime;
+} TimeEvent2<read=getTimeEvent2Text>;
+
+string getTimeEvent2Text(TimeEvent2& ev)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %s (%s)", ev.evTime, readNumString(ev.evName2), readNumString(ev.evName1));
+    return s;
+}
+
+typedef struct
+{
+    Bool enabled;
+    float evTime;
+} TimeEvent3<read=getTimeEvent3Text>;
+
+string getTimeEvent3Text(TimeEvent3& ev)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %s", ev.evTime, readBoolString(ev.enabled));
+    return s;
+}
+
+typedef struct 
+{
+    Vector4 rot;
+    float evTime;
+} TimeEvent4<read=getTimeEvent4Text>;
+
+string getTimeEvent4Text(TimeEvent4& ev)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %s", ev.evTime, readVector4(ev.rot));
+    return s;
+};
+
+typedef struct 
+{
+    Vector3 pos;
+    float evTime;
+} TimeEvent5<read=getTimeEvent5Text>;
+
+string getTimeEvent5Text(TimeEvent5& ev)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %s", ev.evTime, readVector3(ev.pos));
+    return s;
+};
+
+typedef struct 
+{
+    NumString evName;
+    float evTime;
+} TimeEvent6<read=getTimeEvent6Text>;
+
+string getTimeEvent6Text(TimeEvent6& ev)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %s", ev.evTime, readNumString(ev.evName));
+    return s;
+};
+
+typedef struct
+{
+    int num1;
+    int num2; // Should match num1
+    
+    NumString directorType;
+    
+    DTB property;
+    int unknownEnum1; // 0, 1, 2, 4
+
+    NumString secondaryPropName; // Empty?
+    int unknownEnum2; // 0, 1, 2, 3, 5, 6
+    
+    int eventCount;
+    switch (num1)
+    {
+        case 0:
+            TimeEvent0 events[eventCount];
+            break;
+        case 1:
+            TimeEvent1 events[eventCount];
+            break;
+        case 2:
+            TimeEvent2 events[eventCount]<optimize=false>;
+            break;
+        case 3:
+            TimeEvent3 events[eventCount];
+            break;
+        case 4:
+            TimeEvent4 events[eventCount];
+            break;
+        case 5:
+            TimeEvent5 events[eventCount];
+            break;
+        case 6:
+            TimeEvent6 events[eventCount]<optimize=false>;
+            break;
+    }
+} PropAnimEvent<read=getPropEventText>;
+
+string getPropEventText(PropAnimEvent& ev)
+{
+    local string s;
+    SPrintf(s, "%s | %s | %d | (%d events)", readNumString(ev.directorType), readNumString(ev.property.root.children[0].value), ev.num1, ev.eventCount);
+    return s;
+}
+
+struct PropAnim
+{
+    int version; // Always 11
+    int subVersion; // Always 2
+    NumString name;
+
+    byte zeroes[5];
+    
+    int always4;
+
+    float totalTime;
+    int always1;
+    
+    if (version >= 12)
+    {
+        byte always0;
+    }
+
+    int bandObjCount;
+    PropAnimEvent evs[bandObjCount]<optimize=false>;
+};
+
+#endif

@@ -1,0 +1,102 @@
+// This class implements a cube map intended for environment mapping
+// Super: (None)
+// Ext: .cube
+// C++ Class: RndCubeTex?
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CubeTex"
+    #endif
+#endif
+
+#ifndef OBJECT_CUBE_TEX
+#define OBJECT_CUBE_TEX
+
+#include "bitmap.bt"
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (GH2 360), 2 (TBRB)
+    read_metadata(info, super);
+
+
+    uint bpp; // 4
+    uint width_height; // 32, 64, 128
+    if (version >= 2)
+    {
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+        uint bpp; // 4
+    }
+    
+    NumString right_ext_path;
+    NumString left_ext_path;
+    NumString top_ext_path;
+    NumString bottom_ext_path;
+    NumString front_ext_path;
+    NumString back_ext_path;
+    
+   // Bool some_bool;
+
+    Bitmap right;
+    Bitmap left;
+    Bitmap top;
+    Bitmap bottom;
+    Bitmap front;
+    Bitmap back;
+} CubeTex;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CubeTex")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 24;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CubeTex cube_tex(info, False);
+}
+
+#endif
+
+#endif

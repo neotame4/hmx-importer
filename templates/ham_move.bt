@@ -1,0 +1,92 @@
+// Data associated with a ham Move
+// Super: PropAnim
+// Ext: .move
+// C++ Class: ???
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "HamMove"
+    #endif
+#endif
+
+#ifndef OBJECT_HAM_MOVE
+#define OBJECT_HAM_MOVE
+
+#include "common.bt"
+#include "prop_anim.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    // 17 (DC1 Beta), 28 (DC1)
+    int version;
+    PropAnim prop_anim(info, super);
+    
+    uint always_0;
+    NumString tex; // Tex - Texture to describe the move
+    
+    Bool unknown_1;
+    if (version >= 28) Bool unknown_2;
+    
+    uint lang_count; // Always 6?
+    if (lang_count > 0)
+    {
+        struct LangName
+        {
+            NumString loc;
+            NumString name;
+        } lang[lang_count]<optimize=false, read=Str("%s - %s", this.loc.text, this.name.text)>;
+    }
+    
+    uint num_1;
+    uint num_2;
+    uint num_3;
+    uint num_4; // 1/2/3
+    
+    uint frame_count;
+    if (frame_count > 0 && version >= 28)
+    {
+        // 1108 bytes
+        struct LargeEntry
+        {
+            uint unknown;
+            uint always_16;
+            
+            Vector3 vec_1;
+            uint num_1;
+            
+            byte unk_byte; // Bool?
+
+            // TODO
+        } frames;
+    }
+    else if (frame_count > 0)
+    {
+        // 24 bytes
+        struct MoveFrame
+        {
+            float pos;
+            uint num_1; // 1, 2
+            uint num_2; // 1, 2
+            uint num_3; // 0, 1
+            uint num_4; // 0, 1
+            uint num_5; // 1
+        } frames[frame_count]<read=Str("Pos: %.2f, Value: (%d, %d, %d, %d, %d)", this.pos, this.num_1, this.num_2, this.num_3, this.num_4, this.num_5)>;
+    }
+    
+    uint always_0;
+} HamMove;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "HamMove")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 28;
+
+    HamMove ham_move(info, False);
+}
+
+#endif
+
+#endif

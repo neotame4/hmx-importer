@@ -1,0 +1,161 @@
+// Base class for transformable objects.
+// Trans objects have a 3D position, rotation, and scale.
+// Super: (None)
+// Ext: .trans, .mesh
+// C++ Class: RndTransformable
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Trans"
+    #endif
+#endif
+
+#ifndef OBJECT_TRANS
+#define OBJECT_TRANS
+
+#include "common.bt"
+
+typedef enum
+{
+    kConstraintNone,
+    kConstraintLocalRotate,
+    kConstraintParentWorld,
+    kConstraintLookAtTarget,
+    kConstraintShadowTarget,
+    kConstraintBillboardZ,
+    kConstraintBillboardXZ,
+    kConstraintBillboardXYZ,
+    kConstraintFastBillboardXYZ
+} CONSTRAINT_ENUM;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 5 (Freq/Amp Demo/Amp), 8 (AntiGrav/GH1), 9 (GH2 4-song/GH2/GH2 360/RB1/TBRB/GDRB/RB3/DC2)
+    read_metadata(info, super);
+
+    Matrix localXfm;
+    Matrix worldXfm;
+
+    if (version < 9)
+    {
+        // GH1 and before
+        int trans_count;
+        if (trans_count > 0)
+        {
+            // Trans types?
+            if (info.version <= 6) NullTerminatedString trans_objects[trans_count]<optimize=false>;
+            else NumString trans_objects[trans_count]<optimize=false>;
+        }
+    }
+
+    // Trans constraint for the object (Constraint + target are used together)
+  //  if (version > 6)
+  //  {
+  //      CONSTRAINT_ENUM constraint;
+  //  }
+    if (version == 6)
+    {
+        uint constraint; // Parse as bitfield?
+    }
+    if (version >= 8)
+    {
+        uint constraint; // Parse as bitfield?
+    }
+    else if (version < 3)
+    {
+        if (version > 0)
+        {
+            uint some_number;
+        }
+    }
+    else // 3, 4, 5
+    {
+        // Also constraint?
+        uint some_flags;
+    }
+
+    // Load rest
+    if (version < 7)
+    {
+        uint unknown_1;
+        uint unknown_2;
+        uint unknown_3;
+    }
+
+    if (version < 5)
+    {
+        Bool unknown_bool;
+    }
+
+    if (version < 2)
+    {
+        // Related to drawable?
+        Vector4 unknown_floats;
+    }
+
+    if (version > 5)
+    {
+       // NumString target; // Target according to the constraint
+       if (version >= 8)
+       {
+          NumString target;
+       }
+       else
+          uint target;
+    }
+
+
+    if (version > 6)
+    {
+        Bool preserve_scale; // Preserve scale if applying dynamic constraint (usually false)
+    }
+    
+    if (version == 7)
+    {
+        uint unknown_1;
+        uint unknown_2;
+        uint unknown_3;
+        uint unknown_4;
+    }
+
+    if (version < 9)
+    {
+        // Set transparent to 0xb4?
+        //if (version == 6 && constraint == 4)
+
+        if (version >= 7)
+        {
+            NumString parent; // Object this is linked to
+        }
+    }
+    else
+    {
+        NumString parent; // Object this is linked to
+    }
+} Trans;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Trans")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    Trans trans(info, False);
+}
+
+#endif
+
+
+#endif

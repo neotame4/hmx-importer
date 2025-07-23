@@ -1,0 +1,77 @@
+// A sequence which plays other sequences.  Abstract base class.
+// Super: Sequence
+// Ext: .cue
+// C++ Class: GroupSeq
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "GroupSeq"
+    #endif
+#endif
+
+#ifndef OBJECT_GROUP_SEQ
+#define OBJECT_GROUP_SEQ
+
+#include "common.bt"
+#include "draw.bt"
+
+typedef struct(SystemInfo& info, Bool super)
+{
+    int version; // 3 (RB3)
+
+    if(2 < version)
+    {
+        read_metadata(info, super);
+    }
+
+    float avg_vol;
+    float vol_spread;
+    float avg_transpose;
+    float transpose_spread;
+    float avg_pan;
+    float pan_spread;
+
+    if(1 < version)
+    {
+        Bool can_stop;
+    }
+} Sequence;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 3 (RB3)
+
+    if(1 < version)
+    {
+        Sequence sequence(info, super);
+
+        // game technically has a version check here to do different stuff when reading these children, but this is just for internal logic (not how things are saved/loaded from the file)
+        int children_count;
+        NumString children[children_count]<optimize=false>;
+
+    }
+} GroupSeq;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "GroupSeq")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    GroupSeq group_seq(info, False);
+}
+
+#endif
+
+#endif

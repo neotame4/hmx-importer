@@ -1,0 +1,77 @@
+// BLACK MAGIC
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .lookat
+// C++ Class: CharLookAt
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharLookAt"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_LOOK_AT
+#define OBJECT_CHAR_LOOK_AT
+
+#include "common.bt"
+#include "trans.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version;
+    uint bread;
+    float bread1;
+    float bread2;
+    NumString bread3;
+    int bread;
+    float bread;
+    float bread;
+    float count;
+   // if (count > 0) NumString names[count]<optimize=false>;
+    float transcount;
+    int bread5;
+    float bread6;
+   // if (bread6 > 0) NumString names[bread6]<optimize=false>;
+    int bread;
+    float bread;
+    float bread;
+    float bread;
+    float bread;
+    float bread;
+    float bread;
+    float bread;
+    float bread;
+   // float bread;
+    NumString name;
+
+    
+
+} CharLookAt;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharLookAt")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharLookAt char_look_at(info, False);
+}
+
+#endif
+
+
+#endif

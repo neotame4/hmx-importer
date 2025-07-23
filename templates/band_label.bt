@@ -1,0 +1,86 @@
+// Label with jitter, and text fitting, alignment, and kerning options
+// Super: UILabel
+// Ext: .lbl
+// C++ Class: BandLabel
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "BandLabel"
+    #endif
+#endif
+
+#ifndef OBJECT_BAND_LABEL
+#define OBJECT_BAND_LABEL
+
+#include "common.bt"
+#include "ui_label.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 12 (GH2/GH2 360)
+    UILabel ui_label(info, False);
+
+    if (version < 14)
+    {
+        FIT_TEXT_ENUM fit_text; // Whether or not to force this label into specified width/height
+        float width;            // Maximum width this label should take up
+        float height;           // Maximum height this label should take up
+    }
+
+    // Note: leading/kerning might be switched. Not 100% sure yet.
+    if (version < 13)
+    {
+        float leading; // Space between lines
+        ALIGNMENT_ENUM alignment; // Text alignment
+    }
+
+    if (version < 15)
+    {
+        // deltaX, deltaZ, deltaRot?
+        Vector4 vector_1;
+    }
+
+    if (version < 13)
+    {
+        Bool all_caps;   // Set text to uppercase?
+        float kerning;   // Additional kerning applied to text object
+        float text_size; // Text size of underlying text object 
+    }
+
+    if (version < 14)
+    {
+        float wrap_width; // Corresponds to RndText wrap width
+    }
+
+    if (version < 15)
+    {
+        Color4 color; // Set the specific color for this label
+    }
+
+    // Still more io for version > 12
+} BandLabel;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "BandLabel")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    BandLabel band_label(info, False);
+}
+
+#endif
+
+#endif

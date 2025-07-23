@@ -1,0 +1,265 @@
+// An animated clip of a skeleton playable in milo
+// Super: Anim
+// Ext: .part
+// C++ Class: RndParticleSys
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "ParticleSys"
+    #endif
+#endif
+
+#ifndef OBJECT_PARTICLE_SYS
+#define OBJECT_PARTICLE_SYS
+
+#include "anim.bt"
+#include "common.bt"
+#include "draw.bt"
+#include "trans.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    // 30 (GH2-360), 36 (RB1), 37 (RB2/TBRB/GDRB/RB3/DC1)
+    int version;
+    read_metadata(info, super);
+
+    Anim anim(info, True);
+    if(version == 30)
+    {
+       byte bread;
+       int bread;
+       float bread;
+       int bread;
+    }
+    Trans trans(info, True);
+    Draw draw(info, True);
+    
+    if(version == 7)
+    {
+        NumString bread;
+    }
+    
+    Vector2 life;
+
+    if(35 < version)
+    {
+        float height_ratio;
+    }
+    if(version == 12)
+    {
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        Bool bread;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        Matrix localXfm;
+        Matrix worldXfm;
+        float bread;
+        float bread;
+        float bread;
+        NumString material;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        float bread;
+        short bread;
+        NumString part;
+        Bool bread;
+    }
+
+    if(version > 12)
+    {
+       Vector3 pos_low;
+       Vector3 pos_high;
+
+       Vector2 speed;
+       Vector2 pitch;
+       Vector2 yaw;
+       Vector2 emit_rate;
+ 
+       if(32 < version)
+       {
+           int max_bursts;
+           Vector2 burst_interval;
+           Vector2 burst_peak;
+           Vector2 burst_length;
+       }
+
+       Vector2 start_size;
+
+       if(15 < version)
+       {
+           Vector2 delta_size;
+       }
+
+       Color4 startColorLow;
+       Color4 startColorHigh;
+
+       Color4 endColorLow;
+       Color4 endColorHigh;
+
+       NumString bounce;
+
+       Vector3 force;
+
+       if(version >= 14)
+       {
+           if(version < 20)
+           {
+              int filler1;
+              int filler2;
+              int filler3;
+           }
+       }
+
+       NumString material;
+
+       if(version < 18)
+       {
+           if(version < 13)
+           {
+               int unknown;
+           }
+       }
+       else
+       {
+           int unknown;
+           float grow_ratio;
+           float shrink_ratio;
+
+           float mid_color_ratio;
+
+           Color4 mid_color_low;
+           Color4 mid_color_high;
+       }
+
+       int max_particles;
+
+       if(2 < version)
+       {
+           if(version < 7)
+           {
+               int unknown;
+           }
+           else if (version < 13)
+           {
+               int unknown;
+           }
+       }
+
+       if(3 < version)
+       {
+           Vector2 bubble_period;
+           Vector2 bubble_size;
+           Bool bubble;
+           if(version < 30)
+           {
+               Bool filler4;
+               if (filler4 == True)    
+                  NumString bubble2;
+           }
+       }
+
+       if(29 < version)
+       {
+           Bool rotate;
+
+           Vector2 rot_speed;
+           float rot_drag;
+           if(36 < version)
+           {
+               Bool rot_random_direction;
+           }
+
+           int drag;
+       }
+
+       if(31 < version)
+       {
+           Vector2 swing_arm_start;
+           Vector2 swing_arm_end;
+
+           Bool align_with_velocity;
+           Bool stretch_with_velocity;
+           Bool constant_area;
+
+           float stretch_scale;
+       }
+
+       if(33 < version)
+       {
+           Bool perspective_stretch;
+       }
+       
+       if(version != 14)
+       {
+           float relative_motion;
+       }
+       if(version == 14)
+       {
+           Bool filler5;
+       }
+ 
+       if(26 < version)
+       {
+           NumString relative_parent;
+       }
+ 
+       if(18 < version)
+       {
+           NumString mesh;
+       }
+    
+       if(30 < version || version == 21)
+       {
+           int sub_samples;
+       }
+
+       if(!(version < 28))
+       {
+           Bool frame_drive;
+       }
+ 
+       if(!(version < 35))
+       {
+           Bool pause_offscreen;
+       }
+
+       if(!(version < 29))
+       {
+           Bool fast_forward;
+       }
+
+       if(!(version < 11))
+       {
+           if (version != 22)
+               Bool preserve_particles;
+       }
+   }
+} ParticleSys;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "ParticleSys")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 28;
+
+    ParticleSys particle_sys(info, False);
+}
+
+#endif
+
+#endif

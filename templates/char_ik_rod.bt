@@ -1,0 +1,64 @@
+// Rigs a bone between two other bones and sets the orientation from that.
+//  When you set up all the bone pointers, the rig xfm will be computed,
+//  an inverse from that to the dst bone will be computed, and everything
+//  will come from that. So the dst bone will maintain the exact same
+//  position in that pose. That makes it easy to author the bones.
+// Super: CharPollable
+// Ext: .rod, .ikrod
+// C++ Class: CharIKRod
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharIKRod"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_IK_ROD
+#define OBJECT_CHAR_IK_ROD
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 2 (GH2/GH2 360/TBRB)
+    read_metadata(info, super);
+
+    NumString left_end;  // Trans - Left end of the rod
+    NumString right_end; // Trans - Right end of the rod
+
+    float dest_pos;      // Fraction of the way dest is from left (0) to right(1)
+    NumString side_axis; // Trans - Take the z axis from this bone rather than from rod end delta
+
+    Bool vertical;  // Force the dest to be vertically upright
+    NumString dest; // Trans - The bone to set
+
+    // Undocumented
+    Vector3 nums_1;
+    Vector3 nums_2;
+    Vector3 nums_3;
+    Vector3 nums_4;
+} CharIKRod;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharIKRod")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharIKRod char_ik_rod(info, False);
+}
+
+#endif
+
+#endif

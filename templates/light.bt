@@ -1,0 +1,123 @@
+// Light objects are added to environments for drawing.
+// Super: Trans
+// Ext: .lit
+// C++ Class: RndLight
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Light"
+    #endif
+#endif
+
+#ifndef OBJECT_LIGHT
+#define OBJECT_LIGHT
+
+#include "common.bt"
+#include "trans.bt"
+
+typedef enum
+{
+    kLightPoint,
+    kLightDirectional,
+    kLightFakeSpot,
+    kLightFloorSpot,
+    kLightShadowRef
+} LIGHT_TYPE_ENUM;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 3 (GH1), 6 (GH2), 9 (GH2 360), 14 (TBRB)
+    if (version > 3) read_metadata(info, super);
+
+    Trans trans(info, True);
+
+    Color color;     // Color of light
+    if (version <= 3)
+    {
+        uint intensity; // Intensity of light color
+    }
+    else
+        float intensity; // Intensity of light color
+
+    if (version < 2) float ignore_data_1[8];
+    if (version < 3) float ignore_data_2[2];
+
+    // Falloff distance for point lights
+    float range;
+
+    if (version < 3) float ignore_data_3[3];
+
+    // Type of dynamic lighting
+    if (version > 0) LIGHT_TYPE_ENUM type;
+
+    // Distance at which falloff starts for point lights
+    if (version > 11) float falloff_start;
+
+    if (version > 5)
+    {
+        // Animation authority for LightPreset
+        Bool animate_color_from_preset;
+        Bool animate_position_from_preset;
+    }
+
+    if (version > 6)
+    {
+        float topradius;    // Fake cone small radius at the source
+        float botradius;    // Fake cone big radius at the far end
+        float softness;     // Fake cone softness with 0 hard edge and 1 total mushy
+        float displacement; // Amount along dir to adjust the fake spot position
+        // RndLight::CalcCosines()
+    }
+
+    // Projected floor spot texture
+    if (version > 7)
+    {
+        NumString texture; // Tex
+
+        // Read RndDrawable...?
+        if (version == 9)
+        {
+            // v9 load updates different fields
+            uint string_count;
+            if (string_count > 0) NumString some_strings[string_count]<optimize=false>;
+        }
+        else if (version == 8)
+        {
+            uint string_count;
+            if (string_count > 0) NumString some_strings[string_count]<optimize=false>;
+        }
+    }
+
+    // Master for light color and intensity
+    if (version > 10) NumString color_owner; // Light
+
+    if (version > 12) Matrix texture_xfm;
+
+    if (version > 13) Bool only_projection;
+} Light;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Light")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    Light light(info, False);
+}
+
+#endif
+
+#endif

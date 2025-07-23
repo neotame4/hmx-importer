@@ -1,0 +1,78 @@
+// BLACK MAGIC
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .lookat
+// C++ Class: LightAnim
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "LightAnim"
+    #endif
+#endif
+
+#ifndef OBJECT_LIGHTANIM
+#define OBJECT_LIGHTANIM
+
+#include "common.bt"
+#include "trans.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version;
+    uint bread;
+    float bread1;
+    float bread2;
+    NumString bread3;
+    int unknown; // normaly 5
+   // if (count > 0) float beans[count]<optimize=false>;
+    float bread;
+    float bread;
+    float count;
+    float transcount;
+    int bread5;
+    float bread6;
+   // if (bread6 > 0) NumString names[bread6]<optimize=false>;
+    float bread;
+    float bread;
+    short bread3;
+    short bread3;
+    float bread;
+    float bread;
+    float bread;
+    float bread;
+    uint bread;
+    float bread;
+   // float bread;
+    NumString name;
+
+    
+
+} LightAnim;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "LightAnim")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    LightAnim lightanim(info, False);
+}
+
+#endif
+
+
+#endif

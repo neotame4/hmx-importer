@@ -1,0 +1,52 @@
+// Forces the targets to be within a world space bounding box relative to source.
+// Super: CharPollable
+// Ext: .pcon, .const
+// C++ Class: CharPosConstraint
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharPosConstraint"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_POS_CONSTRAINT
+#define OBJECT_CHAR_POS_CONSTRAINT
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 2 (GH2/GH2 360/TBRB)
+    read_metadata(info, super);
+
+    // Trans[] - Bones to constrain
+    uint targets_count;
+    if (targets_count > 0) NumString targets[targets_count]<optimize=false>;
+
+    NumString source; // Trans - Bone to be higher than
+    Box box;          // Bounding box, make min > max to ignore that dimension
+} CharPosConstraint;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharPosConstraint")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharPosConstraint char_pos_constraint(info, False);
+}
+
+#endif
+
+#endif

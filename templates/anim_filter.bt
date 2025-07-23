@@ -1,0 +1,80 @@
+// An AnimFilter object modifies the playing of another animatable object
+// Super: Anim
+// Ext: .filt
+// C++ Class: RndAnimFilter
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "AnimFilter"
+    #endif
+#endif
+
+#ifndef OBJECT_ANIM_FILTER
+#define OBJECT_ANIM_FILTER
+
+#include "anim.bt"
+#include "common.bt"
+
+typedef enum
+{
+    kAnimRange,
+    kAnimLoop,
+    kAnimShuttle
+} ANIM_ENUM;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (GH2/GH2 360), 2 (TBRB)
+    read_metadata(info, super);
+
+    Anim anim_base(info, True);
+
+    NumString anim; // RndAnim - Animatable object that receives filtered frame
+
+    float scale;    // Multiplier to speed of animation
+    float offset;   // Amount to offset frame for animation
+    float start;    // Overriden start frame of animation
+    float end;      // Overriden end frame of animation
+
+    if (version < 1)
+    {
+        // Encoded as 1-byte
+        ubyte type; // How to treat the frame outside of start and end
+    }
+    else
+    {
+        // Note: scale is read-only when period != 0.0
+        ANIM_ENUM type; // How to treat the frame outside of start and end
+        float period;   // Alternative to scale, overriden period of animation
+    }
+
+    if (version > 1)
+    {
+        float snap;   // Snap frame to nearest multiple
+        float jitter; // Jitter frame randomly up to this amount
+    }
+} AnimFilter;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "AnimFilter")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    AnimFilter anim_filter(info, False);
+}
+
+#endif
+
+#endif

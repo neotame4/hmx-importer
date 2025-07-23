@@ -1,0 +1,27 @@
+struct IPUFile;
+
+typedef struct (IPUFile& file)
+{
+    ubyte flag;
+
+    // Macro-block info
+} IPUFrame;
+
+struct IPUFile
+{
+    LittleEndian();
+    char magic[4]; // "ipum"
+
+    uint file_size; // Uncompressed size?
+    ushort size_x;
+    ushort size_y;
+
+    uint frame_count;
+
+    local uint i;
+    for (i = 0; i < frame_count; i++)
+    {
+        IPUFrame frames(this);
+        break;
+    }
+} file<read=Str("resolution: %dx%d, frames: %d", this.size_x, this.size_y, this.frame_count)>;

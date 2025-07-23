@@ -1,0 +1,822 @@
+// A Mesh object is composed of triangle faces.
+// Super: Draw Trans
+// Ext: .mesh
+// C++ Class: RndMesh
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Mesh"
+    #endif
+#endif
+
+#ifndef OBJECT_MESH
+#define OBJECT_MESH
+
+#include "common.bt"
+#include "draw.bt"
+#include "trans.bt"
+
+struct Mesh;
+
+string mesh_to_string(Mesh& mesh)
+{
+    local string s;
+    SPrintf(s, "(%d verts, %d faces)", mesh.vertices.count, mesh.faces.count);
+    return s;
+}
+
+struct QTangent;
+
+void x_axis(QTangent& q_quat, float data[3])
+{
+    local float fTy = 2.0 * q_quat.y.f_value;
+    local float fTz = 2.0 * q_quat.z.f_value;
+    local float fTwy = fTy * q_quat.w.f_value;
+    local float fTwz = fTz * q_quat.w.f_value;
+    local float fTxy = fTy * q_quat.x.f_value;
+    local float fTxz = fTz * q_quat.x.f_value;
+    local float fTyy = fTy * q_quat.y.f_value;
+    local float fTzz = fTz * q_quat.z.f_value;
+
+    data[0] = 1.0 - (fTyy + fTzz);
+    data[1] = fTxy + fTwz;
+    data[2] = fTxz - fTwy;
+}
+
+void y_axis(QTangent& q_quat, float data[3])
+{
+    local float fTx  = 2.0 * q_quat.x.f_value;
+    local float fTy  = 2.0 * q_quat.y.f_value;
+    local float fTz  = 2.0 * q_quat.z.f_value;
+    local float fTwx = fTx * q_quat.w.f_value;
+    local float fTwz = fTz * q_quat.w.f_value;
+    local float fTxx = fTx * q_quat.x.f_value;
+    local float fTxy = fTy * q_quat.x.f_value;
+    local float fTyz = fTz * q_quat.y.f_value;
+    local float fTzz = fTz * q_quat.z.f_value;
+
+    data[0] = fTxy - fTwz;
+    data[1] = 1.0 - (fTxx + fTzz);
+    data[2] = fTyz + fTwx;
+}
+
+// 4 bytes (x 10-bit, y 10-bit, z 10-bit, w 2-bit)
+// Encoding order: wzyx
+typedef struct
+{
+    const int MAX_2_BIT_SIGNED  = (1 <<  1) - 1; //    1
+    const int MASK_2_BIT        = (1 <<  2) - 1; //    3
+    const int MAX_10_BIT_SIGNED = (1 <<  9) - 1; //  512
+    const int MASK_10_BIT       = (1 << 10) - 1; // 1023
+
+    uint value;
+
+    local int w_bits = (value >> 30) & MASK_2_BIT;
+    local int z_bits = (value >> 20) & MASK_10_BIT;
+    local int y_bits = (value >> 10) & MASK_10_BIT;
+    local int x_bits = value & MASK_10_BIT;
+
+    // Reverse two's complement and muliply by negative 1 (basically convert 10-bit signed to 32-bit signed)
+    // There's probably a more optimal way of doing this...
+    if (x_bits > MAX_10_BIT_SIGNED) x_bits = -1 * (~(x_bits - 1) & (MASK_10_BIT >> 1));
+    if (y_bits > MAX_10_BIT_SIGNED) y_bits = -1 * (~(y_bits - 1) & (MASK_10_BIT >> 1));
+    if (z_bits > MAX_10_BIT_SIGNED) z_bits = -1 * (~(z_bits - 1) & (MASK_10_BIT >> 1));
+    if (w_bits > MAX_2_BIT_SIGNED)  w_bits = -1 * (~(w_bits - 1) & ( MASK_2_BIT >> 1));
+
+    local float x = Max((float)x_bits / (float)MAX_10_BIT_SIGNED, -1.0);
+    local float y = Max((float)y_bits / (float)MAX_10_BIT_SIGNED, -1.0);
+    local float z = Max((float)z_bits / (float)MAX_10_BIT_SIGNED, -1.0);
+    local float w = Max((float)w_bits / (float)MAX_2_BIT_SIGNED, -1.0);
+} SignedCompressedVec4<read=Str("(%f, %f, %f, %f)", this.x, this.y, this.z, this.w)>;
+
+// 4 bytes (x 10-bit, y 10-bit, z 10-bit, w 2-bit)
+// Encoding order: wzyx
+typedef struct
+{
+    const int MAX_2_BIT_UNSIGNED  = (1 <<  2) - 1; //    3
+    const int MASK_2_BIT          = (1 <<  2) - 1; //    3
+    const int MAX_10_BIT_UNSIGNED = (1 << 10) - 1; // 1023
+    const int MASK_10_BIT         = (1 << 10) - 1; // 1023
+
+    uint value;
+
+    local uint w_bits = (value >> 30) & MASK_2_BIT;
+    local uint z_bits = (value >> 20) & MASK_10_BIT;
+    local uint y_bits = (value >> 10) & MASK_10_BIT;
+    local uint x_bits = value & MASK_10_BIT;
+
+    local float x = (float)x_bits / (float)MAX_10_BIT_UNSIGNED;
+    local float y = (float)y_bits / (float)MAX_10_BIT_UNSIGNED;
+    local float z = (float)z_bits / (float)MAX_10_BIT_UNSIGNED;
+    local float w = (float)w_bits / (float)MAX_2_BIT_UNSIGNED;
+} UnsignedCompressedVec4<read=Str("(%f, %f, %f, %f)", this.x, this.y, this.z, this.w)>;
+
+typedef struct (SystemInfo& info, int mesh_version, Bool is_ng, int vert_size)
+{
+    // Coordinates
+    float x;
+    float y;
+    float z;
+    if (mesh_version == 34) float w;
+    //if (mesh_version == 34 || (mesh_version == 36 && is_ng == False && (info.platform == X360 || info.platform == PS3))) float w; // Always 0?
+
+    if (mesh_version <= 10) // Freq (56 bytes)
+    {
+        // Normals
+        float nx;
+        float ny;
+        float nz;
+
+        // UVs
+        float u;
+        float v;
+
+        // Weights
+        float weight_0;
+        float weight_1;
+        float weight_2;
+        float weight_3;
+
+        // Bone indices
+        ushort bone_0;
+        ushort bone_1;
+        ushort bone_2;
+        ushort bone_3;
+
+        local float tangent_0 = 0.0;
+        local float tangent_1 = 0.0;
+        local float tangent_2 = 0.0;
+        local float tangent_3 = 0.0;
+    }
+    
+    else if (mesh_version <= 22) // Amp/AntiGrav (56 bytes)
+    {
+        // Weights
+        float weight_0;
+        float weight_1;
+       // ushort bone_2;
+       // ushort bone_3;
+
+        // Normals
+        float nx;
+        float ny;
+        float nz;
+
+        // Unknown
+        float unknown_0;
+        float unknown_1;
+        float unknown_2;
+        float unknown_3;
+
+        // UVs
+        float u;
+        float v;
+
+        local float tangent_0 = 0.0;
+        local float tangent_1 = 0.0;
+        local float tangent_2 = 0.0;
+        local float tangent_3 = 0.0;
+
+        local float bone_0 = 0.0;
+        local float bone_1 = 0.0;
+        local float weight_2 = 0.0;
+        local float weight_3 = 0.0;
+    }
+    else if (mesh_version <= 25) // Amp/AntiGrav (56 bytes)
+    {
+        // Bone indices
+        local float bone_0 = 0.0;
+        local float bone_1 = 0.0;
+        local float bone_2 = 0.0;
+        local float bone_3 = 0.0;
+
+        // Normals
+        float nx;
+        float ny;
+        float nz;
+
+        // Weights
+        float weight_0;
+        float weight_1;
+        float weight_2;
+        float weight_3;
+
+        // UVs
+        float u;
+        float v;
+
+        local float tangent_0 = 0.0;
+        local float tangent_1 = 0.0;
+        local float tangent_2 = 0.0;
+        local float tangent_3 = 0.0;
+    }
+    else if (mesh_version < 35 || is_ng == False)
+    {
+
+
+        // Normals
+        float nx;
+        float ny;
+        float nz;
+        if (mesh_version == 34) float nw;
+        //if (mesh_version == 34 || (mesh_version == 36 && (info.platform == X360 || info.platform == PS3))) float nw; // Always 0?
+        
+        if (mesh_version >= 38)
+        {
+            Color color;
+          //  float color_r;
+          //  float color_g;
+          //  float color_b;
+            float color_a;
+        }
+
+        if (mesh_version >= 38)
+        {
+            // UVs
+            float u;
+            float v;
+
+            // Weights
+            float weight_0;
+            float weight_1;
+            float weight_2;
+            float weight_3;
+        }
+        else
+        {
+            // Weights
+            float weight_0;
+            float weight_1;
+            float weight_2;
+            float weight_3;
+
+            // UVs
+            float u;
+            float v;
+
+            // Bone indices
+            local ushort bone_0;
+            local ushort bone_1;
+            local ushort bone_2;
+            local ushort bone_3;
+
+            local float tangent_0 = 0.0;
+            local float tangent_1 = 0.0;
+            local float tangent_2 = 0.0;
+            local float tangent_3 = 0.0;
+        }
+
+        if (mesh_version >= 34)
+        {
+            // Bone indices
+            ushort bone_0;
+            ushort bone_1;
+            ushort bone_2;
+            ushort bone_3;
+
+            if (mesh_version >= 38)
+            {
+                Vector3 mCentroid;
+                float pos_1;
+            }
+            else
+            {
+                // Tangent? (range: -1 to 1)
+                float tangent_0;
+                float tangent_1;
+                float tangent_2;
+                float tangent_3;
+            }
+        }
+    }
+    else
+    {
+        local int uv_check = ReadInt();
+       // Printf("uv_check is %d\n", uv_check);
+
+        // Used for ui meshes?
+        if (uv_check == -1)
+        {
+            uint always_ff_1<format=hex>;
+
+            // UVs
+            hfloat u;
+            hfloat v;
+
+            // Normals
+            //hfloat nx;
+            //hfloat ny;
+            SignedCompressedVec4 normals; // w value can be ignored
+
+            //hfloat nz;
+
+            //ushort always_511;
+            //uint always_ff_2<format=hex>;
+
+            SignedCompressedVec4 tangents;
+            UnsignedCompressedVec4 weights; // Note: Actual w value appears to be derived as (1.0 - (x + y + z))
+
+            // Bone indices (default: [3, 2, 1, 0])
+            ubyte bone_0; // w 
+            ubyte bone_1; // z
+            ubyte bone_2; // y
+            ubyte bone_3; // x
+        }
+        else
+        {
+            // UVs
+            hfloat u;
+            hfloat v;
+
+            // Normals
+            /*hfloat nx;
+            hfloat ny;
+            hfloat nz;
+            hfloat nw; // Not 100% sure, maybe some scaler for weight?*/
+
+            struct QTangent
+            {
+                typedef struct
+                {
+                    short value;
+                    local float f_value = Max((float)value / 32767.0, -1.0);
+                } SNorm<read=Str("%.3f", this.f_value)>;
+
+                SNorm x;
+                SNorm y;
+                SNorm z;
+                SNorm w;
+
+                // Calculate normals + tangents
+                local float normals[3]<read=Str("(%.3f, %.3f, %.3f)", this[0], this[1], this[2])>;
+                x_axis(this, normals);
+
+                local float tangents[3]<read=Str("(%.3f, %.3f, %.3f)", this[0], this[1], this[2])>;
+                y_axis(this, tangents);
+
+            } q_tangent;
+
+            // Weights
+            ubyte weight_0; // Default: [FF, FF, FF, FF]
+            ubyte weight_1;
+            ubyte weight_2;
+            ubyte weight_3;
+
+            // Bone indices
+            // Can all match like [5, 5, 5, 5]
+            ushort bone_0; // Default: [0, 1, 2, 3]
+            ushort bone_1;
+            ushort bone_2;
+            ushort bone_3;
+        }
+
+        // TODO: Remove this hacky workaround
+        if (mesh_version == 38 && vert_size == 40) FSkip(4);
+    }
+} Vertex<read=vertex_to_string>;
+
+/*
+NG Bone weights?
+0x03 Terminator and/or bitfield?
+0x17 0.1999999
+0xF8 0.8000001
+0xFF 1.0
+
+99 47 198
+130 56 191
+203 148
+
+01100011
+00101111
+11000110
+
+10000010
+00111000
+10111111
+
+11001011
+10010100
+
+*/
+
+string vertex_to_string(Vertex& v)
+{
+    local string s;
+
+    // Check mesh version and if next-gen packed vert data
+    if (parentof(parentof(v)).version < 36 || parentof(v).is_ng == False)
+    {
+        SPrintf(s, "v = (%.3f, %.3f, %.3f), uv = (%.3f, %.3f), b = (%.3f, %.3f)",
+            v.x, v.y, v.z,
+           // v.nx, v.ny, v.nz,
+           // v.weight_0, v.weight_1, v.weight_2, v.weight_3,
+            v.u, v.v,
+            v.bone_0, v.bone_1
+            //v.tangent_0, v.tangent_1, v.tangent_2, v.tangent_3
+        );
+    }
+    else
+    {
+        //SPrintf(s, "v = (%.3f, %.3f, %.3f)", v.x, v.y, v.z);
+        SPrintf(s, "v = (%.3f, %.3f, %.3f), b = (%d, %d, %d, %d)", v.x, v.y, v.z, v.bone_0, v.bone_1, v.bone_2, v.bone_3);
+    }
+    
+    return s;
+}
+
+typedef struct
+{
+    ushort idx1;
+    ushort idx2;
+    ushort idx3;
+} Face<read=Str("[%d, %d, %d]", this.idx1, this.idx2, this.idx3)>;
+
+typedef struct
+{
+    int sectionCount;
+    int vertCount;
+    int sections[sectionCount]; // Ascending, last being equal to count of verts
+    ushort vertOffsets[vertCount];
+} GroupSection;
+
+typedef struct (SystemInfo& info, int mesh_version)
+{
+    if (mesh_version == 19)
+    {
+       int count1;
+       int count2;
+       int count;
+    }
+    else int count;
+    local Bool use_ng_verts = False; // Is next gen?
+    local int vert_size_loc = 0;
+
+    if (mesh_version >= 36)
+    {
+        Bool is_ng; //  0 = wii, 1 = ps3/xbox
+
+        if (is_ng == True)
+        {
+            // TBRB/GDRB (36, 1)
+            // RB3 (40, 2)
+            // DC2 (36, 1)
+            int vert_size;
+            int some_type;
+
+            use_ng_verts = True;
+            vert_size_loc = vert_size;
+        }
+    }
+
+    local int i = 0;
+    while (i < count)
+    {
+        Vertex verts(info, mesh_version, use_ng_verts, vert_size_loc);
+        i++;
+    }
+} Vertices;
+
+typedef struct
+{
+    int count;
+
+    local int i = 0;
+    while (i < count)
+    {
+        Face faces;
+        i++;
+    }    
+} Faces;
+
+typedef struct
+{
+    NumString bone_name;
+    Matrix mat;
+
+    local string bone_name_str = "";
+    if (exists(bone_name.text))
+    {
+        bone_name_str = bone_name.text;
+    }
+} BoneTrans<read=Str("%s", this.bone_name_str)>;
+
+typedef enum
+{
+    kMutableNone = 0,
+    kMutableVerts = 31,
+    kMutableFaces = 32,
+    kMutableAll = 63
+} MUTABLE_ENUM;
+
+typedef enum
+{
+    kVolumeEmpty,
+    kVolumeTriangles,
+    kVolumeBSP,
+    kVolumeBox
+} VOLUME_ENUM;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 10 (Freq), 13 (Amp Demo), 14 (Amp), 22 (AntiGrav), 25 (KRPAI/GH1), 28 (GH2/GH2 4-song), 29, 34 (GH2 360/RB1/RB2), 36 (TBRB), 37 (GDRB), 38 (RB3/DC2)
+
+    // Read meta if newer than GH1
+    if (version > 25)
+    {
+        read_metadata(info, super);
+    }
+
+    Trans trans(info, True);
+    Draw draw(info, True);
+
+    if (version < 15)
+    {
+        uint always_0; // Usually empty
+
+        int bones_count;
+        if (bones_count > 0)
+        {
+            if (version <= 10) NullTerminatedString bones[bones_count]<optimize=false>;
+            else NumString bones[bones_count]<optimize=false>;
+        }
+    }
+
+    // Get from material in later games... (version > 20)
+    // z_mode = 0 (default)
+
+    if (version < 20) 
+    {
+        uint num_1; // 2, 3
+        uint num_2; // 1
+    
+
+        /*
+        if (num_1 == 0 || num_2 == 0)
+        {
+            z_mode = 0;
+        }
+        else
+        {
+            if (num_1 == 1)
+            {
+                z_mode = 1;
+            }
+            else
+            {
+                z_mode = 1;
+
+                if (num_2 == 7)
+                {
+                    z_mode = 3;
+                }
+            }
+        }
+        */
+    }
+
+    if (version < 3)
+    {
+        NumString some_value;
+    }
+
+    // Material used for rendering the Mesh (Mat)
+    if (version <= 10) string mat;
+    else NumString mat;
+
+    if (version == 27)
+    {
+        NumString mat_2;
+    }
+
+    // Geometry owner for the mesh (Mesh)
+    if (version <= 10) string geom_owner;
+    else NumString geom_owner;
+
+    if (version < 13)
+    {
+        // "Combining face and vert owner of %s" ??
+        if (version <= 10) string alt_geom_owner;
+        else NumString alt_geom_owner;
+    }
+
+    if (version < 15)
+    {
+        // Usually same as geom_owner (RndTransformable)
+        if (version <= 10) string trans_parent;
+        else NumString trans_parent;
+    }
+
+    if (version < 14)
+    {
+        // Always empty? (RndTransformable)
+        if (version <= 10) string trans_1;
+        else NumString trans_1;
+
+        if (version <= 10) string trans_2;
+        else NumString trans_2;
+    }
+
+    if (version < 3)
+    {
+        Vector3 some_vector;
+    }
+
+    if (version < 15)
+    {
+        // RndDrawable::SetSphere(this, sphere);
+        Sphere sphere;
+    }
+
+    if (version < 8)
+    {
+        Bool some_bool;
+    }
+
+    if (version < 15)
+    {
+        // Ignored
+        if (version <= 10) string some_string;
+        else NumString some_string;
+
+        float some_float;
+    }
+
+    if (version < 16)
+    {
+        if (version > 11)
+        {
+            Bool some_bool;
+        }
+    }
+    else
+    {
+        MUTABLE_ENUM mutable; // Bitfield? 0, 31, 33, 37, 63
+        if (version == 17)
+        {
+            uint unknown_1;
+            uint unknown_2;
+        }
+    }
+
+    if (version > 17)
+    {
+        VOLUME_ENUM volume; // Volume of the Mesh (usually kVolumeTriangles)
+    }
+
+    if (version > 18)
+    {
+        //byte bsp; // Never observed, always 0
+        //if (bsp != 0) return;
+
+        struct BSPNode;
+
+        struct BSPNode
+        {
+            Bool has_value;
+
+            if (has_value == True)
+            {
+                Vector4 vec;
+
+                BSPNode left;
+                BSPNode right;
+            }
+        } bsp_node;
+
+        if (bsp_node.has_value == True) return;
+    }
+
+    if (version == 7)
+    {
+        Bool some_bool;
+    }
+
+    if (version < 11)
+    {
+        uint some_number;
+    }
+
+    Vertices vertices(info, version);
+    Faces faces;
+
+    if (version < 24)
+    {
+        // Pairs of shorts, vertex edges?
+        // Matches face count?
+        uint short_count;
+        if (short_count > 0) ushort some_shorts[short_count * 2];
+
+        if (version >= 22)
+        {
+            uint group_count;
+
+            struct GroupSectionAG
+            {
+                uint some_number;
+
+                uint short_count;
+                ushort shorts[short_count];
+
+                uint int_count;
+                uint ints[int_count];
+            } groups[group_count]<optimize=false, read=Str("key: %d (%d shorts, %d ints)", this.some_number, this.short_count, this.int_count)>;
+        }
+
+
+       // if (version >= 14) uint unknown; // Always 0?
+    //   VERY HACKY WORKAROUND FOR SOME GAMES
+        if (version >= 15)
+        if (version != 22)  NumString unknown_1; // L2? ;? Just a padding value??        local int bonelen = ReadInt();        NumString bone_1; // Always 0?        if (bonelen > 2)        {
+           NumString bone_2; // Always 0?           Matrix bone1trans;           Matrix bone2trans;        }
+        return;
+    }
+    
+    // Weight groups?
+    int groupSizesCount;
+    if (groupSizesCount > 0) ubyte groupSizes[groupSizesCount]; // Sum should equal count of faces
+    
+    local int charCount = ReadInt();
+    
+    if (charCount > 0)
+    {
+        if (version >= 34) // Starting w/ RB1
+        {
+            // Array of bone transform objects for n-bones
+            int bone_count;
+            BoneTrans bones[bone_count]<optimize=false>;
+        }
+        else
+        {
+            // Always 4 bones (some can be empty)
+            NumString bones[4]<optimize=false>;
+            Matrix boneTransforms[4];
+        }
+    }
+    else
+    {
+        int noBones; // Always 0
+    }
+
+    if (version >= 36)
+    {
+        Bool keep_mesh_data; // Whether or not to keep mesh vertices and faces.  Mutable meshes will always keep this data.
+    }
+
+    if (version == 37)
+    {
+        Bool exclude_from_self_shadow; // Whether to include this mesh in a parent Character's self-shadow generation or not.
+    }
+    else if (version >= 38)
+    {
+        Bool has_ao_calculation; // Whether or not this mesh has had ambient occlusion calculated on it.
+    }
+    
+    // This seems to be a last gen or lower version thing...
+    // Present when groupSize count is at least one and at least one bone?
+    if (groupSizesCount > 0 && groupSizes[0] > 0 && info.version < 25)
+    {
+        // If eof, then groups should be divided equally? Empty only for light meshes?
+        local int sectionCount1 = ReadInt();
+       // Printf("sections number is %d\n", sectionCount1);
+        if (sectionCount1 == -559030611)
+        {
+            Printf("sections number is %d\n", sectionCount1);
+        }
+        else if (sectionCount1 != -559030611)
+        {
+            GroupSection groups[groupSizesCount]<optimize=false>;
+        }
+    }
+} Mesh<read=mesh_to_string>;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Mesh")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        if (obj_version <= 10)
+        {
+            info.version = 6; // Freq
+        }
+        else if (obj_version < 28)
+        {
+            info.version = 24;
+        }
+    }
+
+    Mesh mesh(info, False);
+}
+
+#endif
+
+#endif

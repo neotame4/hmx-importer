@@ -1,0 +1,61 @@
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "MoggFile"
+    #endif
+#endif
+
+#ifndef OBJECT_MOGG_FILE
+#define OBJECT_MOGG_FILE
+
+#include "common.bt"
+
+typedef struct
+{
+    uint num_1;
+    uint num_2;
+} OffsetEntry;
+
+typedef struct 
+{
+    int version; // 15
+    uint some_count; // Always 20000
+
+    uint entry_count;
+    if (entry_count > 0) OffsetEntry entries[entry_count];
+} OggMap;
+
+typedef struct
+{
+    local int start = FTell();
+
+    int version; // 10 (GH2), 11 (RB1)
+    uint ogg_offset;
+
+    OggMap map;
+
+    // Read crypt related data
+    local int crypt_size = (start + ogg_offset) - FTell();
+    if (crypt_size > 0) byte crypt_data[crypt_size];
+
+    local uint ogg_start = FTell();
+    local uint search_start = ogg_start;
+    if (map.entry_count > 0) search_start += map.entries[map.entry_count - 1].num_1;
+
+    // Read ogg data
+    local int ogg_size = findNextFile();
+    if (ogg_size == -1) ogg_size = FileSize() - ogg_start;
+    if (ogg_size > 0) byte ogg_data[ogg_size];
+} MoggFile;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "MoggFile")
+{
+    LittleEndian();
+
+    MoggFile mogg_file;
+}
+
+#endif
+
+#endif

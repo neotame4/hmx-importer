@@ -1,0 +1,125 @@
+// Represents a group of objects to which to propogate animation and messages.
+// Super: Anim Draw Trans
+// Ext: .grp, .view
+// C++ Class: RndGroup
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Group"
+    #endif
+#endif
+
+#ifndef OBJECT_GROUP
+#define OBJECT_GROUP
+
+#include "anim.bt"
+#include "common.bt"
+#include "draw.bt"
+#include "trans.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 4 (Amp), 7 (AntiGrav/KRPAI/GH1), 11 (GH2 4-song), 12 (GH2/GH2 360), 13 (RB1), 14 (TBRB/GDRB/RB3), 16 (DC2)
+
+    if (version > 7)
+    {
+        read_metadata(info, super);
+    }
+
+    Anim anim(info, True);
+    Trans trans(info, True);
+    Draw draw(info, True);
+    
+    if (version > 10)
+    {
+        // (Basically drawables again)
+        // Objects in the group, in order of drawing and polling
+        int objects_count;
+        if (objects_count > 0) NumString objects[objects_count]<optimize=false>; // Object
+
+        if (version < 16) NumString environ; // Environ
+
+        if (version < 13)
+        {
+            // Releases some object resource here...
+        }
+        else
+        {
+            NumString draw_only; // Draw - if set, only draws this member of the group
+        }
+    }
+
+    if (version > 11 && version < 16)
+    {
+        // 108 objects
+        // 11c environ
+        // 128 draw_only
+        // 134 lod, 140 lod_screen_size
+
+        NumString lod;         // Draw - Object to draw instead below lod_screen_size
+        float lod_screen_size; // Ratio of screen height for lod
+    }
+    else if (version == 4)
+    {
+        uint some_number_1; // Always 0
+        
+        int objects_count;
+        if (objects_count > 0) NumString objects[objects_count]<optimize=false>;
+
+        struct NumString some_name; // Matches group name
+
+        // Always 0
+        uint some_number_2;
+        uint some_number_3;
+    }
+    else if (version == 7)
+    {
+        NumString some_name; // Matches group name
+
+        // Ratio is usually 4:3 or both 0?
+        float lod_width;
+        float lod_height;
+    }
+
+    /*if (version <= 12)
+    {
+        // Ratio is usually 4:3
+        float lod_width;
+        float lod_height;
+        return;
+    }*/
+
+    if (version > 13)
+    {
+        Bool sort_in_world; // Sort by distance to current camera per frame.\nThis has a CPU cost if there are many objects
+    }
+} Group;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Group")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        if (obj_version <= 12)
+        {
+            info.version = 24;
+        }
+    }
+
+    Group group(info, False);
+}
+
+#endif
+
+#endif

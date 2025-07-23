@@ -1,0 +1,56 @@
+// Base class for any object that can have weight set on it, or have a Weightable parent from which it gets that state.
+// Super: (None)
+// Ext: N/A
+// C++ Class: CharWeightable
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharWeightable"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_WEIGHTABLE
+#define OBJECT_CHAR_WEIGHTABLE
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 2 (GH2/GH2 360/TBRB)
+    read_metadata(info, super);
+
+    int weight; // Weight to blend in by
+    NumString weight_owner; // CharWeightable - Object to get weight from
+
+    local string weight_owner_str = "";
+    if (exists(weight_owner.text))
+    {
+        weight_owner_str = weight_owner.text;
+    }
+} CharWeightable<read=Str("(%f %s)", this.weight, this.weight_owner_str)>;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharWeightable")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharWeightable char_weightable(info, False);
+}
+
+#endif
+
+
+#endif

@@ -1,0 +1,90 @@
+// BLACK MAGIC
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .lookat
+// C++ Class: CharBlendBone
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharBlendBone"
+    #endif
+#endif
+
+#ifndef OBJECT_CHARBLENDBONE
+#define OBJECT_CHARBLENDBONE
+
+#include "anim.bt"
+#include "common.bt"
+#include "draw.bt"
+#include "trans.bt"
+
+typedef struct
+{
+    local string bone_name = "";
+    local float weight = 0.0;
+    NumString bone_name;
+    float weight;
+    
+} MidBones /*<read=Str("%s (%f)", this.bone_name.text, this.weight)>*/;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (), 2 (), 3 (RB3), 4 (DC1), 5 (), 6 ()
+    read_metadata(info, super);
+    int mid_bone_count;
+    if (mid_bone_count > 0)
+    {
+       MidBones bones[mid_bone_count];
+    }
+    NumString bone_1;
+    NumString bone_target;
+    Bool something1;
+    Bool something2;
+    Bool something3;
+    Bool something4;
+    if (version == 4)
+    {
+        Bool unk;
+    }
+    
+    
+ /*   
+   // RndMesh* mBeam; // 0x0
+    NumString Mesh;
+    NumString target;    float mBottomBorder; // 0x1c    float mOffset; // 0x20    Vector2 mTargetOffset; // 0x24    float mBrighten; // 0x2c    float mExpand; // 0x30    int mShape; // 0x34 - enum Shape    int mNumSections; // 0x38    int mNumSegments; // 0x3c  //  ObjPtr<RndTex> mXSection; // 0x40  //  ObjPtrList<RndDrawable> mCutouts; // 0x4c  //  ObjPtr<RndMat> mMat; // 0x5c
+    */
+
+
+
+    
+    
+
+} CharBlendBone;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharBlendBone")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharBlendBone char_blend_bone(info, False);
+}
+
+#endif
+
+
+#endif

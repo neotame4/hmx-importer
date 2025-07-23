@@ -1,0 +1,66 @@
+// A CharClip container.
+// Super: ObjectDir
+// Ext: (None)
+// C++ Class: CharClipSet
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharClipSet"
+    #endif
+#endif
+
+#ifndef CHAR_CLIP_SET
+#define CHAR_CLIP_SET
+
+#include "common.bt"
+#include "object_dir.bt"
+
+typedef struct (SystemInfo& info, Bool super, Bool inlined, Bool is_entry)
+{
+    int version; // 16 (GH2 360), 24 (TBRB/DC2), 25 (GDRB)
+    ObjectDir obj_dir(info, True, inlined);
+
+    // Only written when this.data_dir == this
+    // Not usually the case when CharClipSet is a sub directory as entry
+    // Note: Second check probably not needed anymore
+    if (is_entry == True || ReadUInt() == 0xADDEADDE) return;
+
+    NumString char_file_path; // Preview base character to use- for example, char/male/male_guitar.milo for male guitarist
+    NumString preview_clip;   // CharClip - Pick a clip to play
+    uint filter_flags;        // Flags for filtering preview clip
+
+    int bpm;              // bpm for clip playing
+    Bool preview_walk;    // Allow preview character to move around and walk?
+    NumString still_clip; // CharClip - Set this to view drummer play anims
+
+    if (version >= 25)
+    {
+        // Assuming this is a string
+        NumString unk;
+    }
+} CharClipSet;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharClipSet")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    CharClipSet char_clip_set(info, False, False, False);
+}
+
+#endif
+
+#endif

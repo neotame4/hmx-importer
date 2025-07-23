@@ -1,0 +1,148 @@
+// TransAnim objects animate the position, rotation, and scale of transformable objects.
+// Super: Anim
+// Ext: .tnm
+// C++ Class: RndTransAnim
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "TransAnim"
+    #endif
+#endif
+
+#ifndef OBJECT_TRANS_ANIM
+#define OBJECT_TRANS_ANIM
+
+#include "anim.bt"
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 4 (KRPAI/GH1), 6 (GH2/GH2 360), 7 (TBRB/GDRB)
+
+    if (version > 4) read_metadata(info, super);
+
+    Anim anim(info, True);
+
+    if (version < 6)
+    {
+        // RndDrawable::DumpLoad()
+        int version_min; // 1
+        Bool unkown; // Always true?
+
+        if (version_min < 2)
+        {
+            uint str_count;
+            if (str_count > 0) NumString strings[str_count]<optimize=false>;
+        }
+
+        if (version_min > 0)
+        {
+            int num_1;
+            int num_2;
+            int num_3;
+            int num_4;
+        }
+
+        if (version_min > 2)
+        {
+            int num_5;
+        }
+
+        if (version_min > 3)
+        {
+            NumString drawable; // RndDrawable
+        }
+    }
+
+    NumString trans_object;
+
+    if (version != 2)
+    {
+        uint rot_keys_count;
+        if (rot_keys_count > 0) KeyQuart rot_keys[rot_keys_count];        
+
+        uint trans_keys_count;
+        if (trans_keys_count> 0) KeyVec3 trans_keys[trans_keys_count];
+    }
+
+    NumString trans_anim_owner; // RndTransAnim
+
+    if (version < 4)
+    {
+        // Inside bitfield?
+        uint trans_spline;
+    }
+    else
+    {
+        Bool trans_spline;
+    }
+
+    Bool repeat_trans;
+
+    if (version < 4)
+    {
+        // TODO
+    }
+    else
+    {
+        uint scale_keys_count;
+        if (scale_keys_count) KeyVec3 scale_keys[scale_keys_count];
+
+        Bool scale_spline;
+    }
+
+    if (version < 2)
+    {
+        // Determine by keys_owner? (0x4c)
+    }
+    else
+    {
+        Bool follow_path;
+        if (follow_path == True)
+           Vector4 vec4;
+    }
+
+    if (version > 3)
+    {
+        Bool rot_slerp;
+    }
+
+    if (version == 3)
+    {
+        uint bone1;
+        uint bone2;
+    }
+    
+    if (version > 6)
+    {
+        Bool rot_spline;
+    }
+} TransAnim;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "TransAnim")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        if (obj_version == 6)
+        {
+            info.version = 24;
+        }
+    }
+
+    TransAnim trans_anim(info, False);
+}
+
+#endif
+
+#endif

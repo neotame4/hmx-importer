@@ -1,0 +1,55 @@
+// Stand-in for dir in the UI, polls and draws them, can center about a mesh inside it.
+// Super: Draw Trans
+// Ext: .placer, .place
+// C++ Class: BandPlacer
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "BandPlacer"
+    #endif
+#endif
+
+#ifndef OBJECT_BAND_PLACER
+#define OBJECT_BAND_PLACER
+
+#include "common.bt"
+#include "draw.bt"
+#include "trans.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 2 (GH2/GH2 360)
+    read_metadata(info, super);
+
+    Draw draw(info, True);
+    Trans trans(info, True);
+
+    // Ex: spot_ui.mesh
+    NumString center; // Name of RndTransformable to center proxy about
+
+    // Proxy not written to binary? Should be RndDir
+} BandPlacer;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "BandPlacer")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    BandPlacer band_placer(info, False);
+}
+
+#endif
+
+#endif

@@ -1,0 +1,85 @@
+// This is the simple but inefficient format that just stores samples and interpolates. Data is grouped by time, not channel, for better storage, interpolation, etc.
+// Super: CharClip
+// Ext: (None)
+// C++ Class: CharClipSamples
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharClipSamples"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_CLIP_SAMPLES
+#define OBJECT_CHAR_CLIP_SAMPLES
+
+#include "common.bt"
+#include "char_bones_samples.bt"
+#include "char_clip.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 10 (GH2), 11 (GH2 X60), 13 (RB1), 15 (TBRB), 16 (GDRB)
+    CharClip char_clip(info, False); // Metadata is written for CharClip instead for some reason
+
+    if (version >= 16)
+    {
+        Bool some_bool; // Usually true
+    }
+
+    if (version < 13)
+    {
+        CharBonesSamples full(info, False, version);
+        CharBonesSamples one(info, False, version);
+
+        if (version > 7)
+        {
+            // Probably milo bug
+            CharBonesSamples ignore(info, False, version);
+        }
+
+        CharBonesSamplesData full_data(full, info);
+        CharBonesSamplesData one_data(one, info);
+    }
+    else
+    {
+        CharBonesSamples full(info, False, -1);
+        CharBonesSamples one(info, False, -1);
+    }
+
+    if (version > 14)
+    {
+        CharBones bones(version);
+    }
+
+    //TransInfo trans_info;
+} CharClipSamples;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharClipSamples")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else if (IsLittleEndian() && obj_version == 11)
+    {
+        info.platform = X360;
+        info.version = 25;
+    }
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    CharClipSamples char_clip_samples(info, False);
+}
+
+#endif
+
+#endif

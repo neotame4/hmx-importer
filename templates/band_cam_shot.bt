@@ -1,0 +1,124 @@
+// Band specific camera shot
+// Super: CamShot
+// Ext: .shot
+// C++ Class: BandCamShot
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "BandCamShot"
+    #endif
+#endif
+
+#ifndef OBJECT_BAND_CAM_SHOT
+#define OBJECT_BAND_CAM_SHOT
+
+#include "anim.bt"
+#include "cam_shot.bt"
+#include "common.bt"
+
+typedef struct
+{
+    NumString target; // Trans
+
+    Bool unk;
+
+    Matrix from;
+    NumString anim; // CharClipGroup
+
+    Bool unk_bool;     // Sometimes true
+    int unk_zeros[3]; 
+    Bool unk_bools[5];
+    /*
+        0 -
+        1 - Sometimes true
+        2 - Sometimes true
+        3 - Sometimes true
+        4 -
+    */
+
+    float unk_floats_1[5]; // 0s
+    int unk_num; // -1, 1, 2, 5
+    float unk_floats_2[3]; // 0s
+
+    float float_1; // 1000
+    float float_2; // 0
+    float float_3; // 15
+    float float_4; // 15
+} BandCamShotTarget; // Target
+
+typedef struct (int version)
+{
+    float frame;
+    NumString trigger; // EventTrigger
+
+    if (version != 0x2001b && version >= 28)
+    {
+        NumString trigger_group; // TriggerGroup
+    }
+} TimedTrigger;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 27 (TBRB), 28 (GDRB), 0x2001b (TBRB Wii)
+    //read_metadata(info, super);
+
+    CamShot cam_shot(info, False);
+
+    int targets_count;
+    if (targets_count > 0) BandCamShotTarget targets[targets_count]<optimize=false>;
+
+    float zero_time;
+
+    int triggers_count;
+    if (triggers_count > 0)
+    {
+        local int i;
+        for (i = 0; i < triggers_count; i++)
+        {
+            TimedTrigger triggers(version);
+        }
+    }
+
+    NumString event_at_start; // EventTrigger
+    NumString event_at_end;   // EventTrigger
+
+    int min_time;
+    int max_time;
+
+    int next_shots_count;
+    if (next_shots_count > 0) NumString next_shots[next_shots_count]<optimize=false>; // BandCamShot?
+
+    float crowd_audio_volume;
+    Bool reset_at_start;
+
+    // Why wii gotta be weird?
+    if (version == 0x2001b)
+    {
+        Bool dof_tint;
+        Color4 dof_tint_color;
+    }
+} BandCamShot;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "BandCamShot")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    BandCamShot band_cam_shot(info, False);
+}
+
+#endif
+
+#endif

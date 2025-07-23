@@ -1,0 +1,101 @@
+// Base class for animatable objects. Anim objects change their state or other objects.
+// Super: (None)
+// Ext: 
+// C++ Class: RndAnimatable
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Anim"
+    #endif
+#endif
+
+#ifndef OBJECT_ANIM
+#define OBJECT_ANIM
+
+#include "common.bt"
+
+typedef struct
+{
+    NumString name;
+    float f1;
+    float f2;
+} AnimEntry;
+
+typedef enum
+{
+    k30_fps,
+    k480_fpb,
+    k30_fps_ui,
+    k1_fpb,
+    k30_fps_tutorial
+} RATE_ENUM;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 0 (Amp/AntiGrav/GH1), 4 (GH2 4-song/GH2/GH2 360/RB1/TBRB/GDRB/DC1/DC2)
+    read_metadata(info, super);
+
+    if (version > 1)
+    {
+        float frame;
+    }
+
+    if (version < 4)
+    {
+        if (version > 2)
+        {
+            Bool unknown;
+        }
+    }
+    else
+    {
+        RATE_ENUM rate;
+        return;
+    }
+
+    /*if (version >= 4)
+    {
+        float frame;
+        RATE_ENUM rate;
+
+        return;
+    }*/
+
+    if (version < 1)
+    {
+        
+    }
+
+    // Anim entries
+    int anim_entry_count;
+    if (anim_entry_count > 0) AnimEntry anim_entries[anim_entry_count]<optimize=false>;
+
+    // .tnm
+    int anim_count;
+    if (anim_count> 0) NumString anim_objects[anim_count]<optimize=false>;
+} Anim;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Anim")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    Anim anim(info, False);
+}
+
+#endif
+
+#endif

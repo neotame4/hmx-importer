@@ -1,0 +1,87 @@
+// Base class for animatable objects. Anim objects change their state or other objects.
+// Super: (None)
+// Ext: (None)
+// C++ Class: RndDrawable
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Draw"
+    #endif
+#endif
+
+#ifndef OBJECT_DRAW
+#define OBJECT_DRAW
+
+#include "common.bt"
+
+typedef enum
+{
+    kOverrideIncludeInDepthOnlyPass_None,
+    kOverrideIncludeInDepthOnlyPass_Include,
+    kOverrideIncludeInDepthOnlyPass_DontInclude
+} OVERRIDEINCLUDEINDEPTHONLYPASS_ENUM;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 0 (Freq/Amp Demo/Amp), 1 (AntiGrav/GH1), 3 (GH2 4-song/GH2/GH2 360/RB1/TBRB/RB3/DC2), 4 (GDRB)
+    read_metadata(info, super);
+
+    Bool showing; // Whether the object and its Draw children are drawn or collided with. - Always 1?
+
+    // Drawables seemingly moved to Group in later games
+    if (version < 2)
+    {
+        int draw_count; // Drawables (mesh, env, view)
+        if (draw_count > 0)
+        {
+            if (info.version <= 6) NullTerminatedString draw_objects[draw_count]<optimize=false>;
+            else NumString draw_objects[draw_count]<optimize=false>;
+        }
+    }
+
+    // Represents a bounding sphere around this object and its
+    // drawn children, which is used for culling of draw and
+    // collision commands. X, Y, Z are the sphere center in local
+    // coordinates, R is the sphere radius in world coordinates.
+    // Culling is not performed when the radius is zero. The world
+    // transform of the object must be baked into the radius.
+    if (version > 0)
+    {
+        Sphere sphere;
+    }
+
+    // Skip 0'd data
+    if (version > 2)
+    {
+        float draw_order;
+    }
+
+    if (version >= 4)
+    {
+        OVERRIDEINCLUDEINDEPTHONLYPASS_ENUM override_include_in_depth_only_pass;
+    }
+} Draw;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Draw")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    Draw draw(info, False);
+}
+
+#endif
+
+#endif

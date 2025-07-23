@@ -1,0 +1,57 @@
+// Does all interpolation for the forearm.
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .texblendctl
+// C++ Class: texblendcontroller
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "TexBlendController"
+    #endif
+#endif
+
+#ifndef OBJECT_TEX_BLEND_CONTROLLER
+#define OBJECT_TEX_BLEND_CONTROLLER
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 15 (TBRB/GDRB)
+    read_metadata(info, super);
+    NumString Mesh;     // Trans - The filename
+    NumString Bone1;  // Trans - The bone to rotate
+    NumString Bone2;  // Trans - The bone to look at
+    float mReferenceDistance;
+    float mMaxDistance;
+    float mMinDistance;
+    
+} TexBlendController;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "TexBlendController")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    TexBlendController texblendcontroller(info, False);
+}
+
+#endif
+
+
+#endif

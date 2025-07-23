@@ -1,0 +1,46 @@
+// 
+// Super: Character
+// Ext: N/A
+// C++ Class: Unknown
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "BandCharacter"
+    #endif
+#endif
+
+#ifndef BAND_CHARACTER
+#define BAND_CHARACTER
+
+#include "common.bt"
+#include "character.bt"
+
+typedef struct (SystemInfo& info, Bool super, Bool inlined)
+{
+    int version; // 1 (GH2/GH2 360)
+    Character character(info, False, inlined, False);
+} BandCharacter;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "BandCharacter")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    BandCharacter band_character(info, False, False);
+}
+
+#endif
+
+#endif

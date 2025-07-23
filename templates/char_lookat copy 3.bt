@@ -1,0 +1,103 @@
+// BLACK MAGIC
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .lookat
+// C++ Class: Spotlight
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Spotlight"
+    #endif
+#endif
+
+#ifndef OBJECT_SPOTLIGHT
+#define OBJECT_SPOTLIGHT
+
+#include "anim.bt"
+#include "common.bt"
+#include "draw.bt"
+#include "trans.bt"
+
+typedef struct
+{
+   // local string bone_name = "";
+   // local float weight = 0.0;
+    NumString bone_name;
+    Matrix localXfm;
+    short weight2;
+    
+} MidBones /*<read=Str("%s (%f)", this.bone_name.text, this.weight)>*/;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    byte face[4];
+    int version; // 1 (), 2 (), 3 (RB3), 4 (DC1), 5 (), 6 ()
+    short egg;
+    
+    NumString copyright;
+    short egg;
+    NumString copyright2;
+
+    int mid_bone_count;
+ //   if (mid_bone_count > 0)
+ //   {
+ //      MidBones something[mid_bone_count];
+ //   }
+    short egg;
+    int weight2;
+    int weight2;
+    int weight2;
+    short weight2;
+    NumString header1;
+    int count2;
+    int weight2;
+    int weight2;
+    NumString one;
+    int weight2;
+    short weight2;
+    float weight2;
+    int weight2;
+    int weight2;
+    int weight2;
+    int weight2;
+    int weight2;
+    int mid_bone_count;
+    int weight2;
+    int weight2;
+    if (count2 > 0)
+    {
+       MidBones something[count2];
+    }
+
+
+
+
+} Spotlight;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Spotlight")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    Spotlight char_look_at(info, False);
+}
+
+#endif
+
+
+#endif

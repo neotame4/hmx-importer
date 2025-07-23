@@ -1,0 +1,136 @@
+// Triggers animations, sfx, and responses to game events
+// Super: (None)
+// Ext: .trig
+// C++ Class: EventTrigger
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "EventTrigger"
+    #endif
+#endif
+
+#ifndef OBJECT_EVENT_TRIGGER
+#define OBJECT_EVENT_TRIGGER
+
+#include "anim.bt"
+#include "common.bt"
+
+typedef struct
+{
+    NumString anim;
+
+    float blend;
+    float delay;
+
+    Bool wait;
+    Bool enable;
+
+    RATE_ENUM rate;
+
+    // Note: fields possibly out of order
+    float start;
+    float end;
+    float scale;
+
+    NumString type; // Default: range
+    float period;
+
+    // Missing two fields?
+} EventTriggerAnim;
+
+typedef struct
+{
+    NumString object; // RndDrawable
+    float delay;
+} HideDelay;
+
+typedef struct
+{
+    NumString proxy; // ObjectDir
+    NumString call;  // Symbol
+    NumString event; // EventTrigger
+} ProxyCall;
+
+typedef struct
+{
+    // Not observed yet...
+    float unpause_delay;
+
+    // TexMovie
+    int movies_count;
+    if (movies_count > 0) NumString movies[movies_count]<optimize=false>;
+} UnpauseMovies;
+
+typedef enum
+{
+    kTriggerRandom,
+    kTriggerSequence
+} TRIGGER_ORDER_ENUM;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 12 (TBRB), 14 (GDRB)
+    read_metadata(info, super);
+
+    // Symbol
+    int trigger_events_count; // trigger_events
+    if (trigger_events_count > 0) NumString trigger_events[trigger_events_count]<optimize=false>;
+
+    // Anim
+    int anims_count; // anims
+    if (anims_count > 0) EventTriggerAnim anims[anims_count]<optimize=false>;
+
+    // Sequence
+    int sounds_count; // sounds
+    if (sounds_count > 0) NumString sounds[sounds_count]<optimize=false>;
+
+    // RndDrawable
+    int shows_count; // shows
+    if (shows_count > 0) NumString shows[shows_count]<optimize=false>;
+
+    int hide_delays_count;
+    if (hide_delays_count > 0) HideDelay hide_delays[hide_delays_count]<optimize=false>;
+
+    int enable_events_count;
+    if (enable_events_count > 0) NumString enable_events[enable_events_count]<optimize=false>;
+
+    int disable_events_count;
+    if (disable_events_count > 0) NumString disable_events[disable_events_count]<optimize=false>;
+
+    int wait_for_events_count;
+    if (wait_for_events_count > 0) NumString wait_for_events[wait_for_events_count]<optimize=false>;
+
+    NumString next_link; // EventTrigger
+
+    int proxy_calls_count;
+    if (proxy_calls_count > 0) ProxyCall proxy_calls[proxy_calls_count]<optimize=false>;
+
+    if (version >= 14) UnpauseMovies unpause_movies;
+
+    TRIGGER_ORDER_ENUM trigger_order;
+} EventTrigger;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "EventTrigger")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    EventTrigger event_trigger(info, False);
+}
+
+#endif
+
+#endif

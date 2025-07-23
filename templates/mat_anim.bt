@@ -1,0 +1,81 @@
+// MatAnim objects animate material properties.
+// Super: Anim
+// Ext: .mnm
+// C++ Class: RndMatAnim
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "MatAnim"
+    #endif
+#endif
+
+#ifndef OBJECT_MAT_ANIM
+#define OBJECT_MAT_ANIM
+
+#include "anim.bt"
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 7 (GH2/GH2 360/TBRB)
+    read_metadata(info, super);
+
+    Anim anim(info, True);
+
+    NumString mat; // RndMat
+    NumString keys_owner;
+
+    // Base color keys
+    uint base_keys_count;
+    if (base_keys_count > 0) KeyColor base_keys[base_keys_count];
+
+    // Alpha keys
+    uint alpha_keys_count;
+    if (alpha_keys_count > 0) KeyFloat alpha_keys[alpha_keys_count];
+
+    // Trans keys
+    uint trans_keys_count;
+    if (trans_keys_count > 0) KeyVec3 trans_keys[trans_keys_count];
+
+    // Scale keys
+    uint scale_keys_count;
+    if (scale_keys_count > 0) KeyVec3 scale_keys[scale_keys_count];
+
+    // Rotation keys (should be quats?)
+    uint rot_keys_count;
+    if (rot_keys_count > 0) KeyVec3 rot_keys[rot_keys_count];
+
+    // Tex keys
+    uint tex_keys_count;
+    if (tex_keys_count > 0)
+    {
+        struct TexKeys
+        {
+            KeyString tex_keys[tex_keys_count]<optimize=false>;
+        } tex_keys_collection;
+    }
+} MatAnim;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "MatAnim")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    MatAnim mat_anim(info, False);
+}
+
+#endif
+
+#endif

@@ -1,0 +1,148 @@
+// Hair physics, deals with strands of hair.
+// Super: CharPollable
+// Ext: .hair
+// C++ Class: CharHair
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharHair"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_HAIR
+#define OBJECT_CHAR_HAIR
+
+#include "common.bt"
+#include "poll.bt"
+
+typedef struct
+{
+    float unknown_1[3];
+    NumString bone; // hair bone we set the transform of
+    float unknown_2[4];
+    float unknown_3[3];
+} CharHairPointTBRB;
+
+typedef struct
+{
+    NumString root; // The root Trans for the hair strand
+    float angle;    // Angle in degrees of starting flip
+
+    int points_count;
+    if (points_count > 0) CharHairPointTBRB points[points_count]<optimize=false>;
+
+    // Contains rotation + scale data
+    // Note: Default value is just identity matrix
+    Matrix3 mat_1; // ??? 0x20
+    Matrix3 mat_2; // root_mat 0x50
+
+    int unknown_int; // 0, 1, 65, 68, 76, 129, 141, 193
+} CharHairStrandTBRB;
+
+typedef enum
+{
+    kCollidePlane,
+    kCollideSphere,
+    kCollideInsideSphere,
+    kCollideCylinder,
+    kCollideInsideCylinder
+} COLLIDE_TYPE_ENUM;
+
+typedef struct
+{
+    Vector3 unknown_floats; // Origin?
+    NumString bone; // Trans - Hair bone we set the transform of
+
+    float length;                   // The length of this strand bone
+    COLLIDE_TYPE_ENUM collide_type; // Type of collision
+    NumString collision;            // Trans - Collision sphere
+
+    float distance; // Collision radius (0.0, 5.0, 6.5)
+
+    // If positive, is the distance the bone should start aligning itself with the collision primitive,
+    //  so that once touching it, it will be totally flattened against it.
+    // Values: 0.0
+    float align_dist;
+
+    // No "show_collide" bool? Probably just not encoded in binary.
+} CharHairPoint;
+
+typedef struct 
+{
+    NumString root; // Trans - The root Trans for the hair strand
+    float angle;    // Angle in degrees of starting flip
+
+    int points_count;
+    if (points_count > 0) CharHairPoint points[points_count]<optimize=false>;
+
+    // Contains rotation + scale data
+    //  Note: Both values are usually the same
+    Matrix3 mat_1; // ??? 0x20
+    Matrix3 mat_2; // root_mat 0x50
+} CharHairStrand;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 2 (GH2/GH2 360), 11 (TBRB/DC2)
+    read_metadata(info, super);
+
+    float stiffness; // stiffness of each strand
+    float torsion;   // rotational stiffness of each strand
+    float inertia;   // Inertia of the hair, zero means none
+    float gravity;   // Gravity of the hair, one is normal
+
+    float weight;    // Gravity of the hair, one is normal (duplicate dev comment?)
+    float friction;  // Hair friction against each other
+
+    if (version >= 11)
+    {
+        float min_slack; // If using sides, determines how far in it could go
+        float max_slack; // If using sides, determines how far out it could go
+    }
+
+    int strand_count;
+    if (strand_count > 0)
+    {
+        if (version >= 11)
+        {
+            CharHairStrandTBRB strands[strand_count]<optimize=false>;
+        }
+        else
+        {
+             CharHairStrand strands[strand_count]<optimize=false>;
+        }
+    }
+
+    Bool simulate; // Simulate physics or not
+
+    if (version >= 11)
+    {
+        NumString wind; // wind object to use
+    }
+
+    //Poll poll(info, True);
+} CharHair;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharHair")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharHair char_hair(info, False);
+}
+
+#endif
+
+#endif

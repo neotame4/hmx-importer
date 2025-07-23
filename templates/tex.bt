@@ -1,0 +1,89 @@
+// Tex objects represent bitmaps used by materials. These can be created automatically with 'import tex' on the file menu.
+// Super: (None)
+// Ext: .tex
+// C++ Class: RndTex
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Tex"
+    #endif
+#endif
+
+#ifndef OBJECT_TEX
+#define OBJECT_TEX
+
+#include "bitmap.bt"
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 5 (Amp Demo/Amp), 7 (AntiGrav), 8 (KRPAI/GH1), 10 (GH2/GH2 4-song/GH2 360/RB1/TBRB), 11 (GDRB/RB3/DC2)
+    local Bool use_gdrb_enc = False;
+
+    if (version > 8) read_metadata(info, super);
+
+    if (version >= 11 && info.version == 25)
+    {
+        use_gdrb_enc = True;
+
+        Bool some_bool;
+    }
+
+    uint width;
+    uint height;
+    uint bpp;
+    
+    NumString ext_path;
+    if (version >= 8) float index_f;
+       if (version == 7)
+       {
+           int index;
+       }
+       else
+       {
+           uint index;
+       }
+
+
+    if (version >= 11 && use_gdrb_enc == False) Bool some_bool;
+
+    if (version != 7)
+    {
+        Bool use_ext_path;
+    }
+    else
+    {
+        // Idk why it's not a bool here...
+        uint use_ext_path;
+    }
+
+    if (FEof() || (ReadUInt() == 0xADDEADDE) || (ReadUInt() == 0xDEADDEAD)) return;
+
+    // Read bitmap
+    Bitmap bitmap;
+} Tex;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Tex")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 24;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+        info.version = 25;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    Tex tex(info, False);
+}
+
+#endif
+
+#endif

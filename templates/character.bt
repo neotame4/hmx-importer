@@ -1,0 +1,233 @@
+// Base class for Character objects. Contains Geometry, Outfit Loaders, and LOD + Sphere concepts.
+// Super: RndDir
+// Ext: (None)
+// C++ Class: Character
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Character"
+    #endif
+#endif
+
+#ifndef CHARACTER
+#define CHARACTER
+
+struct Character;
+
+#include "common.bt"
+#include "rnd_dir.bt"
+
+typedef enum <int>
+{
+    kLODPerFrame = -1,
+    kLOD0,
+    kLOD1,
+    kLOD2
+} FORCE_LOD_ENUM;
+
+typedef struct (int version)
+{
+    float screen_size; // When the unit sphere centered on the bounding sphere is smaller than this screen height fraction, it will draw the next lod
+
+    if (version < 18)
+    {
+        NumString group; // Group - Group to show at this LOD.  Drawables not in any lod group will be drawn at every LOD
+        if (version >= 15) NumString trans_group; // Group - Translucency group to show at this LOD.  Drawables in it are guaranteed to be drawn last.
+    }
+    else
+    {
+        // Draw - Opaque drawables to show at this LOD.  Drawables not in any lod group will be drawn at every LOD
+        uint opaque_count;
+        if (opaque_count > 0) NumString opaque[opaque_count]<optimize=false>;
+
+        // Draw - Translucent drawables to show at this LOD. Drawables in it are guaranteed to be drawn last.
+        uint translucent_count;
+        if (translucent_count > 0) NumString translucent[translucent_count]<optimize=false>;
+    }
+} LODTarget<read=lod_to_string>;
+
+string lod_to_string(LODTarget& lod)
+{
+    local string s;
+    local string grp_text = "";
+    local string trans_text = "";
+
+    if (exists(lod.group.text))
+    {
+        grp_text = lod.group.text;
+    }
+
+    if (exists(lod.trans_group.text))
+    {
+        trans_text = lod.trans_group.text;
+    }
+
+    SPrintf(s, "%.3f %s %s", lod.screen_size, grp_text, trans_text);
+    return s;
+}
+
+typedef struct (SystemInfo& info)
+{
+    int version; // 6 (GH2 360), 10 (TBRB/GDRB)
+
+    NumString driver; // CharDriver - The driver to animate
+    NumString clip1;  // CharClip - Clip to play
+    NumString clip2;  // CharClip - Clip to transition to, if any
+
+    NumString teleport_to;   // Waypoint - Teleport to this Waypoint
+    NumString teleport_from; // Waypoint - ???
+
+    NumString dist_map; // Symbol (none nodes raw) - Displays the transition distance map between clip1 and clip2, raw means the raw graph, no nodes
+
+    if (version <= 6) return;
+
+    int value_0x7c;
+    Bool value_0x80;
+    int value_0x90;
+
+    Bool value_0x81;
+    Bool value_0x82;
+    Bool value_0x83;
+
+    NumString value_0x84; // Symbol
+
+    Bool value_0x88;
+    Bool value_0x89;
+
+    int bpm;
+
+    NumString value_0x98; // Symbol
+
+    float value_0x9c;
+
+    NumString value_0x54; // RndTransformable
+} CharacterTest; // a.ka. CharacterTesting
+
+typedef struct (SystemInfo& info, Bool super, Bool inlined, Bool is_entry)
+{
+    int version; // 9 (GH2), 10 (GH2 360), 15 (TBRB/GDRB), 18 (DC1/DC2)
+    RndDir rnd_dir(info, True, inlined);
+
+    // Only written when this.data_dir == this
+    // Not usually the case when Character is a sub directory as entry
+    // Note: Second check probably not needed anymore
+    if (is_entry == True || ReadUInt() == 0xADDEADDE) return;
+    
+    struct LODTargets
+    {
+        int lod_count;
+        local int i;
+
+        for (i = 0; i < lod_count; i++)
+        {
+            LODTarget lods(version);
+        }
+    } lod_targets;
+
+    if (version < 18)
+    {
+        NumString shadow; // Group - Group containing shadow geometry
+    }
+    else
+    {
+        uint shadow_count;
+        if (shadow_count > 0) NumString shadow[shadow_count]<optimize=false>;
+    }
+
+    Bool self_shadow; // Whether this character should be self-shadowed
+
+    NumString sphere_base; // RndTransformable - Base for bounding sphere, such as bone_pelvis.mesh
+    if (version <= 9) return;
+
+    if (version > 10)
+    {
+        Sphere bounding; // Bounding sphere for the character, fixed
+
+        Bool frozen;   // If true, is frozen in place, no polling happens
+
+        // Forces the lod if greater or equal to zero
+        // (DC2) Forces LOD, kLODPerFrame is normal behavior of picking per frame, the others force the lod (0 is highest res lod, 2 is lowest res lod)
+        FORCE_LOD_ENUM force_lod; 
+    }
+
+    if (version <= 15)
+    {
+        CharacterTest char_test(info);
+        return;
+    }
+
+    // TODO: Update for DC1
+
+    if (version < 17)
+    {
+        int always_10;
+    }
+    if (version == 17)
+    {
+        NumString group;
+    }
+    else
+    {
+        int always_0;
+        int always_15;
+    }
+
+    NumString unknown; // main.drv
+    if (version == 17)
+    {
+        byte empty_bytes_1[5];
+    }
+    else
+    {
+        byte empty_bytes_1[16];
+    }
+    NumString str_1; // none
+
+    int always_0;
+    Bool always_true;
+
+    if (version >= 17)
+    {
+        byte empty_bytes_2[8];
+        return;
+    }
+
+    byte empty_bytes_2[7];
+
+    NumString str_2; // none
+
+    short always_0;
+    int always_120; // 120, 127, 134
+
+    Vector3 unk_vec;
+} Character;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Character")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else if (obj_version == 10)
+    {
+        info.platform = X360;
+        info.version = 25;
+    }
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    Character character(info, False, False, False);
+}
+
+#endif
+
+#endif

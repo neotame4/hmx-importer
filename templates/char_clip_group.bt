@@ -1,0 +1,62 @@
+// A related group of animations.  Gives you the lru one. Usually no extension.
+// Super: (None)
+// Ext: (None)
+// C++ Class: CharClipGroup
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharClipGroup"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_CLIP_GROUP
+#define OBJECT_CHAR_CLIP_GROUP
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 2 (TBRB/DC2), 4 (GDRB)
+    read_metadata(info, super);
+
+    uint clips_count;
+    if (clips_count > 0)
+    {
+        NumString clips[clips_count]<optimize=false>; // CharClipSamples[]
+    }
+    
+    uint unknown; // 0x18
+    uint flags;   // 0x1c
+
+    if (version >= 4)
+    {
+        uint unknown_2;      // 0
+        float unknown_float; // 1.0
+        Bool some_bool; // Usually false
+    }
+} CharClipGroup;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharClipGroup")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharClipGroup char_clip_group(info, False);
+}
+
+#endif
+
+#endif

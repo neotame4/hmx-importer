@@ -1,0 +1,508 @@
+/*
+; "Intrinsic" types.
+#define SPHERE ((struct (x float) (y float) (z float) (radius float)))
+#define VECTOR3 ((vector (x float) (y float) (z float)))
+#define VECTOR2 ((vector (x float) (y float)))
+#define COLOR ((struct (r float) (g float) (b float)))
+#define RECT ((struct (x float) (y float) (w float) (h float)))
+#define MATRIX3 ((struct (pitch float) (roll float) (yaw float) (x_scale float) (y_scale float) (z_scale float)))
+#define TRANSFORM ((struct (pitch float) (roll float) (yaw float) (x_scale float) (y_scale float) (z_scale float) (x float) (y float) (z float)))
+#define QUAT ((struct (x float) (y float) (z float) (w float)))
+#define BOX ((struct (min_x float) (max_x float) (min_y float) (max_y float) (min_z float) (max_z float)))
+*/
+
+#ifndef MILO_COMMON
+#define MILO_COMMON
+
+typedef enum <byte>
+{
+    False = 0,
+    True = 1
+} Bool<read=readBoolString>;
+
+string readBoolString(Bool& b)
+{
+    return (b == True)
+        ? "True"
+        : "False";
+}
+
+typedef struct
+{
+    uint count;
+    
+    if (count > 0)
+    {
+        char text[count]<optimize=false>;
+    }
+} NumString<read=read_num_string, write=write_num_string>;
+
+string read_num_string(NumString& ns)
+{
+    return ns.count > 0 ? ns.text : "";
+}
+
+void write_num_string(NumString& ns, string s)
+{
+    uint old_count = ns.count;
+    int64 start_pos = startof(ns.count) + 4;
+
+    // Delete old string
+    if (old_count > 0)
+    {
+        DeleteBytes(start_pos, old_count);
+    }
+    
+    int length = sizeof(s) - 1;
+    ns.count = length;
+
+    if (length > 0)
+    {
+        // Insert new string
+        InsertBytes(start_pos, length, 0);
+        WriteBytes(s, start_pos, length);
+    }
+
+    Printf("WARNING: Refresh template for changes to be recognized");
+}
+
+typedef struct
+{
+    float x;
+    float y;
+    float z;
+    float radius;
+} Sphere<read=readSphere>;
+
+string readSphere(Sphere& sp)
+{
+    local string s;
+    SPrintf(s, "(%f, %f, %f), r=%f", sp.x, sp.y, sp.z, sp.radius);
+    return s;
+}
+
+typedef struct
+{
+    float m11;
+    float m12;
+    float m13;
+    float m21;
+    float m22;
+    float m23;
+    float m31;
+    float m32;
+    float m33;
+    float m41;
+    float m42;
+    float m43;
+} Matrix;
+
+typedef struct
+{
+    float m11;
+    float m12;
+    float m13;
+    float m21;
+    float m22;
+    float m23;
+    float m31;
+    float m32;
+    float m33;
+} Matrix3;
+
+typedef struct
+{
+    float x;
+    float y;
+} Vector2<read=readVector2>;
+
+string readVector2(Vector2& v)
+{
+    local string s;
+    SPrintf(s, "(%f, %f)", v.x, v.y);
+    return s;
+}
+
+typedef struct
+{
+    float x;
+    float y;
+    float z;
+} Vector3<read=readVector3>;
+
+string readVector3(Vector3& v)
+{
+    local string s;
+    SPrintf(s, "(%f, %f, %f)", v.x, v.y, v.z);
+    return s;
+}
+
+typedef struct
+{
+    float x;
+    float y;
+    float z;
+    float w;
+} Vector4<read=readVector4>;
+
+string readVector4(Vector4& v)
+{
+    local string s;
+    SPrintf(s, "(%f, %f, %f, %f)", v.x, v.y, v.z, v.w);
+    return s;
+}
+
+typedef struct
+{
+    float x;
+    float y;
+    float z;
+    float w;
+} Quat<read=read_quat>;
+
+string read_quat(Quat& quat)
+{
+    return Str("(%f, %f, %f, %f)", quat.x, quat.y, quat.z, quat.w);
+}
+
+typedef struct
+{
+    float x;
+    float y;
+    float w;
+    float h;
+} Rect<read=readRect>;
+
+string readRect(Rect& r)
+{
+    local string s;
+    SPrintf(s, "(%f, %f) (%f, %f)", r.x, r.y, r.w, r.h);
+    return s;
+}
+
+typedef struct
+{
+    float min_x;
+    float max_x;
+    float min_y;
+    float max_y;
+    float min_z;
+    float max_z;
+} Box<read=Str("x = (%f, %f), y = (%f, %f), z = (%f, %f)", this.min_x, this.max_x, this.min_y, this.max_y, this.min_z, this.max_z)>;
+
+typedef struct
+{
+    float r;
+    float g;
+    float b;
+} Color<read=readColor, bgcolor=get_bgcolor_color>;
+
+
+int get_bgcolor_color(Color& c)
+{
+    local int r = (int)(c.r * 255.0);
+    local int g = (int)(c.g * 255.0);
+    local int b = (int)(c.b * 255.0);
+
+    // BGR order
+    return (b << 16) | (g << 8) | r;
+}
+
+string readColor(Color& c)
+{
+    local string s;
+
+    local int r = (int)(c.r * 255.0);
+    local int g = (int)(c.g * 255.0);
+    local int b = (int)(c.b * 255.0);
+
+    SPrintf(s, "#%02X%02X%02X", r, g, b);
+    return s;
+}
+
+typedef struct
+{
+    float r;
+    float g;
+    float b;
+    float a;
+} Color4<read=readColor4, bgcolor=get_bgcolor4_color>;
+
+int get_bgcolor4_color(Color4& c)
+{
+    local int r = (int)(c.r * 255.0);
+    local int g = (int)(c.g * 255.0);
+    local int b = (int)(c.b * 255.0);
+    local int a = (int)(c.a * 255.0);
+
+    // BGR order
+    return (b << 16) | (g << 8) | r;
+}
+
+string readColor4(Color4& c)
+{
+    local string s;
+    SPrintf(s, "(%f, %f, %f, %f)", c.r, c.g, c.b, c.a);
+    return s;
+}
+
+
+typedef struct
+{
+    float r;
+    float g;
+    float b;
+   // float a;
+} Color32<read=readColor32, bgcolor=get_bgcolor32_color>;
+
+int get_bgcolor32_color(Color32& c)
+{
+    local int r = (int)(c.r * 255.0);
+    local int g = (int)(c.g * 255.0);
+    local int b = (int)(c.b * 255.0);
+   // local int a = (int)(c.a * 255.0);
+
+    // BGR order
+    return (b * 0.0039215688593685627) | (g * 0.0039215688593685627) | (r * 0.0039215688593685627);
+  //  float fr() const { return r * 0.0039215688593685627f; }  //  float fg() const { return g * 0.0039215688593685627f; }  //  float fb() const { return b * 0.0039215688593685627f; }    //float fa() const { return a * 0.0039215688593685627f; }
+}
+
+string readColor32(Color32& c)
+{
+    local string s;
+    SPrintf(s, "#%02X%02X%02X", r, g, b);
+    return s;
+}
+
+// DTB
+typedef struct
+{
+    struct Node;
+    typedef enum <int>
+    {
+        Int,
+        Float,
+        Variable,
+        Func,
+        Object,
+        Symbol,
+        Unhandled,
+        IfDef,
+        Else,
+        EndIf,
+        Array = 0x10,
+        Command,
+        String,
+        Property,
+        Glob,
+        Define = 0x20,
+        Include,
+        Merge,
+        IfNDef,
+        Autorun,
+        Undef
+    } NodeType;
+
+    typedef struct
+    {
+        ushort childCount;
+        uint id;
+        Node children[childCount]<optimize=false>;
+    } Parent;
+
+    typedef struct
+    {
+        NodeType type;
+    
+        switch(type)
+        {
+            // Integer
+            case 0x00:
+                uint value;
+                break;
+            // Float
+            case 0x01: // Float
+                float value;
+                break;
+            // String
+            case 0x02: // Variable
+            case 0x03: // Func
+            case 0x04: // Object (gh2 milos)
+            case 0x05: // Symbol, Keyword
+            case 0x06: // Unhandled "KDataUnhandled" or "invalid"
+            case 0x07: // IfDef
+            case 0x08: // Else
+            case 0x09: // EndIf
+            case 0x12: // String
+            case 0x20: // Define
+            case 0x21: // Include
+            case 0x22: // Merge
+            case 0x23: // IfNDef
+            case 0x24: // Autorun
+            case 0x25: // Undef
+                NumString value;
+                break;
+            case 0x10: // Array
+            case 0x11: // Command, Script
+            case 0x13: // Property (Object Prop Ref)
+                Parent value;
+                break;
+            case 0x14: // Glob <glob 00>
+                // Note: <file.txt> is old syntax for "#include file.dta" so <glob file.bin> *might* be dta syntax for glob
+                struct Glob
+                {
+                    ushort size;
+                    if (size > 0) byte data[size];
+                } value<read=Str("<glob %d>", this.size)>;
+                break;
+        }
+    } Node;
+
+    Bool hasTree;
+    if (hasTree == True)
+    {
+        Parent root;
+    }
+} DTB;
+
+// Returns current file size
+uint findNextFile()
+{
+    if (FEof()) return -1;
+
+    local uint magic = 0xADDEADDE;
+    if (IsLittleEndian())
+    {
+        magic = 0xDEADDEAD;
+    }
+
+    local uint startPos = FTell();
+
+    local int64 result = FindFirst(magic, true, false, 0, 0.0, 1, startPos, 0, 24);
+    if (result == -1) return -1;
+
+    return result - startPos;
+}
+
+struct SystemInfo;
+
+typedef struct (SystemInfo& info)
+{
+    // 0 = GH2
+    // 1 = GH2 360
+    // 2 = RB1
+    int revision; // Usually 1 or 2
+    NumString type;
+    DTB props; // Usually empty
+
+    // Note field added in gh2 360
+    if (revision > 0)
+    {
+        NumString note;
+    }
+} Metadata;
+
+typedef enum <byte>
+{
+     PS2 = 0x01,
+    X360 = 0x02,
+      PC = 0x03,
+     PS3 = 0x04,
+     Wii = 0x05
+} Platform;
+
+typedef struct
+{
+    int version;
+    Platform platform;
+} SystemInfo;
+
+typedef struct
+{
+    string value;
+} NullTerminatedString<read=Str("%s", this.value)>;
+
+void read_metadata(SystemInfo& info, Bool super)
+{
+    if (info.version <= 10 || super == True)
+    {
+        // Skip reading
+        return;
+    }
+
+    Metadata metadata(info);
+}
+
+int guess_version()
+{
+    local int version;
+
+    BigEndian();
+    version = ReadInt();
+
+    if (version >= 0 && version < 255)
+    {
+        return version;
+    }
+
+    LittleEndian();
+    version = ReadInt();
+    if (version >= 0 && version < 255)
+    {
+        return version;
+    }
+
+    return -1;
+}
+
+typedef enum
+{
+    kNormal,
+    kStretched,
+    kJustFit
+} FIT_TEXT_ENUM;
+
+typedef enum
+{
+    kTopLeft = 17,
+    kTopCenter = 18,
+    kTopRight = 20,
+    kMiddleLeft = 33,
+    kMiddleCenter = 34,
+    kMiddleRight = 36,
+    kBottomLeft = 65,
+    kBottomCenter = 66,
+    kBottomRight = 68,
+} ALIGNMENT_ENUM;
+
+typedef struct
+{
+    Vector4 quat;
+    float pos;
+} KeyQuart;
+
+typedef struct
+{
+    float value;
+    float pos;
+} KeyFloat;
+
+typedef struct
+{
+    Vector3 vec3;
+    float pos;
+} KeyVec3;
+
+typedef struct
+{
+    Color4 color;
+    float pos;
+} KeyColor;
+
+typedef struct
+{
+    NumString value;
+    float pos;
+} KeyString;
+
+#endif

@@ -1,0 +1,64 @@
+// Parameters for fur shading, to be set on a material
+// Super: (None)
+// Ext: .fur
+// C++ Class: RndFur
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Fur"
+    #endif
+#endif
+
+#ifndef OBJECT_FUR
+#define OBJECT_FUR
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 3 (TBRB)
+    read_metadata(info, super);
+
+    int layers; // Number of passes
+
+    float thickness;     // Length of fur
+    float curvature;     // Curvature exponent (range: 0.0-3.0)
+    float shell_out;     // Bunch shells towards surface (range: 0.0-1.0)
+    float alpha_falloff; // Bunch opacity towards surface (range: 0.0-1.0)
+
+    float stretch;  // Maximum stretch
+    float slide;    // Maximum lateral motion
+    float gravity;  // Strength of gravity (range: 0.0-1.0)
+    float fluidity; // Langor of motion (range: 0.0-1.0)
+
+    Color4 roots_tint; // Tint at hair roots
+    Color4 ends_tint;  // Tint at hair ends
+
+    NumString fur_detail; // Detail map for finer fur. Only the alpha channel is used. (Tex)
+    float fur_tiling;     // Tiling for fur detail map. UVs of fur_detail are multiplied by this value. (range: 2.0e-2-100.0)
+    NumString wind;       // Wind Object, if set, blows on the fur. (Wind)
+} Fur;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Fur")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    Fur fur(info, False);
+}
+
+#endif
+
+#endif

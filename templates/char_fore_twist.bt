@@ -1,0 +1,61 @@
+// Does all interpolation for the forearm.
+//  Assumes:
+//   - foretwist1 and forearm are under upperarm.
+//   - foretwist2 is under foretwist1 and that hand is under forearm.
+//   - on the left hand offset rotation is usually 90 on the left, and -90 on the right.
+//  Feeds the bones when executed.
+// Super: CharPollable
+// Ext: .ftwist, .ik
+// C++ Class: CharForeTwist
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharForeTwist"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_FORE_TWIST
+#define OBJECT_CHAR_FORE_TWIST
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (GH2/GH2 360), 2 (TBRB extra), 3 (), 4 (DC1)
+    read_metadata(info, super);
+
+    float offset; // Usually -90 for right hand, 90 for left hand
+
+    NumString hand;   // Trans - The hand bone
+    NumString twist2; // Trans - The twist2 bone
+
+    if (version >= 2)
+    
+    float weight; // Usually -90 for right hand, 90 for left hand
+} CharForeTwist;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharForeTwist")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharForeTwist char_fore_twist(info, False);
+}
+
+#endif
+
+
+#endif

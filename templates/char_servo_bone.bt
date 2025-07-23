@@ -1,0 +1,45 @@
+// Sets bone transforms and regulates Character center to a spot.
+// Super: CharPollable
+// Ext: .servo
+// C++ Class: CharServoBone
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharServoBone"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_SERVO_BONE
+#define OBJECT_CHAR_SERVO_BONE
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (GH2/GH2 360/TBRB)
+    read_metadata(info, super);
+} CharServoBone;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharServoBone")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharServoBone char_servo_bone(info, False);
+}
+
+#endif
+
+#endif

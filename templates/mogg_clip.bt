@@ -1,0 +1,68 @@
+// Allows dynamic playback of Mogg-based audio clips, most notably crowd audio loops.
+// Super: (None)
+// Ext: .mogg
+// C++ Class: MoggClip
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "MoggClip"
+    #endif
+#endif
+
+#ifndef OBJECT_MOGG_CLIP
+#define OBJECT_MOGG_CLIP
+
+#include "common.bt"
+#include "mogg_file.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (TBRB/GDRB)
+    read_metadata(info, super);
+
+    NumString file; // The mogg audio file to be played
+    float volume;   // Volume in dB (0 is full volume, -96 is silence)
+    Bool loop;      // If true, this audio clip should loop during playback
+
+    // Read encoded audio data
+    if (version > 0)
+    {
+        ushort channels; // 2, 4
+        ushort sample_rate; // Not really sure...
+
+        // Remember endianess
+        local byte is_big_endian = IsBigEndian();
+
+        // Mogg is still written in little endian
+        LittleEndian();
+        MoggFile mogg;
+
+        if (is_big_endian) BigEndian();
+    }
+} MoggClip;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "MoggClip")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    MoggClip mogg_clip(info, False);
+}
+
+#endif
+
+
+#endif

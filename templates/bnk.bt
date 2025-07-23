@@ -1,0 +1,189 @@
+// .bnk for Amplitude PS2
+// Thanks to samplitude https://github.com/mtolly/samplitude/blob/master/src/Amplitude.hs
+
+#ifndef AMPPS2_BNK
+#define AMPPS2_BNK
+
+#include "common.bt"
+
+#define CHUNK_PREFIXED_DATA { char magic[4]; uint size; }
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    local uint entry_count = size / 22;
+
+    // 22 bytes
+    struct SampleEntry
+    {
+        uint entry_size; // Always 18
+        uint channels;
+        uint sample_rate;
+
+        uint unknown_1;
+        ushort unknown_2;
+
+        uint pos;
+    } entries[entry_count]<read=Str("channels: %d, sample rate: %d, pos: %d, unk_1: %d, unk_2: %d",
+        this.channels, this.sample_rate, this.pos, this.unknown_1, this.unknown_2)>;
+} SampleChunk<read=Str("SAMP: %d samples", this.entry_count)>;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    local uint end_offset = FTell() + size;
+    local uint string_count = 0;
+
+    uint unknown_count; // Always 1?
+
+    while (FTell() < end_offset)
+    {
+        NumString strings;
+        string_count += 1;
+    }
+} StringListChunk<read=Str("%s: %d strings", this.magic, this.string_count)>;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    local uint entry_count = size / 13;
+
+    // 13 bytes
+    struct BankEntry
+    {
+        uint entry_size; // Always 9
+
+        uint unknown_1;
+
+        ubyte bank_num;
+            
+        ubyte unknown_2;
+        ubyte unknown_3;
+
+        ubyte inst_count;
+
+        ubyte unknown_4;
+     } entries[entry_count];
+} BankChunk<read=Str("BANK: %d banks", this.entry_count)>;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    local uint entry_count = size / 16;
+
+    // 16 bytes
+    struct InstEntry
+    {
+        uint entry_size; // Always 12
+
+        uint unknown_1; // Always 1?
+
+        ushort prog;
+        ushort unknown_2;
+        ushort unknown_3; // Always 0?
+        ushort sdes;
+    } entries[entry_count]<read=Str("prog: %d, sdes: %d, unk_1: %d, unk_2: %d, unk_3: %d",
+        this.prog, this.sdes, this.unknown_1, this.unknown_2, this.unknown_3)>;
+} InstChunk<read=Str("INST: %d instruments", this.entry_count)>;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    local uint end_offset = FTell() + size;
+    local uint entry_count = 0;
+
+    typedef enum <ubyte>
+    {
+        Left = 0,
+        Center = 0x40,
+        Right = 0x7F
+    } PAN;
+
+    while (FTell() < end_offset)
+    {
+        // Variable sized
+        struct SdesEntry
+        {
+            uint entry_size;
+
+            uint end_bytes;
+            
+            ubyte min_pitch;
+            ubyte max_pitch;
+            ubyte base_pitch;
+            ubyte transpose;
+
+            ubyte unknown_1[12];
+
+            ubyte _vol;
+            PAN pan;
+            ubyte samp;
+
+            ubyte unknown_2[3];
+            ubyte unknown_3[end_bytes];
+
+            local string sample_name = "";
+
+            if (exists(parentof(parentof(this)).sample_chunk_filenames))
+            {
+                sample_name = parentof(parentof(this)).sample_chunk_names.strings[samp].text;
+            }
+        } entries<read=Str("sample: %s", this.sample_name)>;
+
+        entry_count += 1;
+    }
+} SdesChunk<read=Str("SDES: %d sde entries", this.entry_count)>;
+
+struct BnkChunks
+{
+    LittleEndian();
+    local string magic;
+
+    while (!FEof())
+    {
+        magic = ReadString(FTell(), 4);
+
+        switch (magic)
+        {
+            case "SAMP":
+                SampleChunk sample_chunk;
+                break;
+            case "SANM":
+                StringListChunk sample_chunk_names;
+                break;
+            case "SAFN":
+                // FN = file names (probably)
+                StringListChunk sample_chunk_filenames;
+                break;
+            case "BANK":
+                // Seems to always have 1 entry
+                BankChunk bank_chunk;
+                break;
+            case "BKNM":
+                // Seems to always have 1 string
+                StringListChunk bank_chunk_names;
+                break;
+            case "INST":
+                InstChunk inst_chunk;
+                break;
+            case "INNM":
+                StringListChunk inst_chunk_names;
+                break;
+            case "SDES":
+                SdesChunk sdes_chunk;
+                break;
+            case "SDNM":
+                StringListChunk sdes_chunk_names;
+                break;
+            default:
+                return;
+        }
+    }
+} file;
+
+#endif

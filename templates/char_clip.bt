@@ -1,0 +1,336 @@
+// A clip of animation that you can play. We expect subclasses for stuff like compression
+// (DC1)
+//  This is the simple form that stores samples and linearly interpolates between them.
+//  Data is grouped by keyframe, for better RAM coherency better storage, interpolation, etc.
+// Super: (None)
+// Ext: (None)
+// C++ Class: CharClip
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharClip"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_CLIP
+#define OBJECT_CHAR_CLIP
+
+#include "common.bt"
+#include "char_bones_samples.bt"
+
+typedef struct
+{
+    // Guessing fields
+    float frame;
+    float weight;
+} ClipNodeFloats<read=read_clip_node_floats_string>;
+
+string read_clip_node_floats_string(ClipNodeFloats& floats)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %.3f", floats.frame, floats.weight);
+    return s;
+}
+
+typedef struct
+{
+    NumString name;
+    uint float_count;
+    
+    if (float_count > 0)
+    {
+        ClipNodeFloats floats[float_count];
+    }
+} ClipNode<read=read_clip_node_string>;
+
+string read_clip_node_string(ClipNode& node)
+{
+    local string s;
+    SPrintf(s, "%s (%d frames)", node.name.text, node.float_count);
+    return s;
+}
+
+typedef struct
+{
+    NumString name;
+    int vec_count; // Usually 1
+        
+    if (vec_count > 0)
+    {
+        Vector2 vecs[vec_count];
+    }
+} ClipEvent;
+
+typedef struct
+{
+    int count;
+
+    if (count > 0)
+    {
+        ClipEvent events[count]<optimize=false>;
+    }
+} ClipEvents;
+
+typedef struct
+{
+    float frame;
+    NumString script;
+} FrameEvent<read=read_frame_event_string>;
+
+
+string read_frame_event_string(FrameEvent& fe)
+{
+    local string s;
+    SPrintf(s, "Start: %.2f, Value: %s", fe.frame, fe.script.text);
+    return s;
+}
+
+typedef struct
+{
+    int count;
+
+    if (count > 0)
+    {
+        FrameEvent events[count]<optimize=false>;
+    }
+} FrameEvents;
+
+typedef enum
+{
+    kPlayNoDefault = 0,
+    kPlayNow = 1,
+    kPlayNoBlend = 2,
+    kPlayFirst = 3,
+    kPlayLast = 4,
+    kPlayDirty = 8
+} PLAY_BLEND_FLAGS;
+
+typedef enum
+{
+    // kPlayNoDefault = 0,
+    kPlayNoLoop = 16,
+    kPlayLoop = 32,
+    kPlayGraphLoop = 48,
+    kPlayNodeLoop = 64,
+} PLAY_LOOP_FLAGS;
+
+typedef enum
+{
+    kPlayBeatTime = 0,
+    kPlayRealTime = 512,
+    kPlayBeatAlign1 = 4096,
+    kPlayBeatAlign2 = 8192,
+    kPlayBeatAlign4 = 16384,
+    kPlayBeatAlign8 = 32768
+} PLAY_TIME_FLAGS;
+
+typedef struct
+{
+    float cur_beat;
+    float next_beat;
+} TransitionNode<read=Str("%f -> %f", this.cur_beat, this.next_beat)>;
+
+typedef struct
+{
+    NumString clip; // CharClip: "clip it's transitioning to"
+
+    uint node_count;
+    if (node_count > 0) TransitionNode nodes;
+} Transition<read=Str("%s (%d nodes)", this.clip.text, this.node_count)>;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 5 (GH2/GH2 360), 12 (TBRB/GDRB), 19 (DC1), 20 (DC2)
+    read_metadata(info, super);
+
+    // Note: Seems that DC1 switched to using beat time
+    /*
+      Rem:
+        sync_to_song_time: bool
+        blend_width?: float
+    */
+
+    float start_beat;
+    if (version >= 19)
+    {
+        int end_beat;
+
+        int beats_per_sec;
+    }
+    
+    else
+    {
+        float end_beat;
+
+        float beats_per_sec;
+    }
+    
+
+    if (version >= 19)
+    {
+       // FSkip(17);
+        int egg;
+        NumString egg;
+        int egg;
+        int egg;
+        byte egg;
+
+        struct Transitions
+        {
+            uint transitions_count;
+            if (transitions_count > 0) Transition transitions[transitions_count]<optimize=false>;
+        } transitions<read=Str("(%d transitions)", this.transitions_count)>;
+
+       // FSkip(4);
+        int Junk;
+        if (Junk == 1)
+            CharBones char_bones(version);
+// if metadata type is viseme uncomment this
+//        int junk;
+        CharBonesSamples full(info, False, -1);
+        CharBonesSamples one(info, False, -1);
+
+        // TODO: Figure out rest of data for DC clips
+       // int Junk;
+        CharBones char_bones(version);
+        int float_count;    // sometimes the same as full num_samples, other times is low  numver like 2
+        float beans;
+        float some_floats[float_count * 2]<optimize=false>;
+    /*
+        float Junk;
+        float Junk;
+        float Junk;
+        float Junk;
+        float Junk;
+        float Junk;
+        float Junk;
+        float Junk;
+        float Junk;
+        float Junk;
+        float Junk;
+    */
+    //    float Junk;
+     //   float Junk;
+     //   float Junk;
+     
+        if (version >= 22)
+        {
+            int egg1;
+            int egg2;
+         //   int egg1;
+         //   int egg2;
+        }
+        return;
+    }
+
+    // PLAY_BLEND_FLAGS | PLAY_LOOP_FLAGS | PLAY_TIME_FLAGS
+    uint flags;      // default_blend? PLAY_BLEND_FLAGS
+    uint play_flags; // default_loop? PLAY_LOOP_FLAGS
+
+    float blend_width; // Usually 2?
+
+    if (version > 3)
+    {
+        float range;
+    }
+
+    if (version == 5)
+    {
+        Bool unknown_bool_1;
+    }
+    else if (version > 5)
+    {
+        NumString relative; // 0x2c Not sure
+    }
+
+    if ((version - 9) < 2)
+    {
+        Bool unknown_bool_2;
+    }
+
+    if (version > 9)
+    {
+        // beat_align? PLAY_TIME_FLAGS
+        int usually_neg_1; // 0x48 -1, 2
+    }
+
+    if (version > 11)
+    {
+        Bool do_not_decompress;
+    }
+
+    // ClearAllNode()
+
+    if (version < 8)
+    {
+        uint node_count;
+        if (node_count > 0)
+        {
+            ClipNode nodes[node_count]<optimize=false>;
+        }
+    }
+    else
+    {
+        uint nodes_size; // Computed
+        uint node_count;
+
+        if (node_count > 0)
+        {
+            ClipNode nodes[node_count]<optimize=false>;
+        }
+    }
+
+    // ResizeNode()
+    
+    if (version < 3)
+    {
+        int some_string_count;
+        NumString some_strings[some_string_count]<optimize=false>;
+    }
+
+    if (version < 7)
+    {
+        NumString enter_event;
+        NumString exit_event;
+        
+        // Print same warnings as milo engine code
+        if (enter_event.count > 0) Printf("WARN: Has old enter event %s, must port\n", enter_event.text);
+        if (exit_event.count > 0) Printf("WARN: Has old exit event %s, must port\n", exit_event.text);
+
+        FrameEvents events;
+    }
+    else
+    {
+        FrameEvents events;
+    }
+    
+    
+    /*ClipEvents clip_events;
+
+    byte bytes_always_0[8];
+    FrameEvents events;*/
+} CharClip;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharClip")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharClip char_clip(info, False);
+}
+
+#endif
+
+#endif

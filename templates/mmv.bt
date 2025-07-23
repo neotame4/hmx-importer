@@ -1,0 +1,122 @@
+// .mmv video file for PS2 Frequency
+
+// Note: This breaks if multiline
+#define CHUNK_PREFIXED_DATA { char magic[4]; uint unknown_1<hidden=true>; uint size; uint unknown_2<hidden=true>; }
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    byte data[size];
+} MovsChunk;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    // Both unknown values used?
+
+    byte data[size];
+} SndhChunk;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    // Both unknown values used?
+
+    byte data[size];
+} SndbChunk;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    // Both unknown values used?
+
+    byte data[size];
+} SndpChunk;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    byte data[size];
+} MovtChunk;
+
+/*typedef struct
+{
+    CHUNK_PREFIXED_DATA
+    uint unknown<hidden=true>;
+
+    byte data[size];
+} Rle8Chunk;*/
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    byte data[size];
+} PallChunk;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    byte data[size];
+} FramChunk;
+
+typedef struct
+{
+    CHUNK_PREFIXED_DATA
+
+    // Second unknown value used?
+
+    byte data[size];
+} LoopChunk;
+
+struct MmvFile
+{
+    LittleEndian();
+    local string magic;
+
+    // Note: There can be multiple of same chunk type in file
+    // SNDB
+    while (!FEof())
+    {
+        magic = ReadString(FTell(), 4);
+
+        switch (magic)
+        {
+            case "MOVS":
+                MovsChunk movs_chunk;
+                break;
+            case "SNDH":
+                SndhChunk sndh_chunk;
+                break;
+            case "SNDB":
+                SndbChunk sndb_chunk;
+                break;
+            case "SNDP":
+                SndpChunk sndp_chunk;
+                break;
+            case "MOVT":
+                MovtChunk movt_chunk;
+                break;
+            /*case "RLE8":
+                Rle8Chunk rle8_chunk;
+                break;*/
+            case "PALL":
+                PallChunk pall_chunk;
+                break;
+            case "FRAM":
+                FramChunk fram_chunk;
+                break;
+            case "LOOP":
+                LoopChunk loop_chunk;
+                break;
+            default:
+                return;
+        }
+    }
+} file;

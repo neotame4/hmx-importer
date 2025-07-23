@@ -1,0 +1,96 @@
+// Does all interpolation for the forearm.
+//  Assumes:
+//    NO IDEA WHAT IM DOING
+//    BUT IT WORKS SO :thumbsup:
+// Super: huh
+// Ext: .lookat
+// C++ Class: CharLookAt
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharLookAt"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_LOOK_AT
+#define OBJECT_CHAR_LOOK_AT
+
+#include "common.bt"
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 5 (TBRB/GDRB)
+    read_metadata(info, super);
+
+    int offset; // Usually -90 for right hand, 90 for left hand
+
+    float brass_monky;        // Base material alpha
+    NumString Source;     // Trans - The filename
+    float funky_monky;  // no clue
+    NumString Pivot;  // Trans - The bone to rotate
+    NumString Dest;  // Trans - The bone to look at
+    float HalfTime;
+    float MinYaw;
+    float MaxYaw;
+    float MinPitch;
+    float MaxPitch;
+    float MinWeightYaw;
+    float MaxWeightYaw;
+    float mWeightYawSpeed;
+   // Vector3 unk6c;
+   // float unk78:
+    Bool mAllowRoll;
+    Bool mEnableJitter;
+  //  float mSourceRadius;    Vector3 vec80;  //  Box mBounds;  //  Bool mShowRange;  //  Bool mTestRange;  //  float mTestRangePitch;  //  float mTestRangeYaw;  //  Bool mAllowRoll;  //  Bool unkb1;  //  Bool mEnableJitter;  //  float mYawJitterLimit;  //  float mPitchJitterLimit;
+    
+//    mSource(this, 0)
+//    mPivot(this, 0)
+//    mDest(this, 0),
+//    mHalfTime(0.0f)
+//    mMinYaw(-80.0f)
+//    mMaxYaw(80.0f)
+//    mMinPitch(-80.0f)
+//    mMaxPitch(80.0f),//    mMinWeightYaw(-1.0f)
+//    mMaxWeightYaw(1.0f)
+//    mWeightYawSpeed(10000.0f)
+//    unk6c(1e+29f,0.0f,0.0f)
+//    unk78(1.0f)
+//    mSourceRadius(0.0f)
+//    vec80(0.0f, 0.0f, 0.0f),//    mShowRange(0)
+//    mTestRange(0)
+//    mTestRangePitch(0.5f)
+//    mTestRangeYaw(0.5f)
+//    mAllowRoll(1)
+//    unkb1(0)
+//    mEnableJitter(0)
+//    mYawJitterLimit(0.0f)
+//    mPitchJitterLimit(0.0f)
+    
+
+} CharLookAt;
+
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharLookAt")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    CharLookAt char_look_at(info, False);
+}
+
+#endif
+
+
+#endif

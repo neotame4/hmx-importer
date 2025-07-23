@@ -1,0 +1,221 @@
+// Super: (None)
+// Ext: .png .bmp
+// C++ Class: RndBitmap?
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "Bitmap"
+    #endif
+#endif
+
+#ifndef OBJECT_BITMAP
+#define OBJECT_BITMAP
+
+#include "common.bt"
+
+typedef enum <uint>
+{
+    ARGB = 1, // Presumably, 32bpp
+    RGBA = 3,
+    DXT1_BC1 = 8,
+    DXT5_BC3 = 24,
+    ATI2_BC5 = 32,
+    TPL_CMP = 72,        // 48 00 00 00
+    TPL_CMP_ALPHA = 328, // 48 01 00 00
+    TPL_CMP_2     = 583  // 48 02 00 00 seems to be same as 0x48
+} BITMAP_ENCODING;
+
+typedef struct
+{
+    ubyte value<bgcolor=get_bgcolor_pixel_8bpp>;
+} Pixel;
+
+typedef struct (ubyte mip, ushort w, ushort h, uint size)
+{
+    local ubyte mip_level = mip;
+    local ushort width = w;
+    local ushort height = h;
+
+    //Pixel data[size]<optimize=false>;
+    byte data[size];
+} Texture<read=Str("mip #%d: %dx%d", this.mip_level, this.width, this.height)>;
+
+typedef struct (ubyte mip, ushort w, ushort h, uint size)
+{
+    local ubyte mip_level = mip;
+    local ushort width = w;
+    local ushort height = h;
+
+    //ubyte data[size];
+
+    struct PixelData
+    {
+        ubyte d1;
+        ubyte d2;
+    } data[size / 2]<read=Str("(%d | %d)", this.d1, this.d2)>;
+
+    // Validation...
+    local uint i;
+    local uint pixel_count = 0;
+
+    return;
+
+    for (i = 0; i < size; i += 2)
+    {
+        pixel_count += data[i];
+    }
+} FreqTexture<read=Str("mip #%d: %dx%d (%d pixels)", this.mip_level, this.width, this.height, this.pixel_count)>;
+
+typedef struct
+{
+    ubyte r;
+    ubyte g;
+    ubyte b;
+    ubyte a;
+
+    local uint rgba_value = ((uint)r << 24) | ((uint)g << 16) | ((uint)b << 8) | (uint)a;
+} RGBAColor<read=Str("%08X", this.rgba_value), bgcolor=get_bgcolor_rgbacolor>;
+
+int get_bgcolor_rgbacolor(RGBAColor& c)
+{
+    // BGR order
+    return ((int)c.b << 16) | ((int)c.g << 8) | (int)c.r;
+}
+
+int get_bgcolor_pixel_8bpp(ubyte& p)
+{
+    local ubyte r = parentof(parentof(this)).color_palette.colors[p].r;
+    local ubyte g = parentof(parentof(this)).color_palette.colors[p].g;
+    local ubyte b = parentof(parentof(this)).color_palette.colors[p].b;
+
+    // BGR order
+    return ((int)b << 16) | ((int)g << 8) | (int)r;
+}
+
+typedef struct
+{
+    // 0 = Amp, 1 = GH/RB
+    // Header is 16 bytes in amp, and 32 bytes for GH/RB
+    byte version; // Usually 1 (might change in LEGO idk)
+
+    local ubyte is_freq = 0;
+
+    if (version == 0
+        && (ReadUShort(FTell() + 3) == 0xD000 || ReadUShort(FTell() + 3) == 0x1500 || ReadUShort(FTell() + 3) == 0x1100))
+    {
+        // 24-byte header (No mip maps)
+        FSkip(3); // Zero'd data
+        ushort encoding<format=hex>; // 0xD000 = 4bpp, 0x1100 = 8bpp, 0x1500 = 8bpp (variable)
+
+        ushort width;
+        ushort height;
+        ushort bpl;
+
+        uint always_0_1;
+        uint img_data_size;
+        uint always_0_2;
+
+        local ubyte bpp = (bpl * 8) / width;
+        local ubyte mip_maps = 0;
+        is_freq = 1;
+    }
+    else if (version == 0)
+    {
+        // 16-byte header (No mip maps)
+        ubyte bpp;
+        ushort encoding; // Always 3
+
+        ushort width;
+        ushort height;
+        ushort bpl;
+
+        local ubyte mip_maps = 0;
+    
+        // Skip empty bytes
+        FSkip(6);
+    }
+    else
+    {
+        // 32-byte header
+        local ubyte lookup_bpp = ReadUByte(FTell());
+        local ubyte is_alt_v2 = version == 2 && lookup_bpp != 4 && lookup_bpp != 8;
+
+        if (is_alt_v2) uint hash<format=hex>; // Assumed...
+
+        ubyte bpp;
+        BITMAP_ENCODING encoding;
+        ubyte mip_maps;
+
+        ushort width;
+        ushort height;
+        ushort bpl;
+        ushort wii_alpha_num; // Not sure on byte length (0 if not used)
+
+        // Skip empty bytes
+        if (!is_alt_v2) FSkip(17);
+        else FSkip(13);
+    }
+
+    if (encoding == 3 && (bpp == 4 || bpp == 8))
+    {
+        byte color_palette[1 << (bpp + 2)];
+    }
+    if (encoding == 8 && (bpp == 4 || bpp == 8))
+    {
+        byte color_palette[1 << (bpp + 2)];
+    }
+    else if (is_freq)
+    {
+        // Always has 256 colors
+        byte color_palette[1024];
+        struct ColorPalette
+        {
+            RGBAColor colors[256]<optimize=false>;
+        } color_palette;
+
+        uint always_0_3;
+        uint color_count; // Count of actual colors in palette
+
+        if (encoding == 0x1500)
+        {
+            FreqTexture textures(0, width, height, img_data_size);
+            return;
+        }
+    }
+
+    local ubyte i = 0;
+    local ushort w = width;
+    local ushort h = height;
+
+    // Early exit if no texture data
+    if (width == 0 || height == 0) return;
+
+    local uint data_size;
+    while (i <= mip_maps)
+    {
+        data_size = ((uint)w * (uint)h * (uint)bpp) / 8;
+        Texture textures(i, w, h, data_size);
+
+        w >>= 1;
+        h >>= 1;
+        i++;
+    }
+    
+    // Read hidden alpha data
+    if (encoding == TPL_CMP && exists(wii_alpha_num) && wii_alpha_num == 4)
+    {
+        data_size = ((uint)width * (uint)height * (uint)bpp) / 8;
+        Texture alpha_texture(0, width, height, data_size);
+    }
+} Bitmap;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "Bitmap")
+{
+    Bitmap bitmap;
+}
+
+#endif
+
+#endif

@@ -1,0 +1,742 @@
+// N/A
+// Super: (None)
+// Ext: (None)
+// C++ Class: CharBonesSamples
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "CharBonesSamples"
+    #endif
+#endif
+
+#ifndef OBJECT_CHAR_BONES_SAMPLES
+#define OBJECT_CHAR_BONES_SAMPLES
+
+#include "common.bt"
+
+struct CharBonesSamples;
+
+typedef enum <uint>
+{
+    kCompressNone = 0,
+    kCompressRots = 1,
+    kCompressVects = 2,
+    kCompressQuats = 3,
+    kCompressAll = 4
+} CLIP_COMPRESSION; // CompressionType
+
+typedef struct
+{
+    int count;
+
+    if (count > 0)
+    {
+        NumString trans_names[count]<optimize=false>;
+    }
+} TransInfo;
+
+typedef struct (int version)
+{
+    NumString symbol;
+    if (version != -1 && version <= 10) return; // No weights
+
+    float weight;
+} CharBone4Bone<read=read_char_bone>;
+
+typedef struct (int version)
+{
+    int bone_count;
+    if (bone_count <= 0) return;
+
+    local int i;
+
+    for (i = 0; i < bone_count; i++)
+    {
+        CharBone4Bone bones(version);
+    }
+} CharBones;
+
+string read_char_bone(CharBone4Bone& bone)
+{
+    local string s;
+    local float w = 1.0;
+
+    if (exists(bone.weight))
+    {
+        w = bone.weight;
+    }
+
+    SPrintf(s, "%1.2f %s", w, bone.symbol.text);
+    return s;
+}
+
+typedef struct (uint sample_size)
+{
+    byte data[sample_size];
+} CharBoneSample;
+
+typedef struct (CharBone4Bone& bone, uint compression)
+{
+    local string bone_name = "";
+    local float xx = 0.0;
+    local float yy = 0.0;
+    local float zz = 0.0;
+
+    if (exists(bone.symbol) && exists(bone.symbol.text))
+    {
+        bone_name = bone.symbol.text;
+    }
+
+    if (compression < 2)
+    {
+        // 12 bytes
+        float x;
+        float y;
+        float z;
+        if (version >= 16)
+        {
+            float w;
+        }
+
+        if (version > 12)
+        {
+            if (version < 16)
+            {
+                xx = (x / 32767) * 1280;
+                yy = (y / 32767) * 1280;
+                zz = (z / 32767) * 1280;
+            }
+            else
+            {
+                xx = x;
+                yy = y;
+                zz = z;
+            }
+        }
+        else
+        {
+            xx = x;
+            yy = y;
+            zz = z;
+        }
+    }
+    else
+    {
+        // 6 bytes
+        short x;
+        short y;
+        short z;
+
+        // Convert to floats
+        xx = Max((float)x / 32767.0, -1);
+        yy = Max((float)y / 32767.0, -1);
+        zz = Max((float)z / 32767.0, -1);
+    }
+} PosSample<read=Str("%s (%f, %f, %f)", this.bone_name, this.xx, this.yy, this.zz)>;
+
+typedef struct (CharBone4Bone& bone, uint compression)
+{
+    local string bone_name = "";
+    local float xx = 0.0;
+    local float yy = 0.0;
+    local float zz = 0.0;
+    local float ww = 0.0;
+
+    if (exists(bone.symbol) && exists(bone.symbol.text))
+    {
+        bone_name = bone.symbol.text;
+    }
+
+    if (compression == 0)
+    {
+        // 16 bytes
+        float x;
+        float y;
+        float z;
+        float w;
+
+        xx = x;
+        yy = y;
+        zz = z;
+        ww = w;
+    }
+    else if (compression < 3)
+    {
+        // 8 bytes
+        // Packed as signed shorts
+        short x;
+        short y;
+        short z;
+        short w;
+
+        // Convert to floats
+        xx = Max((float)x / 32767.0, -1);
+        yy = Max((float)y / 32767.0, -1);
+        zz = Max((float)z / 32767.0, -1);
+        ww = Max((float)w / 32767.0, -1);
+    }
+    else
+    {
+        // 4 bytes
+        byte x;
+        byte y;
+        byte z;
+        byte w;
+        
+    }
+} QuatSample<read=Str("%s (%f, %f, %f, %f)", this.bone_name, this.xx, this.yy, this.zz, this.ww)>;
+
+
+typedef struct (CharBone4Bone& bone, uint compression)
+{
+    local string bone_name = "";
+    local float xx = 0.0;
+    local float yy = 0.0;
+    local float zz = 0.0;
+
+    if (exists(bone.symbol) && exists(bone.symbol.text))
+    {
+        bone_name = bone.symbol.text;
+    }
+
+    if (compression == 0)
+    {
+        // 16 bytes
+        float x;
+        float y;
+        float z;
+
+        xx = x;
+        yy = y;
+        zz = z;
+    }
+    else if (compression < 3)
+    {
+        // 8 bytes
+        // Packed as signed shorts
+        short x;
+        short y;
+        short z;
+
+        // Convert to floats
+        xx = Max((float)x / 32767.0, -1);
+        yy = Max((float)y / 32767.0, -1);
+        zz = Max((float)z / 32767.0, -1);
+    }
+    else
+    {
+        // 4 bytes
+        byte x;
+        byte y;
+        byte z;
+        
+    }
+} ScaleSample<read=Str("%s (%f, %f, %f)", this.bone_name, this.xx, this.yy, this.zz)>;
+
+/*float unpack_float(ushort num)
+{
+    local int uStack20 = (int)num ^ 0x80000000;
+    local uint64 concat44 = (uint64)((uint64)0x43300000 << sizeof(int)) | (uint64)((uint)num ^ 0x80000000);
+
+    // Interpret int64 as double (no casting)
+    local byte data[8];
+    ConvertDataToBytes(concat44, data);
+    local double doubleValue = ConvertBytesToDouble(data);
+
+    // return 0.0006103516 * (float)(doubleValue - 4503601774854144.0);
+    return 1300.0 * 0.00003051851 * (float)(doubleValue - 4503601774854144.0);
+}*/
+
+float unpack_float(short num)
+{
+    /*
+    typedef struct
+                {
+                    short value;
+                    local float f_value = Max((float)value / 32767.0, -1.0);
+                } SNorm<read=Str("%.3f", this.f_value)>;*/
+
+
+    return Max((float)num / 32767.0, -1.0);
+
+    local double comp1 = 0.5 + ((float)num / 0.00003051851);
+    local double comp2 = 32767.0;
+
+    // Clamp number
+    if (comp1 <= comp2)
+    {
+        comp2 = comp1;
+
+        if (comp2 < -32767.0)
+        {
+            comp2 = -32767.0;
+        }
+    }
+
+    comp2 = Floor(comp2);
+    return comp2;
+    
+    /*if ((result <= compare) && result < -32767.0)
+    {
+        // Use lower value?
+        result = -32767.0;
+    }
+
+    result = Floor(result);
+    return result;*/
+}
+
+local float test = unpack_float(64008);
+
+typedef struct (CharBone4Bone& bone, uint compression)
+{
+    local string bone_name = "";
+    local float xx;
+    Printf("ROTX FOUND %d\n", xx);
+    Printf("ROTX FOUND %d\n", xx);
+   // Printf("ROTX FOUND %d\n", xx);
+   // Printf("ROTX FOUND %d\n", xx);
+   // Printf("ROTX FOUND %d\n", xx);
+   // Printf("ROTX FOUND %d\n", xx);
+   // Printf("ROTX FOUND %d\n", xx);
+   // Printf("ROTX FOUND %d\n", xx);
+
+    if (exists(bone.symbol) && exists(bone.symbol.text))
+    {
+        bone_name = bone.symbol.text;
+    }
+
+    if (compression == 0)
+    {
+        float x;
+        xx = x;
+    }
+    else
+    {
+        short x;
+        xx = Max((float)(x / 32767.0) / 0.5 * 10, -1);
+    }
+
+    //ushort num;
+    //local float num_unpacked = unpack_float(num);
+} RotxSample<read=Str("%s (%f)", this.bone_name, this.xx)>;
+
+typedef struct (CharBone4Bone& bone, uint compression)
+{
+    local string bone_name = "";
+    local float yy;
+    Printf("ROTY FOUND %d\n", yy);
+    Printf("ROTY FOUND %d\n", yy);
+   // Printf("ROTY FOUND %d\n", yy);
+   // Printf("ROTY FOUND %d\n", yy);
+   // Printf("ROTY FOUND %d\n", yy);
+   // Printf("ROTY FOUND %d\n", yy);
+   // Printf("ROTY FOUND %d\n", yy);
+   // Printf("ROTY FOUND %d\n", yy);
+   // Printf("ROTY FOUND %d\n", yy);
+
+    if (exists(bone.symbol) && exists(bone.symbol.text))
+    {
+        bone_name = bone.symbol.text;
+    }
+
+    if (compression == 0)
+    {
+        float y;
+        yy = y;
+    }
+    else
+    {
+        short y;
+        yy = Max((float)(y / 32767.0) / 0.5 * 10, -1);
+    }
+
+    //ushort num;
+    //local float num_unpacked = unpack_float(num);
+} RotySample<read=Str("%s (%f)", this.bone_name, this.yy)>;
+
+typedef struct (CharBone4Bone& bone, uint compression)
+{
+    local string bone_name = "";
+    local float zz;
+
+    if (exists(bone.symbol) && exists(bone.symbol.text))
+    {
+        bone_name = bone.symbol.text;
+    }
+
+    if (compression == 0)
+    {
+        float z;
+        zz = z;
+    }
+    else
+    {
+        short z;
+        zz = Max((float)(z / 32767.0) / 0.5 * 10, -1);
+    }
+
+    //ushort num;
+    //local float num_unpacked = unpack_float(num);
+} RotzSample<read=Str("%s (%f)", this.bone_name, this.zz)>;
+
+struct CharBonesSamples;
+
+uint get_type_size(CharBonesSamples& char_bones, uint idx)
+{
+    if (idx < 2)
+    {
+        return (char_bones.compression < 2) ? 16 : 6;
+    }
+
+    if (idx != 2)
+    {
+        return (char_bones.compression == 0) ? 4 : 2;
+    }
+    
+    if (char_bones.compression > 2)
+    {
+        return 4;
+    }
+
+    if (char_bones.compression == 0)
+    {
+        return 16;
+    }
+
+    return 8;
+}
+
+void recompute_sizes(CharBonesSamples& char_bones, uint count_size)
+{
+    char_bones.computed_sizes[0] = 0;
+
+    local int i = 0;
+    local uint curr_count;
+    local uint next_count;
+    local uint type_size;
+
+    while (i < (count_size - 1))
+    {
+        curr_count = char_bones.counts[i];
+        next_count = char_bones.counts[i + 1];
+
+        type_size = get_type_size(char_bones, i);
+        Printf("count size is %d\n", count_size);
+        Printf("curr_count is %d\n", curr_count);
+        Printf("next_count is %d\n", next_count);
+        Printf("type_size is %d\n", type_size);
+        Printf("i is %d\n", i);
+        char_bones.computed_sizes[i + 1] = char_bones.computed_sizes[i] + (next_count - curr_count) * type_size;
+        i++;
+        Printf("Last computed size is %d\n", char_bones.computed_sizes[i]);
+        Printf("0Last computed size is %d\n", char_bones.computed_sizes[0]);
+        Printf("1Last computed size is %d\n", char_bones.computed_sizes[1]);
+        Printf("2Last computed size is %d\n", char_bones.computed_sizes[2]);
+        Printf("3Last computed size is %d\n", char_bones.computed_sizes[3]);
+        Printf("4Last computed size is %d\n", char_bones.computed_sizes[4]);
+        Printf("5Last computed size is %d\n", char_bones.computed_sizes[5]);
+        Printf("6Last computed size is %d\n", char_bones.computed_sizes[6]);
+    }
+
+    char_bones.sample_size = (char_bones.computed_sizes[count_size - 1] + 0xF) & 0xFFFFFFF0;
+
+    Printf("Last computed number is %d\n", char_bones.computed_sizes[i]);
+    Printf("Computed sample_size is %d\n", char_bones.sample_size);
+}
+
+int calculate_sample_size(CharBonesSamples& char_bones)
+{
+    local int sum = 0;
+
+    // Pos
+    if (char_bones.compression < 2)
+    {
+        sum += 12 * char_bones.counts[1];
+    }
+    else
+    {
+        sum += 6 * char_bones.counts[1];
+    }
+
+    // Quat
+    if (char_bones.compression == 0)
+    {
+        sum += 16 * (char_bones.counts[3] - char_bones.counts[1]);
+    }
+    else if (char_bones.compression < 3)
+    {
+        sum += 8 * (char_bones.counts[3] - char_bones.counts[1]);
+    }
+    else
+    {
+        sum += 4 * (char_bones.counts[3] - char_bones.counts[1]);
+    }
+
+    // Rot
+    if (char_bones.compression == 0)
+    {
+        sum += 4 * (char_bones.counts[6] - char_bones.counts[3]);
+    }
+    else
+    {
+        sum += 2 * (char_bones.counts[6] - char_bones.counts[3]);
+    }
+
+    return sum;
+}
+
+/*typedef struct (CharBonesSamples& char_bones)
+{
+    local uint buffer_idx;
+    local uint buffer_read_limit_idx;
+
+    // Read pos
+    buffer_idx = char_bones.sample_size * i;
+    buffer_read_limit_idx = buffer_idx + char_bones.computed_sizes[2];
+    while (buffer_idx < buffer_read_limit_idx)
+    {
+        PosSample pos_sample(char_bones.compression);
+        
+        if (char_bones.compression < 2) buffer_idx += 12;
+        else buffer_idx += 6;
+    }
+
+    // Read quat
+    buffer_idx = char_bones.computed_sizes[2];
+    buffer_read_limit_idx = buffer_idx + char_bones.computed_sizes[3];
+    while (buffer_idx < buffer_read_limit_idx)
+    {
+        QuatSample quat_sample(char_bones.compression);
+
+        if (char_bones.compression == 0) buffer_idx += 16;
+        else if (char_bones.compression < 3) buffer_idx += 8;
+        else buffer_idx += 4;
+    }
+
+    // Read rot
+    buffer_idx = computed_sizes[3];
+    buffer_read_limit_idx = buffer_idx + char_bones.computed_sizes[6];
+    while (buffer_idx < buffer_read_limit_idx)
+    {
+        RotSample rot_sample(char_bones.compression);
+        buffer_idx += 2;
+
+        if (char_bones.compression == 0) buffer_idx += 4;
+        else buffer_idx += 2;
+    }
+} Sample;*/
+
+uint calc_bone_count_with_ext(CharBones& char_bones, string ext)
+{
+    // Safe guard if no bones
+    if (!exists(char_bones.bone_count)) return 0;
+
+    local int i;
+    local int ext_idx;
+    local uint count = 0;
+
+    for (i = 0; i < char_bones.bone_count; i++)
+    {
+        // Protect against null...
+        if (char_bones.bones[i].symbol.count == 0) continue;
+
+        //local int str_size = Strlen(char_bones.bones[i].symbol.text);
+        ext_idx = Strstr(char_bones.bones[i].symbol.text, ext);
+
+        // Note: Only checks if path contains ext, not that it ends with it
+        if (ext_idx > -1) count += 1;
+    }
+
+    return count;
+}
+
+typedef struct (CharBonesSamples& char_bones, uint sample_size)
+{
+    //local uint pos_count = char_bones.counts[1];
+    //local uint quat_count = (char_bones.counts[3] - char_bones.counts[1]);
+    //local uint rotz_count = (char_bones.counts[6] - char_bones.counts[3]);
+
+    local uint pos_count = calc_bone_count_with_ext(char_bones.char_bones, ".pos");
+    local uint scale_count = calc_bone_count_with_ext(char_bones.char_bones, ".scale");
+    local uint quat_count = calc_bone_count_with_ext(char_bones.char_bones, ".quat");
+    local uint rotx_count = calc_bone_count_with_ext(char_bones.char_bones, ".rotx");
+    local uint roty_count = calc_bone_count_with_ext(char_bones.char_bones, ".roty");
+    local uint rotz_count = calc_bone_count_with_ext(char_bones.char_bones, ".rotz");
+
+    local uint i;
+    local uint bone_idx = 0;
+
+    local uint start = FTell();
+
+    // Read pos
+    for (i = 0; i < pos_count; i++)
+    {
+        PosSample pos_sample(char_bones.char_bones.bones[bone_idx], char_bones.compression);
+        bone_idx += 1;
+    }
+    
+    // Read scale
+    for (i = 0; i < scale_count; i++)
+    {
+        ScaleSample scale_sample(char_bones.char_bones.bones[bone_idx], char_bones.compression);
+        bone_idx += 1;
+    }
+    
+    // Read quat
+    for (i = 0; i < quat_count; i++)
+    {
+        QuatSample quat_sample(char_bones.char_bones.bones[bone_idx], char_bones.compression);
+        bone_idx += 1;
+    }
+    
+    // Read rot
+    for (i = 0; i < rotx_count; i++)
+    {
+        RotxSample rotx_sample(char_bones.char_bones.bones[bone_idx], char_bones.compression);
+        bone_idx += 1;
+    }
+
+    for (i = 0; i < roty_count; i++)
+    {
+        RotySample roty_sample(char_bones.char_bones.bones[bone_idx], char_bones.compression);
+        bone_idx += 1;
+    }
+
+    for (i = 0; i < rotz_count; i++)
+    {
+        RotzSample rotz_sample(char_bones.char_bones.bones[bone_idx], char_bones.compression);
+        bone_idx += 1;
+    }
+
+    // Only aligned in RB samples?
+    /*if (char_bones.version == -1)
+    {
+        // Align to multiples of 4...
+        local uint end = FTell();
+
+        local uint diff = end - start;
+        local uint rem = diff % 4;
+
+        if (rem != 0) FSkip(4 - rem);
+    }*/
+    if (char_bones.version > 11)
+    {
+        local uint end = FTell();
+        local uint diff = sample_size - (end - start);
+        local uint diff2 = (end - start);
+   // Printf("start is %d\n", start);
+   // Printf("end is %d\n", end);
+   // Printf("SampleSize is %d\n", char_bones.sample_size);
+   // Printf("diff is %d\n", diff);
+   // Printf("end - start is %d\n", diff2);
+
+        if (diff > 0) byte padding[diff];
+    }
+} Sample;
+
+typedef struct (CharBonesSamples& char_bones, SystemInfo& info)
+{
+    if (char_bones.version == 14)
+    {
+        Bool some_bool;
+    }
+
+    if (char_bones.sample_size > 0)
+    {
+        local uint buffer_size = char_bones.sample_size * char_bones.num_samples;
+        // local byte buffer[buffer_size];
+        
+        local uint sample_size = char_bones.sample_size;
+        
+        // Hacky way to fix sample size issue
+        if (char_bones.compression < 2)
+        {
+            //sample_size = calculate_sample_size(char_bones);
+            Printf("Real sample size is %d\n", sample_size);
+        }
+    
+        local int i;
+        for (i = 0; i < char_bones.num_samples; i++)
+        {
+            //CharBoneSample samples(sample_size);
+
+            // TODO: Refactor code
+            Sample samples(char_bones, sample_size);
+        }
+    }
+} CharBonesSamplesData;
+
+typedef struct (SystemInfo& info, Bool super, int fake_version)
+{
+    local uint count_size = 10;
+
+    if (fake_version == -1)
+    {
+        // Always same version of parent CharClipSamples?
+        // Except in DC because it doesn't use CharClipSamples
+`        int version; // 16 (TBRB/GDRB/DC2)
+    }
+    else
+    {
+        local int version = fake_version; // 10 (GH2), 11 (GH2 360)
+    }
+
+    if (version > 15)
+    {
+        count_size = 7;
+    }
+
+    CharBones char_bones(version);
+
+    uint counts[count_size];
+    CLIP_COMPRESSION compression; // 0-4 1 = GH2, 2 = TBRB
+    uint num_samples;
+
+    // Compute these values
+    local uint computed_sizes[count_size];
+    local uint sample_size;
+    recompute_sizes(this, 7); // Still treat as only 7 counts
+
+    if (version > 11)
+    {
+        // Not sure if frame data
+        uint num_frames;
+        if (num_frames > 0)
+        {
+            float frames[num_frames];
+        }
+
+        CharBonesSamplesData data(this, info);
+    }
+} CharBonesSamples;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "CharBonesSamples")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    /*else if (IsLittleEndian() && obj_version == 11)
+    {
+        info.platform = X360;
+        info.version = 25;
+    }*/
+    else
+    {
+        info.platform = PS2;
+        info.version = 24;
+    }
+
+    CharBonesSamples char_bones_samples(info, False, -1);
+}
+
+#endif
+
+#endif

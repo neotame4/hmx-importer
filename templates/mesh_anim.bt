@@ -1,0 +1,106 @@
+// A MeshAnim object animates Mesh vertices. This should be done only when an effect can't be achieved with material animation, because animating vertices directly is less efficient.
+// Super: Anim
+// Ext: .msnm
+// C++ Class: RndMeshAnim
+
+#ifndef IN_MILO_FILE
+    #ifndef STANDALONE_FILE
+        #define STANDALONE_FILE "MeshAnim"
+    #endif
+#endif
+
+#ifndef OBJECT_MESH_ANIM
+#define OBJECT_MESH_ANIM
+
+#include "anim.bt"
+#include "common.bt"
+
+typedef struct
+{
+    uint count;
+    if (count > 0) Vector3 verts[count];
+
+    float pos;
+} VertPointKey;
+
+typedef struct
+{
+    uint count;
+    if (version >= 2)
+    {
+        if (count > 0) Vector3 texts[count];
+    }
+    else
+    {
+        if (count > 0) Vector2 texts[count];
+    }
+
+    float pos;
+} VertTextKey;
+
+typedef struct
+{
+    uint count;
+    if (count > 0) Color4 colors[count];
+
+    float pos;
+} VertColorKey;
+
+typedef struct (SystemInfo& info, Bool super)
+{
+    int version; // 1 (GH2/GDRB), 2 (RB3)
+
+    if (version >= 1) read_metadata(info, super);
+
+    Anim anim(info, True);
+
+    NumString mesh; // 0x10 *
+
+    // vert_point_keys 0x1c *
+    struct VertPoints
+    {
+        uint vert_point_keys_count;
+        if (vert_point_keys_count > 0) VertPointKey vert_point_keys[vert_point_keys_count]<optimize=false>;
+    } vert_points;
+
+    // vert_text_keys 0x28 *
+    struct VertTexts
+    {
+        uint vert_text_keys_count;
+        if (vert_text_keys_count > 0) VertTextKey vert_text_keys[vert_text_keys_count]<optimize=false>;
+    } vert_texts;
+    
+    // vert_text_keys 0x34 *
+    struct VertColors
+    {
+        // 0x28
+        uint vert_color_keys_count;
+        if (vert_color_keys_count > 0) VertColorKey vert_color_keys[vert_color_keys_count]<optimize=false>;
+    } vert_colors;
+
+    NumString keys_owner; // 0x40 *
+} MeshAnim;
+
+#ifdef STANDALONE_FILE
+
+if (STANDALONE_FILE == "MeshAnim")
+{
+    local int obj_version = guess_version();
+    local SystemInfo info;
+    info.version = 25;
+
+    if (IsBigEndian())
+    {
+        info.platform = X360;
+    }
+    else
+    {
+        info.platform = PS2;
+    }
+
+    MeshAnim mesh_anim(info, False);
+}
+
+#endif
+
+#endif
