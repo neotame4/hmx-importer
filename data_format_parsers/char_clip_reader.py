@@ -181,6 +181,35 @@ def read_charclip(self):
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[2] = ( pos3 / 32767 ) * 1280
                                 bone.keyframe_insert("location")
+                    if ".scale" in name:
+                        print("name", name)
+                        name = name.replace(".scale", ".mesh")
+                        bone = armature.pose.bones.get(name)
+                        if compression == 0:
+                            scale1 = quat_math(reader.float32())
+                            print("scale1", scale1)
+                            scale2 = quat_math(reader.float32())
+                            print("scale2", scale2)
+                            scale3 = quat_math(reader.float32())
+                            print("scale3", scale3)
+                        elif compression < 3:
+                            scale1 = quat_math(reader.short())
+                            print("scale1", scale1)
+                            scale2 = quat_math(reader.short())
+                            print("scale2", scale2)
+                            scale3 = quat_math(reader.short())
+                            print("scale3", scale3)
+                        else:
+                            scale1 = quat_math(reader.byte())
+                            print("scale1", scale1)
+                            scale2 = quat_math(reader.byte())
+                            print("scalet2", scale2)
+                            scale3 = quat_math(reader.byte())
+                            print("scale3", scale3)
+                        if bone:
+                           # bone.rotation_mode = "QUATERNION"
+                            bone.scale = (scale1, scale2, scale3,)
+                            bone.keyframe_insert("scale")
                     if ".quat" in name:
                         print("name", name)
                         name = name.replace(".quat", ".mesh")
@@ -216,6 +245,44 @@ def read_charclip(self):
                             bone.rotation_mode = "QUATERNION"
                             bone.rotation_quaternion = (quat4, quat1, quat2, quat3)
                             bone.keyframe_insert("rotation_quaternion")
+                    if ".rotx" in name:
+                        print("name", name)
+                        name = name.replace(".rotx", ".mesh")
+                        bone = armature.pose.bones.get(name)
+                        if compression == 0:
+                            rotx = reader.float32()
+                            print("rotx", rotx)
+                        else:
+                            rot1 = reader.short()
+                            rotx = (rot1 / 32767.0) / 0.5 * 10.0
+                          #  rotx = (rot1 / 32767.0)
+                          # dont know what the real values are sooo
+                          # ¯\_(ツ)_/¯
+                           # rotx = (rot1 / 32767.0) / 0.512 * 10.24
+                            print("rotx", rotx)
+                        if bone:
+                            bone.rotation_mode = "XYZ"
+                            bone.rotation_euler[0] = rotx
+                            bone.keyframe_insert("rotation_euler") 
+                    if ".roty" in name:
+                        print("name", name)
+                        name = name.replace(".roty", ".mesh")
+                        bone = armature.pose.bones.get(name)
+                        if compression == 0:
+                            roty = reader.float32()
+                            print("roty", roty)
+                        else:
+                            rot1 = reader.short()
+                            roty = (rot1 / 32767.0) / 0.5 * 10.0
+                          #  roty = (rot1 / 32767.0)
+                          # dont know what the real values are sooo
+                          # ¯\_(ツ)_/¯
+                           # roty = (rot1 / 32767.0) / 0.512 * 10.24
+                            print("roty", roty)
+                        if bone:
+                            bone.rotation_mode = "XYZ"
+                            bone.rotation_euler[1] = roty
+                            bone.keyframe_insert("rotation_euler") 
                     elif ".rotz" in name:
                         print("name", name)
                         name = name.replace(".rotz", ".mesh")
@@ -389,6 +456,35 @@ def read_charclip(self):
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[2] = ( pos3 / 32767 ) * 1280
                                 bone.keyframe_insert("location")
+                    if ".scale" in name:
+                        print("name", name)
+                        name = name.replace(".scale", ".mesh")
+                        bone = armature.pose.bones.get(name)
+                        if compression == 0:
+                            scale1 = quat_math(reader.float32())
+                            print("scale1", scale1)
+                            scale2 = quat_math(reader.float32())
+                            print("scale2", scale2)
+                            scale3 = quat_math(reader.float32())
+                            print("scale3", scale3)
+                        elif compression < 3:
+                            scale1 = quat_math(reader.short())
+                            print("scale1", scale1)
+                            scale2 = quat_math(reader.short())
+                            print("scale2", scale2)
+                            scale3 = quat_math(reader.short())
+                            print("scale3", scale3)
+                        else:
+                            scale1 = quat_math(reader.byte())
+                            print("scale1", scale1)
+                            scale2 = quat_math(reader.byte())
+                            print("scalet2", scale2)
+                            scale3 = quat_math(reader.byte())
+                            print("scale3", scale3)
+                        if bone:
+                           # bone.rotation_mode = "QUATERNION"
+                            bone.scale = (scale1, scale2, scale3,)
+                            bone.keyframe_insert("scale")
                     if ".quat" in name:
                         print("name", name)
                         name = name.replace(".quat", ".mesh")
@@ -426,6 +522,44 @@ def read_charclip(self):
                             bone.keyframe_insert("rotation_quaternion")
                    # for name, rotz in rotz_samples:
                    # for name in rotz_samples:
+                    if ".rotx" in name:
+                        print("name", name)
+                        name = name.replace(".rotx", ".mesh")
+                        bone = armature.pose.bones.get(name)
+                        if compression == 0:
+                            rotx = reader.float32()
+                            print("rotx", rotx)
+                        else:
+                            rot1 = reader.short()
+                            rotx = (rot1 / 32767.0) / 0.5 * 10.0
+                          #  rotx = (rot1 / 32767.0)
+                          # dont know what the real values are sooo
+                          # ¯\_(ツ)_/¯
+                           # rotx = (rot1 / 32767.0) / 0.512 * 10.24
+                            print("rotx", rotx)
+                        if bone:
+                            bone.rotation_mode = "XYZ"
+                            bone.rotation_euler[0] = rotx
+                            bone.keyframe_insert("rotation_euler") 
+                    if ".roty" in name:
+                        print("name", name)
+                        name = name.replace(".roty", ".mesh")
+                        bone = armature.pose.bones.get(name)
+                        if compression == 0:
+                            roty = reader.float32()
+                            print("roty", roty)
+                        else:
+                            rot1 = reader.short()
+                            roty = (rot1 / 32767.0) / 0.5 * 10.0
+                          #  roty = (rot1 / 32767.0)
+                          # dont know what the real values are sooo
+                          # ¯\_(ツ)_/¯
+                           # roty = (rot1 / 32767.0) / 0.512 * 10.24
+                            print("roty", roty)
+                        if bone:
+                            bone.rotation_mode = "XYZ"
+                            bone.rotation_euler[1] = roty
+                            bone.keyframe_insert("rotation_euler") 
                     elif ".rotz" in name:
                         print("name", name)
                         name = name.replace(".rotz", ".mesh")
@@ -436,6 +570,7 @@ def read_charclip(self):
                         else:
                             rot1 = reader.short()
                             rotz = (rot1 / 32767.0) / 0.5 * 10.0
+                          #  rotz = (rot1 / 32767.0)
                           # dont know what the real values are sooo
                           # ¯\_(ツ)_/¯
                            # rotz = (rot1 / 32767.0) / 0.512 * 10.24
@@ -443,7 +578,7 @@ def read_charclip(self):
                         if bone:
                             bone.rotation_mode = "XYZ"
                             bone.rotation_euler[2] = rotz
-                            bone.keyframe_insert("rotation_euler")
+                            bone.keyframe_insert("rotation_euler") 
                     else:
                         print("unknown bone suffix", name)
                 End = reader.tell()
