@@ -84,8 +84,8 @@ def vertices(reader, version: int) -> list:
             bone_ids.append((0, 1, 2, 3)) 
 
         elif version <= 28:	# GH2 (56 bytes)
-            bone_weights.append(reader.vec4f())
             normals.append(reader.vec3f())
+            bone_weights.append(reader.vec4f())
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2, 3)) 
 
