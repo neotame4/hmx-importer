@@ -51,13 +51,10 @@ def vertices(reader, version: int) -> list:
     bone_ids = []
     for i in range(vertex_count):
         if version == 30:
-            x1 = reader.short()
-            x = reader.short()
-            y1 = reader.short()
-            y = reader.short()
-            z1 = reader.short()
-            z = reader.short()
-            vertices.append((x, y, z))
+            x = reader.int32()
+            y = reader.int32()
+            z = reader.int32()
+            vertices.append((x / 65536.0, y / 65536.0, z / 65536.0))
         else:
             xyz = reader.vec3f()
            # print("xyz", xyz)
@@ -90,13 +87,11 @@ def vertices(reader, version: int) -> list:
             bone_ids.append((0, 1, 2, 3)) 
 
         elif version <= 30:	# Phase (56 bytes)
-            bone_weights.append(reader.vec4s())
-            unknown_0 = reader.short()
-            unknown_1 = reader.int32()
-            normals.append(reader.vec3i())
-            uvs.append(invert_uv_map(reader.vec2f()))
+            normals.append(phase_math3(reader.vec3i()))
+            bone_weights.append(phase_math4(reader.vec4i()))
+            uvs.append(phase_math2(reader.vec2i()))
            # junk3 = reader.short()
-            unknown_2 = reader.short()
+           # unknown_3 = reader.short()
             bone_ids.append(reader.vec4s()) 
 
         elif version <= 33:	# Unused (48 bytes)
@@ -255,7 +250,10 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
             find_next_file(reader)
             return geom_owner, parent_name, name
     if version > 25:
-        read_metadata(reader, False)           
+        read_metadata(reader, False)      
+   # if version == 30:        
+   #     trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_phase_trans(reader, True, name)
+   # else:
     trans_version, trans_count, trans_objects, parent, local_xfm, world_xfm = read_trans(reader, True, name)
    # parent, local_xfm, world_xfm = read_trans(reader, True, name)
    # print("parent, local_xfm, world_xfm", parent, local_xfm, world_xfm)

@@ -26,6 +26,19 @@ def texture_entry_amp(reader, version: int) -> str:
         tex_name = reader.numstring()
     print("tex_name", tex_name)
     return tex_name
+    
+def texture_entry_amp(reader, version: int) -> str:
+    map_type = reader.int32()
+    print("map_type", map_type)
+   # tex_xfm = reader.matrix()
+   # print("tex_xfm", tex_xfm)
+    reader.read_bytes( 21)
+    if version <= 7:
+        tex_name = reader.string()
+    else:
+        tex_name = reader.numstring()
+    print("tex_name", tex_name)
+    return tex_name
 
 def read_mat(reader, name: str, self) -> None:
     mat_data = {}
@@ -100,6 +113,8 @@ def read_mat(reader, name: str, self) -> None:
        # print("tex_name", tex_name)
     blend = reader.int32()
     print("blend", blend)
+    if version <= 7:
+        return
     if version <= 7:
         # anyone know what this is?
         unknown = reader.read_bytes(30)
