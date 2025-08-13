@@ -60,3 +60,12 @@ def quat_math4(quat: tuple[int, int, int, int]) -> tuple[float, float, float, fl
 
 def rotz_math(rotz: int) -> float:
     return (rotz / 32767.0) / 0.5 * 10
+    
+def phase_math(value: int) -> float:
+    return (value / 65536.0)
+def phase_math2(value: tuple[int, int]) -> tuple[float, float]:
+    return ((value[0] / 65536.0), (value[1] / 65536.0))
+def phase_math3(value: tuple[int, int, int]) -> tuple[float, float, float]:
+    return ((value[0] / 65536.0), (value[1] / 65536.0), (value[2] / 65536.0))
+def phase_math4(value: tuple[int, int, int, int]) -> tuple[float, float, float, float]:
+    return ((value[0] / 65536.0), (value[1] / 65536.0), (value[2] / 65536.0), (value[3] / 65536.0))

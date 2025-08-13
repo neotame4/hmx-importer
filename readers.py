@@ -64,8 +64,10 @@ class Reader():
         return self.read("e")[0]
     
     def float32(self) -> float:
+       # if self.import_phase == True:
+       #     return self.read("I")[0]
+       # else:
         return self.read("f")[0]
-    
 
     def numstring(self) -> str:
         length = self.uint32()
@@ -96,6 +98,9 @@ class Reader():
     
     def vec2f(self) -> tuple[float, float]:
         return self.read("2f")
+     
+    def vec2i(self) -> tuple[int, int]:
+        return self.read("2i")
     
     def vec3s(self) -> tuple[int, int, int]:
         return self.read("3h")
@@ -114,6 +119,9 @@ class Reader():
     
     def vec4s(self) -> tuple[int, int, int, int]:
         return self.read("4h")
+    
+    def vec4i(self) -> tuple[int, int, int, int]:
+        return self.read("4i")
     
     def vec4us(self) -> tuple[int, int, int, int]:
         return self.read("4H")

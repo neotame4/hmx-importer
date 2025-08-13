@@ -69,6 +69,12 @@ class ImportMilo(Operator, ImportHelper):
         description="Import TransAnim animations (common in venues).",
         default=False,
     )
+    
+   # import_phase: BoolProperty(
+   #     name="Import PHASE assets",
+   #     description="Import assets from PHASE.",
+   #     default=False,
+   # )
 
     import_prop_anim: BoolProperty(
         name="Import PropAnim Animations",
@@ -111,6 +117,7 @@ class ImportMilo(Operator, ImportHelper):
         layout.prop(self, "import_prop_anim")
         layout.prop(self, "import_world_crowd")
         layout.prop(self, "skip_dir_data")
+       # layout.prop(self, "import_phase")
        # layout.prop(self, "something4")
         layout.prop(self, "import_external")
 
