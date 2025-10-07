@@ -15,7 +15,7 @@ Amplitude
 
 Antigrav
 
-Karaoke Revolution (all of them except KRP Xbox)
+Karaoke Revolution (all of them except some KRP Xbox files)
 
 GH1
 
