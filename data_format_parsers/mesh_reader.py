@@ -63,6 +63,7 @@ def vertices(reader, version: int) -> list:
             w = reader.float32()
         if version <= 10:	# Freq (56 bytes)
             normals.append((reader.vec3f()))
+            vertcolors.append((0, 0, 0))
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_weights.append(reader.vec4f())
             bone_ids.append(reader.vec4us())
@@ -71,23 +72,27 @@ def vertices(reader, version: int) -> list:
             weight_2 = 1.0 - (weight_0 + weight_1)
             bone_weights.append((weight_0, weight_1, weight_2))
             normals.append((reader.vec3f()))
+            vertcolors.append((0, 0, 0))
             unknown_0, unknown_1, unknown_2, unknown_3 = reader.vec4f()
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2))
         elif version <= 25:	# Amp (56 bytes)
             normals.append(reader.vec3f())
+            vertcolors.append((0, 0, 0))
             bone_weights.append(reader.vec4f())
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2, 3)) 
 
         elif version <= 28:	# GH2 (56 bytes)
             normals.append(reader.vec3f())
+            vertcolors.append((0, 0, 0))
             bone_weights.append(reader.vec4f())
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append((0, 1, 2, 3)) 
 
         elif version <= 30:	# Phase (56 bytes)
             normals.append(phase_math3(reader.vec3i()))
+            vertcolors.append((0, 0, 0))
             bone_weights.append(phase_math4(reader.vec4i()))
             uvs.append(phase_math2(reader.vec2i()))
            # junk3 = reader.short()
@@ -96,6 +101,7 @@ def vertices(reader, version: int) -> list:
 
         elif version <= 33:	# Unused (48 bytes)
             normals.append(reader.vec3f())
+            vertcolors.append((0, 0, 0))
             bone_weights.append(reader.vec4f()) 
             uvs.append(invert_uv_map(reader.vec2f()))
             bone_ids.append(reader.vec4us())
@@ -104,8 +110,13 @@ def vertices(reader, version: int) -> list:
         elif (version < 35) or (is_ng == False):
             normal_eggs = reader.vec3f()
             if version == 38:
-                colors = reader.vec4f()
+                colors = d256math4(reader.vec3f())
+                alpha = d256math1(reader.float32())
                 print("colors", colors)
+                print("alpha?", alpha)
+                vertcolors.append(colors)
+            else:
+                vertcolors.append((0, 0, 0))
                # maybe_normals = reader.vec3f()
                # print("maybe_normals", maybe_normals)
             normals.append(normal_eggs)
@@ -170,7 +181,7 @@ def vertices(reader, version: int) -> list:
                 bone_ids.append(ids)     
     if version == 393254:
         reader.little_endian = False
-    return vertices, normals, uvs, bone_weights, bone_ids 
+    return vertices, normals, vertcolors, uvs, bone_weights, bone_ids
 
 def group_section(reader, count: int) -> None:
     for _ in range(count):
@@ -351,11 +362,11 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
         some_bool = reader.milo_bool()
     if version < 11:
         some_number = reader.uint32()
-    verts, normals, uvs, weights, indices = vertices(reader, version)
+    verts, normals, vertcolors, uvs, weights, indices = vertices(reader, version)
     mesh_data["vertices"] = verts
     mesh_data["normals"] = normals
     mesh_data["uvs"] = uvs
-   # mesh_data["colors"] = colors
+    mesh_data["vertcolors"] = vertcolors
     mesh_data["weights"] = weights
     mesh_data["indices"] = indices
     mesh_faces = faces(reader)
@@ -521,8 +532,8 @@ def create_mesh(mesh_data) -> None:
     verts = mesh_data["vertices"]
     faces = mesh_data["faces"]
     normals = mesh_data["normals"]
+    vertcolors = mesh_data["vertcolors"]
     uvs = mesh_data["uvs"]
-   # colors = mesh_data["colors"]
     weights = mesh_data["weights"]
     indices = mesh_data["indices"]
     bone_names = mesh_data.get("bone_names", [])
@@ -638,6 +649,12 @@ def create_mesh(mesh_data) -> None:
     else:
         for f in mesh.polygons:
             f.use_smooth = True
+
+    for poly in mesh.polygons
+        for loop_index in poly.loop_indices:
+            color = mathutils.Color()
+            color.hsv = (vertcolors[0], vertcolors[1], vertcolors[2]) # Assign a random hue
+            vertex_color_layer.data[loop_index].color = color
     bpy.ops.object.select_all(action="DESELECT")
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
