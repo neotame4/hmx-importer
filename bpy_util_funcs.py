@@ -55,10 +55,10 @@ def pos_math3(pos: tuple[int, int, int]) -> tuple[float, float, float]:
 def quat_math(quat: int) -> float:
     return (quat / 32767.0)
 
-def d256math(value: int) -> float:
+def d256math(value: float) -> float:
     return (value / 256.0)
 
-def d256math4(value: tuple[int, int, int, int]) -> tuple[float, float, float, float]:
+def d256math4(value: tuple[float, float, float, float]) -> tuple[float, float, float, float]:
     return (value[0] / 256.0, value[1] / 256.0, value[2] / 256.0, value[3] / 256.0)
 
 def quat_math4(quat: tuple[int, int, int, int]) -> tuple[float, float, float, float]:
@@ -74,5 +74,5 @@ def phase_math2(value: tuple[int, int]) -> tuple[float, float]:
 def phase_math3(value: tuple[int, int, int]) -> tuple[float, float, float]:
     return ((value[0] / 65536.0), (value[1] / 65536.0), (value[2] / 65536.0))
 def phase_math4(value: tuple[int, int, int, int]) -> tuple[float, float, float, float]:
-
     return ((value[0] / 65536.0), (value[1] / 65536.0), (value[2] / 65536.0), (value[3] / 65536.0))
+
