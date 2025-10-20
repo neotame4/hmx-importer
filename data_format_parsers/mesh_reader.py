@@ -110,7 +110,7 @@ def vertices(reader, version: int) -> list:
         elif (version < 35) or (is_ng == False):
             normal_eggs = reader.vec3f()
             if version == 38:
-                colors = d256math4(reader.vec3f())
+                colors = d256math3(reader.vec3f())
                 alpha = d256math1(reader.float32())
                 print("colors", colors)
                 print("alpha?", alpha)
