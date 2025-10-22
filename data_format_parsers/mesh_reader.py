@@ -650,6 +650,10 @@ def create_mesh(mesh_data) -> None:
         for f in mesh.polygons:
             f.use_smooth = True
 
+    if not mesh.vertex_colors:
+        mesh.vertex_colors.new()
+    vertex_color_layer = mesh.vertex_colors.active
+    
     for poly in mesh.polygons
         for loop_index in poly.loop_indices:
             color = mathutils.Color()
