@@ -1760,10 +1760,14 @@ def read_ccs(self):
     if (metadata_type == "viseme"):
         extension = ".vsm"
        # extension = ".ccs"
-        bpy.data.actions[bpy.context.active_object.name + "Action"].name = os.path.splitext(os.path.basename(self.filepath))[0] + extension
-        print("file", bpy.path.basename(os.path.splitext(os.path.basename(self.filepath))[0] + extension))
+        try:
+            bpy.data.actions[bpy.context.active_object.name + "Action"].name = os.path.splitext(os.path.basename(self.filepath))[0] + extension
+            print("file", bpy.path.basename(os.path.splitext(os.path.basename(self.filepath))[0] + extension))
+        except:
+            bpy.ops.report(type='WARNING', message='CCS animation has no data, Animation cannot be pushed down in NLA track, please report this to neotame4')
     else:
         print("file", bpy.path.basename(self.filepath))
    # bpy.ops.nla.action_pushdown(track_index=1)
    # bpy.ops.action.push_down()
    # create_anim(self, reader)
+
