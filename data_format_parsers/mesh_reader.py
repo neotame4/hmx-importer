@@ -653,12 +653,15 @@ def create_mesh(mesh_data) -> None:
     if not mesh.vertex_colors:
         mesh.vertex_colors.new()
     vertex_color_layer = mesh.vertex_colors.active
+
+# TODO
+# MAKE THIS↓↓↓↓ A TRY STATEMENT
     
-    for poly in mesh.polygons
-        for loop_index in poly.loop_indices:
-            color = mathutils.Color()
-            color.hsv = (vertcolors[0], vertcolors[1], vertcolors[2]) # Assign a random hue
-            vertex_color_layer.data[loop_index].color = color
+    #for poly in mesh.polygons:
+    #    for loop_index in poly.loop_indices:
+    #        color = mathutils.Color()
+    #        color.hsv = (vertcolors[0], vertcolors[1], vertcolors[2]) # Assign a random hue
+    #        vertex_color_layer.data[loop_index].color = color
     bpy.ops.object.select_all(action="DESELECT")
     obj.select_set(True)
     bpy.context.view_layer.objects.active = obj
