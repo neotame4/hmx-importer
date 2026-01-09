@@ -181,7 +181,7 @@ def vertices(reader, version: int) -> list:
                 bone_ids.append(ids)     
     if version == 393254:
         reader.little_endian = False
-    return vertices, normals, vertcolors, uvs, bone_weights, bone_ids
+    return vertices, normals, uvs, bone_weights, bone_ids
 
 def group_section(reader, count: int) -> None:
     for _ in range(count):
@@ -362,11 +362,11 @@ def read_mesh(reader, name: str, character_name: str, self) -> tuple:
         some_bool = reader.milo_bool()
     if version < 11:
         some_number = reader.uint32()
-    verts, normals, vertcolors, uvs, weights, indices = vertices(reader, version)
+    verts, normals, uvs, weights, indices = vertices(reader, version)
     mesh_data["vertices"] = verts
     mesh_data["normals"] = normals
     mesh_data["uvs"] = uvs
-    mesh_data["vertcolors"] = vertcolors
+   # mesh_data["vertcolors"] = vertcolors
     mesh_data["weights"] = weights
     mesh_data["indices"] = indices
     mesh_faces = faces(reader)
@@ -532,7 +532,7 @@ def create_mesh(mesh_data) -> None:
     verts = mesh_data["vertices"]
     faces = mesh_data["faces"]
     normals = mesh_data["normals"]
-    vertcolors = mesh_data["vertcolors"]
+   # vertcolors = mesh_data["vertcolors"]
     uvs = mesh_data["uvs"]
     weights = mesh_data["weights"]
     indices = mesh_data["indices"]
@@ -650,9 +650,9 @@ def create_mesh(mesh_data) -> None:
         for f in mesh.polygons:
             f.use_smooth = True
 
-    if not mesh.vertex_colors:
-        mesh.vertex_colors.new()
-    vertex_color_layer = mesh.vertex_colors.active
+  #  if not mesh.vertex_colors:
+  #      mesh.vertex_colors.new()
+  #  vertex_color_layer = mesh.vertex_colors.active
 
 # TODO
 # MAKE THIS↓↓↓↓ A TRY STATEMENT
