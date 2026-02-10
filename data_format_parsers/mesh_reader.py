@@ -117,8 +117,9 @@ def vertices(reader, version: int) -> list:
                # vertcolors.append(colors)
             else:
                # vertcolors.append((0, 0, 0))
-                maybe_normals = reader.vec3f()
-                print("maybe_normals", maybe_normals)
+               # maybe_normals = reader.vec3f()
+               # print("maybe_normals", maybe_normals)
+                print("EGGO WAFFELS, if your reading this I stuck my canoodle in yo mama")
             normals.append(normal_eggs)
             if (version == 34 and reader.little_endian == False) or (version == 36 and is_og_ng == True):
                 nw = reader.float32()
