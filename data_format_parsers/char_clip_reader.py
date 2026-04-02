@@ -148,6 +148,10 @@ def read_charclip(self):
                                         bone.location[1] = pos2
                                         bone.location[2] = pos3
                                     bone.keyframe_insert("location")
+                                    if bone.animation_data and bone.animation_data.action:
+                                        for fcurve in bone.animation_data.action.fcurves:
+                                            for kp in fcurve.keyframe_points:
+                                                kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                             else:
                                 pos1 = pos11
                                 pos2 = pos12
@@ -162,7 +166,11 @@ def read_charclip(self):
                                         bone.location[0] = pos1
                                         bone.location[1] = pos2
                                         bone.location[2] = pos3
-                                    bone.keyframe_insert("location")
+                                    bone.keyframe_insert("location")                                    
+                                    if bone.animation_data and bone.animation_data.action:
+                                        for fcurve in bone.animation_data.action.fcurves:
+                                            for kp in fcurve.keyframe_points:
+                                                kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                         else:
                             pos1 = reader.short()
                             print("pos1", pos1)
@@ -181,6 +189,11 @@ def read_charclip(self):
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[2] = ( pos3 / 32767 ) * 1280
                                 bone.keyframe_insert("location")
+                                if bone.animation_data and bone.animation_data.action:
+                                    for fcurve in bone.animation_data.action.fcurves:
+                                        for kp in fcurve.keyframe_points:
+                                            kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
+                                                
                     if ".scale" in name:
                         print("name", name)
                         name = name.replace(".scale", ".mesh")
@@ -210,6 +223,10 @@ def read_charclip(self):
                            # bone.rotation_mode = "QUATERNION"
                             bone.scale = (scale1, scale2, scale3,)
                             bone.keyframe_insert("scale")
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     if ".quat" in name:
                         print("name", name)
                         name = name.replace(".quat", ".mesh")
@@ -245,6 +262,10 @@ def read_charclip(self):
                             bone.rotation_mode = "QUATERNION"
                             bone.rotation_quaternion = (quat4, quat1, quat2, quat3)
                             bone.keyframe_insert("rotation_quaternion")
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     if ".rotx" in name:
                         print("name", name)
                         name = name.replace(".rotx", ".mesh")
@@ -263,7 +284,11 @@ def read_charclip(self):
                         if bone:
                             bone.rotation_mode = "XYZ"
                             bone.rotation_euler[0] = rotx
-                            bone.keyframe_insert("rotation_euler") 
+                            bone.keyframe_insert("rotation_euler")
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     if ".roty" in name:
                         print("name", name)
                         name = name.replace(".roty", ".mesh")
@@ -283,6 +308,10 @@ def read_charclip(self):
                             bone.rotation_mode = "XYZ"
                             bone.rotation_euler[1] = roty
                             bone.keyframe_insert("rotation_euler") 
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     elif ".rotz" in name:
                         print("name", name)
                         name = name.replace(".rotz", ".mesh")
@@ -301,7 +330,11 @@ def read_charclip(self):
                         if bone:
                             bone.rotation_mode = "XYZ"
                             bone.rotation_euler[2] = rotz
-                            bone.keyframe_insert("rotation_euler") 
+                            bone.keyframe_insert("rotation_euler")
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                 End = reader.tell()
                 print("end", End)
                 datasize = End - Start
@@ -420,6 +453,10 @@ def read_charclip(self):
                                         bone.location[1] = pos2
                                         bone.location[2] = pos3 
                                     bone.keyframe_insert("location")
+                                    if bone.animation_data and bone.animation_data.action:
+                                        for fcurve in bone.animation_data.action.fcurves:
+                                            for kp in fcurve.keyframe_points:
+                                                kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                             else:
                                 print("version3 < 12", version3)
                                 pos1 = pos11
@@ -437,6 +474,10 @@ def read_charclip(self):
                                         bone.location[1] = ( pos2 / 32767 ) * 1280
                                         bone.location[2] = ( pos3 / 32767 ) * 1280
                                     bone.keyframe_insert("location")
+                                    if bone.animation_data and bone.animation_data.action:
+                                        for fcurve in bone.animation_data.action.fcurves:
+                                            for kp in fcurve.keyframe_points:
+                                                kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                         else:
                             print("reading values as shorts")
                             pos1 = reader.short()
@@ -456,6 +497,10 @@ def read_charclip(self):
                                     bone.location[1] = ( pos2 / 32767 ) * 1280
                                     bone.location[2] = ( pos3 / 32767 ) * 1280
                                 bone.keyframe_insert("location")
+                                if bone.animation_data and bone.animation_data.action:
+                                    for fcurve in bone.animation_data.action.fcurves:
+                                        for kp in fcurve.keyframe_points:
+                                            kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     if ".scale" in name:
                         print("name", name)
                         name = name.replace(".scale", ".mesh")
@@ -485,6 +530,10 @@ def read_charclip(self):
                            # bone.rotation_mode = "QUATERNION"
                             bone.scale = (scale1, scale2, scale3,)
                             bone.keyframe_insert("scale")
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     if ".quat" in name:
                         print("name", name)
                         name = name.replace(".quat", ".mesh")
@@ -520,6 +569,10 @@ def read_charclip(self):
                             bone.rotation_mode = "QUATERNION"
                             bone.rotation_quaternion = (quat4, quat1, quat2, quat3)
                             bone.keyframe_insert("rotation_quaternion")
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                    # for name, rotz in rotz_samples:
                    # for name in rotz_samples:
                     if ".rotx" in name:
@@ -540,7 +593,11 @@ def read_charclip(self):
                         if bone:
                             bone.rotation_mode = "XYZ"
                             bone.rotation_euler[0] = rotx
-                            bone.keyframe_insert("rotation_euler") 
+                            bone.keyframe_insert("rotation_euler")
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     if ".roty" in name:
                         print("name", name)
                         name = name.replace(".roty", ".mesh")
@@ -559,7 +616,11 @@ def read_charclip(self):
                         if bone:
                             bone.rotation_mode = "XYZ"
                             bone.rotation_euler[1] = roty
-                            bone.keyframe_insert("rotation_euler") 
+                            bone.keyframe_insert("rotation_euler")
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     elif ".rotz" in name:
                         print("name", name)
                         name = name.replace(".rotz", ".mesh")
@@ -579,6 +640,10 @@ def read_charclip(self):
                             bone.rotation_mode = "XYZ"
                             bone.rotation_euler[2] = rotz
                             bone.keyframe_insert("rotation_euler") 
+                            if bone.animation_data and bone.animation_data.action:
+                                for fcurve in bone.animation_data.action.fcurves:
+                                    for kp in fcurve.keyframe_points:
+                                        kp.interpolation = 'CONSTANT' # Options: 'LINEAR', 'BEZIER', 'CONSTANT'
                     else:
                         print("unknown bone suffix", name)
                 End = reader.tell()
