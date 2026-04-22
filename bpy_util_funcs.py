@@ -55,7 +55,7 @@ def pos_math3(pos: tuple[int, int, int]) -> tuple[float, float, float]:
 def quat_math(quat: int) -> float:
     return (quat / 32767.0)
 
-def d256math(value: float) -> float:
+def d256math1(value: float) -> float:
     return (value * 255.0)
     
 def d256math3(value: tuple[float, float, float]) -> tuple[float, float, float]:
